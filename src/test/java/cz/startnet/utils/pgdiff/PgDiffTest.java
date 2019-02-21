@@ -209,6 +209,8 @@ public class PgDiffTest {
                     {"alter_view_change_default", false, true, false, false},
                     // Tests creation of sequence with bug in MINVALUE value
                     {"add_sequence_bug2100013", false, true, false, false},
+                    // Create Sequence Postgres 10
+                    {"add_sequence_issue225", false, false, false, false},
                     // Tests view with default value
                     {"view_bug3080388", false, true, false, false},
                     // Tests function arguments beginning with in_
@@ -262,7 +264,9 @@ public class PgDiffTest {
                   , {"create_policies", false, false, false, false}
                   , {"drop_policies", false, false, false, false}
                   , {"alter_policies", false, false, false, false}
-                    // Tests grant on new sequence
+                    // Tests scenario where TRIGGER is enable or disable.
+                  , {"disable_trigger", false, false, false, false}
+                            // Tests grant on new sequence
                   , {"grant_on_new_sequence", false, false, false, false}
                     // Tests alter view owner
                   , {"alter_view_owner", false, false, false, false}

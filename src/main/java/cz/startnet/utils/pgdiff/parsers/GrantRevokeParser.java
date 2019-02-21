@@ -252,7 +252,8 @@ public class GrantRevokeParser {
                                     grantOption);
                         }
                     }
-                }
+                } 
+                
             }
         } else if ("SEQUENCE".equalsIgnoreCase(objectType)) {
             for (String name : identifiers) {
