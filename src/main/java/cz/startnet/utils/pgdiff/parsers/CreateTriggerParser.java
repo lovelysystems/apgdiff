@@ -79,11 +79,8 @@ public class CreateTriggerParser {
         String referencing="REFERENCING";
         if (parser.expectOptional(referencing)) {            
              trigger.setReferencing("\t"+referencing);             
-
-            while( !parser.getSubString(parser.getPosition()-5, parser.getPosition()-4).equals(System.getProperty("line.separator"))){ 
-                parseReferencing(parser,trigger);
-               
-            } 
+             parseReferencing(parser,trigger);
+             parseReferencing(parser,trigger);
         }
 
         if (parser.expectOptional("FOR")) {
