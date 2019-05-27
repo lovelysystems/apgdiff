@@ -31,7 +31,10 @@ public class CreateViewParser {
         final Parser parser = new Parser(statement);
 
         parser.expect("CREATE");
-        parser.expectOptional("OR", "REPLACE");
+        boolean isReplace = false;
+        if(parser.expectOptional("OR", "REPLACE")){
+            isReplace = true;
+        }
         final boolean materialized = parser.expectOptional("MATERIALIZED");        
         final boolean temporary = parser.expectOptional("TEMPORARY");
         final boolean recursive = parser.expectOptional("RECURSIVE");
@@ -81,7 +84,24 @@ public class CreateViewParser {
                     statement));
         }
 
-        schema.addRelation(view);
+        if(isReplace){
+            final PgView previousViewDefinition = schema.getView(view.getName());
+            if(previousViewDefinition != null){
+                previousViewDefinition.setMaterialized(materialized);
+                previousViewDefinition.setTemporary(temporary);
+                previousViewDefinition.setRecursive(recursive);
+                previousViewDefinition.setWith(with.toString());
+                previousViewDefinition.setDeclaredColumnNames(columnNames);
+                previousViewDefinition.setQuery(query);
+            }
+            else{
+                schema.addRelation(view);
+            }
+        }
+        else{
+            schema.addRelation(view);
+        }
+        
     }
 
     /**
