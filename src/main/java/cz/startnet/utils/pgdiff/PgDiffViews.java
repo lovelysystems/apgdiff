@@ -40,7 +40,7 @@ public class PgDiffViews {
                 searchPathHelper.outputSearchPath(writer);
                 writer.println();
                 writer.println(newView.getCreationSQL());
-                if (newView.getOwnerTo() != null && oldView == null) {
+                if (newView.getOwnerTo() != null) {
                     writer.println();
                     writer.println("ALTER VIEW "
                             + PgDiffUtils.getQuotedName(newView.getName())
