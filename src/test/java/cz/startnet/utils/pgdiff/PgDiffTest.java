@@ -272,6 +272,7 @@ public class PgDiffTest {
                   , {"alter_view_owner", false, false, false, false}
                   , {"grant_on_table_cols_mixed", false, false, false, false}
                   , {"grant_on_view_cols_mixed", false, false, false, false}
+                  , {"grant_on_view_change", false, false, false, false}
                 });
     }
     /**
@@ -399,7 +400,9 @@ public class PgDiffTest {
         }
 
         reader.close();
-
+        // System.out.println("exp???" + sbExpDiff.toString().trim() + "???");
+        // System.out.println("");
+        // System.out.println("diff!!!" + diffInput.toString().trim() + "!!!");
         Assert.assertEquals("File name template: " + fileNameTemplate,
                 sbExpDiff.toString().trim(),
                 diffInput.toString().trim());

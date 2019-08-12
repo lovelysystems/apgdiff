@@ -42,6 +42,7 @@ CREATE VIEW testview WITH (security_barrier) AS
 
 
 ALTER TABLE public.testview OWNER TO fordfrog;
+grant select(id, name), insert(name), update on testview to admin;
 
 --
 -- Data for Name: testtable; Type: TABLE DATA; Schema: public; Owner: fordfrog
