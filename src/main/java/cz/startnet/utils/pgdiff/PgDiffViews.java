@@ -212,7 +212,13 @@ public class PgDiffViews {
                     writer.println(" IS NULL;");
                 }
             }
-            if (oldView.getOwnerTo() != null && !newView.getOwnerTo().equals(oldView.getOwnerTo())) {
+            if (
+                newView.getOwnerTo() != null && 
+                (
+                    oldView.getOwnerTo() == null ||
+                    !newView.getOwnerTo().equals(oldView.getOwnerTo())
+                )
+            ) {
                 writer.println();
                 writer.println("ALTER VIEW "
                         + PgDiffUtils.getQuotedName(newView.getName())
