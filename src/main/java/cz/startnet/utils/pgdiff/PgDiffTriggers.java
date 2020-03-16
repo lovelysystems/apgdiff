@@ -218,8 +218,12 @@ public class PgDiffTriggers {
         if (newRelation != null)  {
     
                 for (final PgTrigger newTrigger : newRelation.getTriggers()) {
-                    
-                   PgTrigger oldTrigger = oldRelation.getTrigger(newTrigger.getName());
+                   final PgTrigger oldTrigger;
+                   if(oldRelation != null) {
+                        oldTrigger = oldRelation.getTrigger(newTrigger.getName());
+                   } else {
+                       oldTrigger = null;
+                   }
                     if ((newTrigger.isDisable() && oldTrigger==null) || 
                            (oldTrigger!=null && oldTrigger.isDisable()!=newTrigger.isDisable())) {
                         list.add(newTrigger);
