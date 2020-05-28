@@ -55,7 +55,7 @@ public class PgDiffTriggers {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper    
+     * @param searchPathHelper search path helper
      */
     public static void dropTriggers(final PrintWriter writer,
             final PgSchema oldSchema, final PgSchema newSchema,
@@ -201,7 +201,7 @@ public class PgDiffTriggers {
      */
     private PgDiffTriggers() {
     }
-    
+
     /**
      * Returns list of triggers that should be enable or disable.
      *
@@ -216,21 +216,21 @@ public class PgDiffTriggers {
         final List<PgTrigger> list = new ArrayList<PgTrigger>();
 
         if (newRelation != null)  {
-    
+
                 for (final PgTrigger newTrigger : newRelation.getTriggers()) {
-                    
-                   PgTrigger oldTrigger = oldRelation.getTrigger(newTrigger.getName());
-                    if ((newTrigger.isDisable() && oldTrigger==null) || 
+
+                    PgTrigger oldTrigger = oldRelation != null ? oldRelation.getTrigger(newTrigger.getName()) : null;
+                    if ((newTrigger.isDisable() && oldTrigger==null) ||
                            (oldTrigger!=null && oldTrigger.isDisable()!=newTrigger.isDisable())) {
                         list.add(newTrigger);
                     }
                 }
-            
+
         }
 
         return list;
     }
-    
+
     /**
      * Outputs statements for disable or enable triggers.
      *

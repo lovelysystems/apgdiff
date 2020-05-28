@@ -89,11 +89,9 @@ public class CommentParser {
 
         final String tableName = parser.parseIdentifier();
         final String objectName = ParserUtils.getObjectName(tableName);
-        final String schemaName =
-                ParserUtils.getSchemaName(constraintName, database);
+        final String schemaName = ParserUtils.getSchemaName(tableName, database);
 
-        final PgConstraint constraint = database.getSchema(schemaName).
-                getTable(objectName).getConstraint(constraintName);
+        final PgConstraint constraint = database.getSchema(schemaName).getTable(objectName).getConstraint(constraintName);
 
         parser.expect("IS");
         constraint.setComment(getComment(parser));
@@ -195,8 +193,7 @@ public class CommentParser {
 
         final String tableName = parser.parseIdentifier();
         final String objectName = ParserUtils.getObjectName(tableName);
-        final String schemaName =
-                ParserUtils.getSchemaName(triggerName, database);
+        final String schemaName = ParserUtils.getSchemaName(tableName, database);
 
         final PgTrigger trigger = database.getSchema(schemaName).
                 getTable(objectName).getTrigger(triggerName);
