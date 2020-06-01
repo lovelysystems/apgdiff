@@ -15,9 +15,16 @@ docker run --rm -w /src -v /path/to/sources:/src netwo/sqitch-apgdiff:latest jav
 
 ## Changelog
 
+### Version 2.6.7
+
+#### Fixes
+* Fix CreateView null pointer exception
+* Fix PgDiffViews null pointer exception
+* Fix PgDiffTriggers null pointer exception
+
 ### Version 2.6
 
-#### New Features 
+#### New Features
 * PostgresSQL 10 Support
 * Update dependencies to development with Java 11
 * Add security barrier and another options to Views
