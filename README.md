@@ -1,4 +1,4 @@
-# Another PostgreSQL Diff Tool (aka apgdiff)
+# Another PostgreSQL Diff Tool (aka apgdiff) - Netwo Fork
 
 Another PostgreSQL Diff Tool is free PostgreSQL diff tool that is useful for
 comparison/diffing of database schemas. You can find more information at its
@@ -7,7 +7,11 @@ file it at https://github.com/fordfrog/apgdiff/issues. If you for some reason
 need to contact author of this application, you can email him at
 fordfrog@fordfrog.com.
 
-This repo is mainly unmaintained. But if you found a bug and create a pull request chances are good that it will be merged.
+## Run
+
+```bash
+docker run --rm -w /src -v /path/to/sources:/src netwo/sqitch-apgdiff:latest java -jar /usr/local/bin/apgdiff.jar --add-transaction /src/file-diff1 /src/file-diff2
+```
 
 ## Changelog
 
