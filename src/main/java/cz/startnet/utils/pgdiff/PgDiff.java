@@ -89,7 +89,7 @@ public class PgDiff {
             }
         }
     }
-    
+
    /**
      * Creates new extensions.
      *
@@ -274,7 +274,7 @@ public class PgDiff {
             PgDiffTriggers.dropTriggers(
                     writer, oldSchema, newSchema, searchPathHelper);
             PgDiffRules.dropRules(
-                    writer, oldSchema, newSchema, searchPathHelper);                  
+                    writer, oldSchema, newSchema, searchPathHelper);
             PgDiffFunctions.dropFunctions(
                     writer, arguments, oldSchema, newSchema, searchPathHelper);
             PgDiffViews.dropViews(
@@ -300,6 +300,7 @@ public class PgDiff {
             PgDiffTypes.alterTypes(writer, arguments, oldSchema, newSchema, searchPathHelper);
             PgDiffTypes.createTypes(writer, oldSchema, newSchema, searchPathHelper);
             PgDiffTypes.dropTypes(writer, oldSchema, newSchema, searchPathHelper);
+            PgDiffGrant.createGrants(writer, oldSchema, newSchema);
             PgDiffTables.createTables(
                     writer, oldSchema, newSchema, searchPathHelper);
             PgDiffTables.alterTables(

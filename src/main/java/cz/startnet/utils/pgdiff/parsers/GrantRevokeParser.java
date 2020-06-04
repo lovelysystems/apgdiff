@@ -24,14 +24,14 @@ import cz.startnet.utils.pgdiff.schema.PgRelation;
 
 /**
  * Parses GRANT statements.
- * 
+ *
  * @author user
  */
 public class GrantRevokeParser {
 
     /**
      * Parses GRANT statement.
-     * 
+     *
      * @param database
      *            database
      * @param statement
@@ -252,8 +252,8 @@ public class GrantRevokeParser {
                                     grantOption);
                         }
                     }
-                } 
-                
+                }
+
             }
         } else if ("SEQUENCE".equalsIgnoreCase(objectType)) {
             for (String name : identifiers) {
@@ -287,6 +287,29 @@ public class GrantRevokeParser {
                     for (String priv : privileges) {
                         sequencePrivilege.setPrivileges(priv, grant,
                                 grantOption);
+                    }
+                }
+            }
+        } else if ("SCHEMA".equalsIgnoreCase(objectType)) {
+
+            if (grant) {
+                for (String name : identifiers) {
+                    // final String sequenceName = parser.parseIdentifier();
+                    final String schemaName = ParserUtils.getSchemaName(name, database);
+                    final PgSchema schema = database.getSchema(schemaName);
+
+                    if (schema == null) {
+                        throw new RuntimeException(MessageFormat.format(
+                                Resources.getString("CannotFindSchema"),
+                                schemaName, statement));
+                    }
+
+                    for (int i = 0; i < privileges.size(); i++) {
+
+                        String privKey = privileges.get(i);
+                        for (String roleName : roles) {
+                            schema.addGrant("GRANT " + privKey + " ON SCHEMA " + name + " TO " + roleName + ";");
+                        }
                     }
                 }
             }
