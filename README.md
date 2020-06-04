@@ -15,6 +15,13 @@ docker run --rm -w /src -v /path/to/sources:/src netwo/sqitch-apgdiff:latest jav
 
 ## Changelog
 
+@TODO PgDiffGrant => revoke.
+
+### Version 2.6.8
+
+#### New Features
+* Manage PgDiffGrant on schema (only on create)
+
 ### Version 2.6.7
 
 #### Fixes

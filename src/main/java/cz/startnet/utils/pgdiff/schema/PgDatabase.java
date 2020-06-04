@@ -157,7 +157,7 @@ public class PgDatabase {
     public void addExtension(final PgExtension extension) {
         extensions.add(extension);
     }
-    
+
     /**
      * Returns extension of given name or null if the extension has not been found.
      *

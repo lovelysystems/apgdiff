@@ -38,6 +38,11 @@ public class PgSchema {
     @SuppressWarnings("CollectionWithoutInitialCapacity")
     private final List<PgType> types = new ArrayList<PgType>();
     /**
+     * Array of grand statements
+     */
+    @SuppressWarnings("CollectionWithoutInitialCapacity")
+    private final List<String> grantStatements = new ArrayList<String>();
+    /**
      * List of indexes defined in the schema.
      */
     @SuppressWarnings("CollectionWithoutInitialCapacity")
@@ -53,7 +58,7 @@ public class PgSchema {
      */
     @SuppressWarnings("CollectionWithoutInitialCapacity")
     private final List<PgRule> rules = new ArrayList<PgRule>();
-    
+
     /**
      * Name of the schema.
      */
@@ -189,6 +194,15 @@ public class PgSchema {
      */
     public List<PgFunction> getFunctions() {
         return Collections.unmodifiableList(functions);
+    }
+
+    /**
+     * Getter for grant statements. The list cannot be modified.
+     *
+     * @return {@link #String}
+     */
+    public List<String> getGrants() {
+        return Collections.unmodifiableList(grantStatements);
     }
 
     /**
@@ -396,6 +410,15 @@ public class PgSchema {
     }
 
     /**
+     * Adds {@code statement} to the list of grant statements.
+     *
+     * @param grant drant
+     */
+    public void addGrant(final String grant) {
+        grantStatements.add(grant);
+    }
+
+    /**
      * Adds {@code sequence} to the list of sequences.
      *
      * @param sequence sequence
@@ -447,7 +470,7 @@ public class PgSchema {
 
         return null;
     }
-    
+
     /**
      * Get a list of rules from {@link #rels}.
      *
@@ -465,7 +488,7 @@ public class PgSchema {
 
         return list;
     }
-    
+
     /**
      * Returns true if schema contains type with given {@code name}, otherwise
      * false.

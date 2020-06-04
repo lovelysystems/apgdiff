@@ -31,7 +31,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: testtable1; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: testtable1; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace:
 --
 
 CREATE TABLE testtable1 (
@@ -70,7 +70,7 @@ SELECT pg_catalog.setval('testtable1_id_seq', 1, false);
 
 
 --
--- Name: testtable3; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: testtable3; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace:
 --
 
 CREATE TABLE testtable3 (
@@ -111,7 +111,7 @@ SELECT pg_catalog.setval('testtable3_id_seq', 1, false);
 SET search_path = testschema2, pg_catalog;
 
 --
--- Name: testtable1; Type: TABLE; Schema: testschema2; Owner: fordfrog; Tablespace: 
+-- Name: testtable1; Type: TABLE; Schema: testschema2; Owner: fordfrog; Tablespace:
 --
 
 CREATE TABLE testtable1 (
@@ -202,8 +202,8 @@ SET search_path = testschema2, pg_catalog;
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
+-- GRANT ALL ON SCHEMA public TO postgres;
+-- GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
