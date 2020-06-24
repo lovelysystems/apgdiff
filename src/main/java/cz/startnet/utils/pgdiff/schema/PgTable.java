@@ -58,6 +58,8 @@ public class PgTable extends PgRelation {
 
     private String foreignServer;
 
+    private String rangePartition;
+
     /**
      * RLS Policies
      */
@@ -209,11 +211,17 @@ public class PgTable extends PgRelation {
             sbSQL.append("SERVER ");
             sbSQL.append(getForeignServer());
         }
-        
+
         if (tablespace != null && !tablespace.isEmpty()) {
             sbSQL.append(System.getProperty("line.separator"));
             sbSQL.append("TABLESPACE ");
             sbSQL.append(tablespace);
+        }
+
+        if (rangePartition != null && !rangePartition.isEmpty()) {
+            sbSQL.append(System.getProperty("line.separator"));
+            sbSQL.append("PARTITION BY RANGE ");
+            sbSQL.append(rangePartition);
         }
 
         sbSQL.append(';');
@@ -315,6 +323,24 @@ public class PgTable extends PgRelation {
      */
     public void setTablespace(final String tablespace) {
         this.tablespace = tablespace;
+    }
+
+    /**
+     * Getter for {@link #rangePartition}.
+     *
+     * @return {@link #rangePartition}
+     */
+    public String getRangePartition() {
+        return rangePartition;
+    }
+
+    /**
+     * Setter for {@link #rangePartition}.
+     *
+     * @param rangePartition {@link #rangePartition}
+     */
+    public void setRangePartition(final String rangePartition) {
+        this.rangePartition = rangePartition;
     }
 
     /**
@@ -436,18 +462,18 @@ public class PgTable extends PgRelation {
     public void setUnlogged(boolean unlogged) {
         this.unlogged = unlogged;
     }
-    
+
     /**
      * Foreign Tables
      */
-    
+
     @Override
     public String getDropSQL() {
-        
+
         return "DROP " + ((isForeign()) ? "FOREIGN ":"") + getRelationKind() + " " + PgDiffUtils.getDropIfExists() +
                 PgDiffUtils.getQuotedName(getName()) + ";";
     }
-    
+
     public boolean isForeign() {
         return foreign;
     }
@@ -455,11 +481,11 @@ public class PgTable extends PgRelation {
     public void setForeign(boolean foreign) {
         this.foreign = foreign;
     }
-    
+
     public void setForeignServer(String server){
     	foreignServer = server;
     }
-    
+
     public String getForeignServer(){
     	return foreignServer;
     }

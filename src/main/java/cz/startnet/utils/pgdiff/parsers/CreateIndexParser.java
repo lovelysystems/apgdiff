@@ -38,6 +38,12 @@ public class CreateIndexParser {
 
         parser.expect("ON");
 
+        final PgIndex index = new PgIndex(indexName);
+
+        if (parser.expectOptional("ONLY")) {
+            index.setOnly(true);
+        }
+
         final String tableName = parser.parseIdentifier();
         final String definition = parser.getRest();
         final String schemaName =
@@ -53,7 +59,6 @@ public class CreateIndexParser {
         final String objectName = ParserUtils.getObjectName(tableName);
         final PgTable table = schema.getTable(objectName);
         final PgView view = schema.getView(objectName);
-        final PgIndex index = new PgIndex(indexName);
 
         if (table != null) {
             table.addIndex(index);

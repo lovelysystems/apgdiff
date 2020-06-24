@@ -23,6 +23,10 @@ public class PgIndex {
      */
     private String name;
     /**
+     * Indicates not to recurse creating indexes on partitions, if the table is partitioned.
+     */
+    private boolean only;
+    /**
      * Table name the index is defined on.
      */
     private String tableName;
@@ -42,6 +46,7 @@ public class PgIndex {
      */
     public PgIndex(final String name) {
         this.name = name;
+        this.only = false;
     }
 
     /**
@@ -76,9 +81,12 @@ public class PgIndex {
         }
 
         sbSQL.append("INDEX ");
-        sbSQL.append(PgDiffUtils.getCreateIfNotExists());        
+        sbSQL.append(PgDiffUtils.getCreateIfNotExists());
         sbSQL.append(PgDiffUtils.getQuotedName(getName()));
         sbSQL.append(" ON ");
+        if (this.only) {
+            sbSQL.append("ONLY ");
+        }
         sbSQL.append(PgDiffUtils.getQuotedName(getTableName()));
         sbSQL.append(' ');
         sbSQL.append(getDefinition());
@@ -140,6 +148,24 @@ public class PgIndex {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Setter for {@link #only}.
+     *
+     * @param only {@link #only}
+     */
+    public void setOnly(final boolean only) {
+        this.only = only;
+    }
+
+    /**
+     * Getter for {@link #only}.
+     *
+     * @return {@link #only}
+     */
+    public boolean getOnly() {
+        return only;
     }
 
     /**

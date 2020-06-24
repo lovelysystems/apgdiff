@@ -85,7 +85,7 @@ public class CreateTableParser {
             if (parser.expectOptional("INHERITS")) {
                 parseInherits(database, parser, table);
             } else if (parser.expectOptional("WITHOUT")) {
-                table.setWith("OIDS=false");            
+                table.setWith("OIDS=false");
             } else if (parser.expectOptional("WITH")) {
                 if (parser.expectOptional("OIDS")
                         || parser.expectOptional("OIDS=true")) {
@@ -99,6 +99,8 @@ public class CreateTableParser {
                 table.setTablespace(parser.parseString());
             } else if (parser.expectOptional("SERVER")) {
             	table.setForeignServer(parser.getExpression());
+            } else if (parser.expectOptional("PARTITION", "BY", "RANGE")) {
+                table.setRangePartition(parser.getExpression());
             } else {
             	parser.throwUnsupportedCommand();
             }
