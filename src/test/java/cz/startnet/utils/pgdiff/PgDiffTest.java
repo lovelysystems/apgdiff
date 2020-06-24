@@ -53,6 +53,8 @@ public class PgDiffTest {
                     {"drop_with_oids", false, false, false, false},
                     // Tests scenario where INDEX is added.
                     {"add_index", false, false, false, false},
+                    // Tests scenario where create index is only.
+                    {"add_index_only", false, false, false, false},
                     // Tests scenario where INDEX is dropped.
                     {"drop_index", false, false, false, false},
                     // Tests scenario where INDEX that TABLE CLUSTER is based
@@ -84,6 +86,8 @@ public class PgDiffTest {
                     {"drop_column", false, false, false, false},
                     // Tests scenario where new TABLE is added.
                     {"add_table", false, false, false, false},
+                    // Tests scenario where create table is partitioned.
+                    {"add_table_partition", false, false, false, false},
                     // Tests scenario where TABLE is dropped.
                     {"drop_table", false, false, false, false},
                     // Tests scenario where TABLE CONSTRAINT is added.

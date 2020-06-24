@@ -7,6 +7,12 @@ file it at https://github.com/fordfrog/apgdiff/issues. If you for some reason
 need to contact author of this application, you can email him at
 fordfrog@fordfrog.com.
 
+## Compile
+
+```bash
+mvn -Dmaven.javadoc.skip=true compile package
+```
+
 ## Run
 
 ```bash
@@ -16,6 +22,12 @@ docker run --rm -w /src -v /path/to/sources:/src netwo/sqitch-apgdiff:latest jav
 ## Changelog
 
 @TODO PgDiffGrant => revoke.
+
+### Version 2.6.9
+
+#### New Features
+* Manage CreateTableParser partition by range
+* Manage CreateIndexParser only
 
 ### Version 2.6.8
 
