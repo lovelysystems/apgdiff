@@ -75,15 +75,15 @@ public class CreateTriggerParser {
         final String relationName = parser.parseIdentifier();
 
         trigger.setRelationName(ParserUtils.getObjectName(relationName));
-        
-        String referencing="REFERENCING";
-        if (parser.expectOptional(referencing)) {            
-             trigger.setReferencing("\t"+referencing);             
 
-            while( !parser.getSubString(parser.getPosition()-5, parser.getPosition()-4).equals(System.getProperty("line.separator"))){ 
+        String referencing="REFERENCING";
+        if (parser.expectOptional(referencing)) {
+             trigger.setReferencing("\t"+referencing);
+
+            while( !parser.getSubString(parser.getPosition()-5, parser.getPosition()-4).equals(System.getProperty("line.separator"))){
                 parseReferencing(parser,trigger);
-               
-            } 
+
+            }
         }
 
         if (parser.expectOptional("FOR")) {
@@ -104,7 +104,8 @@ public class CreateTriggerParser {
             parser.expect(")");
         }
 
-        parser.expect("EXECUTE", "PROCEDURE");
+        parser.expect("EXECUTE");
+        parser.expectOptional("PROCEDURE");
         trigger.setFunction(parser.getRest());
 
         final boolean ignoreSlonyTrigger = ignoreSlonyTriggers
@@ -123,7 +124,7 @@ public class CreateTriggerParser {
      */
     private CreateTriggerParser() {
     }
-    
+
     private static void parseReferencing(Parser parser, PgTrigger trigger) {
 
         if (parser.expectOptional("NEW")) {
@@ -136,7 +137,7 @@ public class CreateTriggerParser {
         parser.expect("AS");
         trigger.setReferencing(trigger.getReferencing() + "TABLE AS " + parser.parseString());
     }
-    
+
      public static void parseDisable(final PgDatabase database,
             final String statement) {
         final Parser parser = new Parser(statement);
@@ -148,9 +149,9 @@ public class CreateTriggerParser {
 
         final PgTrigger trigger = new PgTrigger();
         trigger.setName(objectName);
-        
+
         trigger.setRelationName(ParserUtils.getObjectName(tableName));
-        
+
          final PgSchema schema = database.getSchema(
                     ParserUtils.getSchemaName(tableName, database));
             schema.getRelation(trigger.getRelationName()).getTrigger(objectName).setDisable(true);

@@ -23,6 +23,11 @@ docker run --rm -w /src -v /path/to/sources:/src netwo/sqitch-apgdiff:latest jav
 
 @TODO PgDiffGrant => revoke.
 
+### Version 2.6.10
+
+### Fixes
+* Trigger parser consider procedure as an optional expected token after function keyword.
+
 ### Version 2.6.9
 
 #### New Features
