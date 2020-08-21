@@ -1,0 +1,337 @@
+/**
+ * Copyright 2006 StartNet s.r.o.
+ *
+ * Distributed under MIT license
+ */
+package cz.startnet.utils.pgdiff
+
+import cz.startnet.utils.pgdiff.schema.PgSchema
+import cz.startnet.utils.pgdiff.schema.PgSequence
+import java.io.PrintWriter
+
+/**
+ * Diffs sequences.
+ *
+ * @author fordfrog
+ */
+object PgDiffSequences {
+    /**
+     * Outputs statements for creation of new sequences.
+     *
+     * @param writer           writer the output should be written to
+     * @param oldSchema        original schema
+     * @param newSchema        new schema
+     * @param searchPathHelper search path helper
+     */
+    fun createSequences(
+        writer: PrintWriter,
+        oldSchema: PgSchema?, newSchema: PgSchema?,
+        searchPathHelper: SearchPathHelper
+    ) {
+        // Add new sequences
+        for (sequence in newSchema!!.sequences) {
+            if (oldSchema == null
+                || !oldSchema.containsSequence(sequence.name)
+            ) {
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.println(sequence.creationSQL)
+                for (sequencePrivilege in sequence
+                    .privileges) {
+                    writer.println(
+                        "REVOKE ALL ON SEQUENCE "
+                                + PgDiffUtils.getQuotedName(sequence.name)
+                                + " FROM " + sequencePrivilege.roleName + ";"
+                    )
+                    if ("" != sequencePrivilege!!.getPrivilegesSQL(true)) {
+                        writer.println(
+                            "GRANT "
+                                    + sequencePrivilege.getPrivilegesSQL(true)
+                                    + " ON SEQUENCE "
+                                    + PgDiffUtils.getQuotedName(sequence.name)
+                                    + " TO " + sequencePrivilege.roleName
+                                    + " WITH GRANT OPTION;"
+                        )
+                    }
+                    if ("" != sequencePrivilege.getPrivilegesSQL(false)) {
+                        writer.println(
+                            "GRANT "
+                                    + sequencePrivilege.getPrivilegesSQL(false)
+                                    + " ON SEQUENCE "
+                                    + PgDiffUtils.getQuotedName(sequence.name)
+                                    + " TO " + sequencePrivilege.roleName
+                                    + ";"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Outputs statements for altering of new sequences.
+     *
+     * @param writer           writer the output should be written to
+     * @param oldSchema        original schema
+     * @param newSchema        new schema
+     * @param searchPathHelper search path helper
+     */
+    fun alterCreatedSequences(
+        writer: PrintWriter,
+        oldSchema: PgSchema?, newSchema: PgSchema?,
+        searchPathHelper: SearchPathHelper
+    ) {
+        // Alter created sequences
+        for (sequence in newSchema!!.sequences) {
+            if ((oldSchema == null
+                        || !oldSchema.containsSequence(sequence.name))
+                && sequence.ownedBy != null && !sequence.ownedBy.isEmpty()
+            ) {
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.println(sequence.ownedBySQL)
+            }
+        }
+    }
+
+    /**
+     * Outputs statements for dropping of sequences that do not exist anymore.
+     *
+     * @param writer           writer the output should be written to
+     * @param oldSchema        original schema
+     * @param newSchema        new schema
+     * @param searchPathHelper search path helper
+     */
+    fun dropSequences(
+        writer: PrintWriter,
+        oldSchema: PgSchema?, newSchema: PgSchema?,
+        searchPathHelper: SearchPathHelper
+    ) {
+        if (oldSchema == null) {
+            return
+        }
+
+        // Drop sequences that do not exist in new schema
+        for (sequence in oldSchema.sequences) {
+            if (!newSchema!!.containsSequence(sequence.name)) {
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.println(sequence.dropSQL)
+            }
+        }
+    }
+
+    /**
+     * Outputs statement for modified sequences.
+     *
+     * @param writer           writer the output should be written to
+     * @param arguments        object containing arguments settings
+     * @param oldSchema        original schema
+     * @param newSchema        new schema
+     * @param searchPathHelper search path helper
+     */
+    fun alterSequences(
+        writer: PrintWriter,
+        arguments: PgDiffArguments, oldSchema: PgSchema?,
+        newSchema: PgSchema?, searchPathHelper: SearchPathHelper
+    ) {
+        if (oldSchema == null) {
+            return
+        }
+        val sbSQL = StringBuilder(100)
+        for (newSequence in newSchema!!.sequences) {
+            val oldSequence = oldSchema.getSequence(newSequence.name) ?: continue
+            sbSQL.setLength(0)
+            val oldDataType = oldSequence.dataType
+            val newDataType = newSequence.dataType
+            if (newDataType != null
+                && newDataType != oldDataType
+            ) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tAS ")
+                sbSQL.append(newDataType)
+            }
+            val oldIncrement = oldSequence.increment
+            val newIncrement = newSequence.increment
+            if (newIncrement != null
+                && newIncrement != oldIncrement
+            ) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tINCREMENT BY ")
+                sbSQL.append(newIncrement)
+            }
+            val oldMinValue = oldSequence.minValue
+            val newMinValue = newSequence.minValue
+            if (newMinValue == null && oldMinValue != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tNO MINVALUE")
+            } else if (newMinValue != null
+                && newMinValue != oldMinValue
+            ) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tMINVALUE ")
+                sbSQL.append(newMinValue)
+            }
+            val oldMaxValue = oldSequence.maxValue
+            val newMaxValue = newSequence.maxValue
+            if (newMaxValue == null && oldMaxValue != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tNO MAXVALUE")
+            } else if (newMaxValue != null
+                && newMaxValue != oldMaxValue
+            ) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tMAXVALUE ")
+                sbSQL.append(newMaxValue)
+            }
+            if (!arguments.isIgnoreStartWith) {
+                val oldStart = oldSequence.startWith
+                val newStart = newSequence.startWith
+                if (newStart != null && newStart != oldStart) {
+                    sbSQL.append(System.getProperty("line.separator"))
+                    sbSQL.append("\tRESTART WITH ")
+                    sbSQL.append(newStart)
+                }
+            }
+            val oldCache = oldSequence.cache
+            val newCache = newSequence.cache
+            if (newCache != null && newCache != oldCache) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tCACHE ")
+                sbSQL.append(newCache)
+            }
+            val oldCycle = oldSequence.isCycle
+            val newCycle = newSequence!!.isCycle
+            if (oldCycle && !newCycle) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tNO CYCLE")
+            } else if (!oldCycle && newCycle) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tCYCLE")
+            }
+            val oldOwnedBy = oldSequence.ownedBy
+            val newOwnedBy = newSequence.ownedBy
+            if (newOwnedBy != null && newOwnedBy != oldOwnedBy) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tOWNED BY ")
+                sbSQL.append(newOwnedBy)
+            }
+            if (sbSQL.length > 0) {
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.print(
+                    "ALTER SEQUENCE "
+                            + PgDiffUtils.getQuotedName(newSequence.name)
+                )
+                writer.print(sbSQL.toString())
+                writer.println(';')
+            }
+            if (oldSequence.comment == null
+                && newSequence.comment != null
+                || oldSequence.comment != null && newSequence.comment != null && oldSequence.comment != newSequence.comment
+            ) {
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.print("COMMENT ON SEQUENCE ")
+                writer.print(PgDiffUtils.getQuotedName(newSequence.name))
+                writer.print(" IS ")
+                writer.print(newSequence.comment)
+                writer.println(';')
+            } else if (oldSequence.comment != null
+                && newSequence.comment == null
+            ) {
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.print("COMMENT ON SEQUENCE ")
+                writer.print(newSequence.name)
+                writer.println(" IS NULL;")
+            }
+            alterPrivileges(writer, oldSequence, newSequence, searchPathHelper)
+        }
+    }
+
+    private fun alterPrivileges(
+        writer: PrintWriter,
+        oldSequence: PgSequence, newSequence: PgSequence?,
+        searchPathHelper: SearchPathHelper
+    ) {
+        val emptyLinePrinted = false
+        for (oldSequencePrivilege in oldSequence
+            .privileges) {
+            val newSequencePrivilege = newSequence
+                .getPrivilege(oldSequencePrivilege.roleName)
+            if (newSequencePrivilege == null) {
+                if (!emptyLinePrinted) {
+                    writer.println()
+                }
+                writer.println(
+                    "REVOKE ALL ON SEQUENCE "
+                            + PgDiffUtils.getQuotedName(oldSequence.name)
+                            + " FROM " + oldSequencePrivilege.roleName + ";"
+                )
+            } else if (!oldSequencePrivilege!!.isSimilar(newSequencePrivilege)) {
+                if (!emptyLinePrinted) {
+                    writer.println()
+                }
+                writer.println(
+                    "REVOKE ALL ON SEQUENCE "
+                            + PgDiffUtils.getQuotedName(newSequence.getName())
+                            + " FROM " + newSequencePrivilege.roleName + ";"
+                )
+                if ("" != newSequencePrivilege.getPrivilegesSQL(true)) {
+                    writer.println(
+                        "GRANT "
+                                + newSequencePrivilege.getPrivilegesSQL(true)
+                                + " ON SEQUENCE "
+                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + " TO " + newSequencePrivilege.roleName
+                                + " WITH GRANT OPTION;"
+                    )
+                }
+                if ("" != newSequencePrivilege.getPrivilegesSQL(false)) {
+                    writer.println(
+                        "GRANT "
+                                + newSequencePrivilege.getPrivilegesSQL(false)
+                                + " ON SEQUENCE "
+                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + " TO " + newSequencePrivilege.roleName + ";"
+                    )
+                }
+            } // else similar privilege will not be updated
+        }
+        for (newSequencePrivilege in newSequence
+            .getPrivileges()) {
+            val oldSequencePrivilege = oldSequence
+                .getPrivilege(newSequencePrivilege.roleName)
+            if (oldSequencePrivilege == null) {
+                if (!emptyLinePrinted) {
+                    writer.println()
+                }
+                writer.println(
+                    "REVOKE ALL ON SEQUENCE "
+                            + PgDiffUtils.getQuotedName(newSequence.getName())
+                            + " FROM " + newSequencePrivilege.roleName + ";"
+                )
+                if ("" != newSequencePrivilege!!.getPrivilegesSQL(true)) {
+                    writer.println(
+                        "GRANT "
+                                + newSequencePrivilege.getPrivilegesSQL(true)
+                                + " ON SEQUENCE "
+                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + " TO " + newSequencePrivilege.roleName
+                                + " WITH GRANT OPTION;"
+                    )
+                }
+                if ("" != newSequencePrivilege.getPrivilegesSQL(false)) {
+                    writer.println(
+                        "GRANT "
+                                + newSequencePrivilege.getPrivilegesSQL(false)
+                                + " ON SEQUENCE "
+                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + " TO " + newSequencePrivilege.roleName + ";"
+                    )
+                }
+            }
+        }
+    }
+}
