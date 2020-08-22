@@ -95,7 +95,7 @@ object PgDiffConstraints {
         val list: MutableList<PgConstraint> = ArrayList()
         if (newTable != null && oldTable != null) {
             for (constraint in oldTable.constraints) {
-                if (constraint!!.isPrimaryKeyConstraint == primaryKey
+                if (constraint.isPrimaryKeyConstraint == primaryKey
                     && (!newTable.containsConstraint(constraint.name)
                             || newTable.getConstraint(constraint.name) != constraint)
                 ) {
@@ -124,13 +124,13 @@ object PgDiffConstraints {
         if (newTable != null) {
             if (oldTable == null) {
                 for (constraint in newTable.constraints) {
-                    if (constraint!!.isPrimaryKeyConstraint == primaryKey) {
+                    if (constraint.isPrimaryKeyConstraint == primaryKey) {
                         list.add(constraint)
                     }
                 }
             } else {
                 for (constraint in newTable.constraints) {
-                    if (constraint!!.isPrimaryKeyConstraint == primaryKey
+                    if (constraint.isPrimaryKeyConstraint == primaryKey
                         && (!oldTable.containsConstraint(
                             constraint.name
                         )
@@ -162,7 +162,7 @@ object PgDiffConstraints {
         }
         for (oldTable in oldSchema.tables) {
             val newTable = newSchema!!.getTable(oldTable.name) ?: continue
-            for (oldConstraint in oldTable!!.constraints) {
+            for (oldConstraint in oldTable.constraints) {
                 val newConstraint = newTable.getConstraint(oldConstraint.name) ?: continue
                 if (oldConstraint.comment == null
                     && newConstraint.comment != null

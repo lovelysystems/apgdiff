@@ -281,7 +281,7 @@ object CommentParser {
             } else {
                 parser.position = position2
             }
-            val argument = PgFunction.Argument()!!
+            val argument = PgFunction.Argument()
             argument.dataType = dataType
             argument.mode = mode
             argument.name = argumentName

@@ -85,7 +85,7 @@ object PgDiffTriggers {
         if (newRelation != null && oldRelation != null) {
             val newTriggers = newRelation.triggers
             for (oldTrigger in oldRelation.triggers) {
-                if (!newTriggers!!.contains(oldTrigger)) {
+                if (!newTriggers.contains(oldTrigger)) {
                     list.add(oldTrigger)
                 }
             }
@@ -138,7 +138,7 @@ object PgDiffTriggers {
         }
         for (oldRelation in oldSchema.rels) {
             val newRelation = newSchema!!.getRelation(oldRelation.name) ?: continue
-            for (oldTrigger in oldRelation!!.triggers) {
+            for (oldTrigger in oldRelation.triggers) {
                 val newTrigger = newRelation.getTrigger(oldTrigger.name) ?: continue
                 if (oldTrigger.comment == null
                     && newTrigger.comment != null
@@ -196,7 +196,7 @@ object PgDiffTriggers {
         if (newRelation != null) {
             for (newTrigger in newRelation.triggers) {
                 val oldTrigger = oldRelation?.getTrigger(newTrigger.name)
-                if (newTrigger!!.isDisable && oldTrigger == null ||
+                if (newTrigger.isDisable && oldTrigger == null ||
                     oldTrigger != null && oldTrigger.isDisable != newTrigger.isDisable
                 ) {
                     list.add(newTrigger)

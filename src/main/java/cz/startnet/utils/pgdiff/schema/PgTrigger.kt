@@ -184,9 +184,6 @@ class PgTrigger {
      * WHEN condition.
      */
     var `when`: String? = null
-        set(`when`) {
-            field = `when`
-        }
     /**
      * Getter for [.comment].
      *

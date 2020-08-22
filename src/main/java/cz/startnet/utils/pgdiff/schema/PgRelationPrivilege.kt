@@ -197,9 +197,7 @@ class PgRelationPrivilege
         if (trigger != other.trigger) {
             return false
         }
-        return if (triggerWithGrantOption != other.triggerWithGrantOption) {
-            false
-        } else true
+        return triggerWithGrantOption == other.triggerWithGrantOption
     }
 
     fun getPrivilegesSQL(withGrantOption: Boolean): String {

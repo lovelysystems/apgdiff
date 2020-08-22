@@ -33,7 +33,7 @@ object PgDiffFunctions {
         for (newFunction in newSchema!!.functions) {
             val oldFunction: PgFunction?
             oldFunction = oldSchema?.getFunction(newFunction.signature)
-            if (oldFunction == null || !newFunction!!.equals(
+            if (oldFunction == null || !newFunction.equals(
                     oldFunction, arguments.isIgnoreFunctionWhitespace
                 )
             ) {
@@ -106,7 +106,7 @@ object PgDiffFunctions {
                     } else {
                         addComma = true
                     }
-                    writer.print(argument!!.getDeclaration(false))
+                    writer.print(argument.getDeclaration(false))
                 }
                 writer.print(") IS ")
                 writer.print(newFunction.comment)
@@ -126,7 +126,7 @@ object PgDiffFunctions {
                     } else {
                         addComma = true
                     }
-                    writer.print(argument!!.getDeclaration(false))
+                    writer.print(argument.getDeclaration(false))
                 }
                 writer.println(") IS NULL;")
             }

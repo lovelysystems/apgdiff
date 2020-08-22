@@ -42,7 +42,7 @@ object PgDiffPolicies {
                 val oldTable = oldSchema.getTable(newTableName)
                 if (oldTable != null) {
                     for (policy in oldTable.policies) {
-                        val newPolicy = newTable!!.getPolicy(policy.name)
+                        val newPolicy = newTable.getPolicy(policy.name)
                         if (newPolicy != null) {
                             // ALTER POLICY doesn't support changing command(ALL,
                             // SELECT..) so we drop it and create it
@@ -91,7 +91,7 @@ object PgDiffPolicies {
                 val oldTable = oldSchema.getTable(newTableName)
                 if (oldTable != null) {
                     for (policy in oldTable.policies) {
-                        if (newTable!!.getPolicy(policy.name) == null) {
+                        if (newTable.getPolicy(policy.name) == null) {
                             searchPathHelper.outputSearchPath(writer)
                             dropPolicySQL(writer, policy)
                         }

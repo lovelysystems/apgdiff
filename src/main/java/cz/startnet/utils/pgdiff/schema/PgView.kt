@@ -133,7 +133,7 @@ class PgView(name: String?) : PgRelation() {
      */
     val creationSQL: String
         get() {
-            val sbSQL = StringBuilder(query!!.length * 2)
+            val sbSQL = StringBuilder(query.length * 2)
             sbSQL.append("CREATE ")
             sbSQL.append(relationKind)
             sbSQL.append(' ')

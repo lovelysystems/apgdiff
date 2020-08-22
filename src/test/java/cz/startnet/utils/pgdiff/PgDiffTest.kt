@@ -125,7 +125,7 @@ class PgDiffTest(
     }
 
     private fun getSQLFileAsStream(suffix: String): InputStream {
-        val path = fileNameTemplate + suffix;
+        val path = fileNameTemplate + suffix
         return javaClass.getResourceAsStream(path) ?: error("sql file not found $path")
     }
 

@@ -128,9 +128,7 @@ class PgColumnPrivilege
         if (references != other.references) {
             return false
         }
-        return if (referencesWithGrantOption != other.referencesWithGrantOption) {
-            false
-        } else true
+        return referencesWithGrantOption == other.referencesWithGrantOption
     }
 
     fun getPrivilegesSQL(

@@ -46,26 +46,26 @@ object PgDiffViews {
                                 + " OWNER TO " + newView.ownerTo + ";"
                     )
                 }
-                for (viewPrivilege in newView!!.privileges) {
+                for (viewPrivilege in newView.privileges) {
                     writer.println(
                         "REVOKE ALL ON TABLE "
                                 + PgDiffUtils.getQuotedName(newView.name)
                                 + " FROM " + viewPrivilege.roleName + ";"
                     )
-                    if ("" != viewPrivilege!!.getPrivilegesSQL(true)) {
+                    if ("" != viewPrivilege.getPrivilegesSQL(true)) {
                         writer.println(
                             "GRANT "
-                                    + viewPrivilege!!.getPrivilegesSQL(true)
+                                    + viewPrivilege.getPrivilegesSQL(true)
                                     + " ON TABLE "
                                     + PgDiffUtils.getQuotedName(newView.name)
                                     + " TO " + viewPrivilege.roleName
                                     + " WITH GRANT OPTION;"
                         )
                     }
-                    if ("" != viewPrivilege!!.getPrivilegesSQL(false)) {
+                    if ("" != viewPrivilege.getPrivilegesSQL(false)) {
                         writer.println(
                             "GRANT "
-                                    + viewPrivilege!!.getPrivilegesSQL(false)
+                                    + viewPrivilege.getPrivilegesSQL(false)
                                     + " ON TABLE "
                                     + PgDiffUtils.getQuotedName(newView.name)
                                     + " TO " + viewPrivilege.roleName + ";"
@@ -116,7 +116,7 @@ object PgDiffViews {
         newView: PgView?
     ): Boolean {
         if (oldView!!.query.trim { it <= ' ' } != newView!!.query.trim { it <= ' ' }) return true
-        if (oldView!!.isMaterialized != newView!!.isMaterialized) return true
+        if (oldView.isMaterialized != newView.isMaterialized) return true
         val oldViewColumnNames = oldView.declaredColumnNames
         val newViewColumnNames = newView.declaredColumnNames
         return if (oldViewColumnNames != null && newViewColumnNames != null) {
@@ -172,7 +172,7 @@ object PgDiffViews {
             for (col in newView.columns) {
                 columnNames.add(col.name)
             }
-            for (col in oldView!!.columns) {
+            for (col in oldView.columns) {
                 if (!columnNames.contains(col.name)) {
                     columnNames.add(col.name)
                 }
@@ -302,7 +302,7 @@ object PgDiffViews {
                             + PgDiffUtils.getQuotedName(oldView.name)
                             + " FROM " + oldViewPrivilege.roleName + ";"
                 )
-            } else if (!oldViewPrivilege!!.isSimilar(newViewPrivilege)) {
+            } else if (!oldViewPrivilege.isSimilar(newViewPrivilege)) {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
@@ -344,7 +344,7 @@ object PgDiffViews {
                             + PgDiffUtils.getQuotedName(newView.name)
                             + " FROM " + newViewPrivilege.roleName + ";"
                 )
-                if ("" != newViewPrivilege!!.getPrivilegesSQL(true)) {
+                if ("" != newViewPrivilege.getPrivilegesSQL(true)) {
                     writer.println(
                         "GRANT "
                                 + newViewPrivilege.getPrivilegesSQL(true)
@@ -404,7 +404,7 @@ object PgDiffViews {
                         oldColumnPrivilege = oldColumn
                             .getPrivilege(newColumnPrivilege.roleName)
                     }
-                    if (!newColumnPrivilege!!.isSimilar(oldColumnPrivilege)) {
+                    if (!newColumnPrivilege.isSimilar(oldColumnPrivilege)) {
                         if (!emptyLinePrinted) {
                             emptyLinePrinted = true
                             writer.println()

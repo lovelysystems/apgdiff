@@ -85,7 +85,7 @@ object PgDiffRules {
         if (newRelation != null && oldRelation != null) {
             val newRules = newRelation.rules
             for (oldRule in oldRelation.rules) {
-                if (!newRules!!.contains(oldRule)) {
+                if (!newRules.contains(oldRule)) {
                     list.add(oldRule)
                 }
             }

@@ -43,7 +43,7 @@ object PgDiffSequences {
                                 + PgDiffUtils.getQuotedName(sequence.name)
                                 + " FROM " + sequencePrivilege.roleName + ";"
                     )
-                    if ("" != sequencePrivilege!!.getPrivilegesSQL(true)) {
+                    if ("" != sequencePrivilege.getPrivilegesSQL(true)) {
                         writer.println(
                             "GRANT "
                                     + sequencePrivilege.getPrivilegesSQL(true)
@@ -201,7 +201,7 @@ object PgDiffSequences {
                 sbSQL.append(newCache)
             }
             val oldCycle = oldSequence.isCycle
-            val newCycle = newSequence!!.isCycle
+            val newCycle = newSequence.isCycle
             if (oldCycle && !newCycle) {
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append("\tNO CYCLE")
@@ -268,7 +268,7 @@ object PgDiffSequences {
                             + PgDiffUtils.getQuotedName(oldSequence.name)
                             + " FROM " + oldSequencePrivilege.roleName + ";"
                 )
-            } else if (!oldSequencePrivilege!!.isSimilar(newSequencePrivilege)) {
+            } else if (!oldSequencePrivilege.isSimilar(newSequencePrivilege)) {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
@@ -310,7 +310,7 @@ object PgDiffSequences {
                             + PgDiffUtils.getQuotedName(newSequence!!.name)
                             + " FROM " + newSequencePrivilege.roleName + ";"
                 )
-                if ("" != newSequencePrivilege!!.getPrivilegesSQL(true)) {
+                if ("" != newSequencePrivilege.getPrivilegesSQL(true)) {
                     writer.println(
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(true)

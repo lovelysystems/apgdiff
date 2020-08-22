@@ -151,7 +151,7 @@ object PgDiff {
             writer.println("COMMIT TRANSACTION;")
         }
         if (arguments.isOutputIgnoredStatements) {
-            if (!oldDatabase!!.ignoredStatements.isEmpty()) {
+            if (!oldDatabase.ignoredStatements.isEmpty()) {
                 writer.println()
                 writer.print("/* ")
                 writer.println(
@@ -165,7 +165,7 @@ object PgDiff {
                 }
                 writer.println("*/")
             }
-            if (!newDatabase!!.ignoredStatements.isEmpty()) {
+            if (!newDatabase.ignoredStatements.isEmpty()) {
                 writer.println()
                 writer.print("/* ")
                 writer.println(
@@ -239,7 +239,7 @@ object PgDiff {
         arguments: PgDiffArguments, oldDatabase: PgDatabase,
         newDatabase: PgDatabase
     ) {
-        val setSearchPath = (newDatabase!!.schemas.size > 1
+        val setSearchPath = (newDatabase.schemas.size > 1
                 || newDatabase.schemas[0].name != "public")
         for (newSchema in newDatabase.schemas) {
             val searchPathHelper: SearchPathHelper

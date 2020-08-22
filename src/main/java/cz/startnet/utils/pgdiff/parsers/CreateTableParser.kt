@@ -120,7 +120,7 @@ object CreateTableParser {
             val parsedString = parser.parseIdentifier()
             val tableName = ParserUtils.getObjectName(parsedString)
             val schemaName =
-                if (parsedString!!.contains(".")) ParserUtils.getSecondObjectName(parsedString) else database.defaultSchema.name
+                if (parsedString.contains(".")) ParserUtils.getSecondObjectName(parsedString) else database.defaultSchema.name
             table.addInherits(schemaName, tableName)
             if (parser.expectOptional(")")) {
                 break

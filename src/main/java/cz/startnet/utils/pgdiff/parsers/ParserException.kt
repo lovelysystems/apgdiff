@@ -14,7 +14,7 @@ class ParserException : RuntimeException {
     /**
      * Creates a new instance of `ParserException` without detail message.
      */
-    constructor() {}
+    constructor()
 
     /**
      * Constructs an instance of `ParserException` with the specified
@@ -22,7 +22,7 @@ class ParserException : RuntimeException {
      *
      * @param msg the detail message
      */
-    constructor(msg: String?) : super(msg) {}
+    constructor(msg: String?) : super(msg)
 
     /**
      * Constructs an instance of `ParserException` with the specified
@@ -31,7 +31,7 @@ class ParserException : RuntimeException {
      * @param msg   the detail message
      * @param cause cause of the exception
      */
-    constructor(msg: String?, cause: Throwable?) : super(msg, cause) {}
+    constructor(msg: String?, cause: Throwable?) : super(msg, cause)
 
     companion object {
         /**

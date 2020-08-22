@@ -105,9 +105,7 @@ class PgSequencePrivilege
         if (update != other.update) {
             return false
         }
-        return if (updateWithGrantOption != other.updateWithGrantOption) {
-            false
-        } else true
+        return updateWithGrantOption == other.updateWithGrantOption
     }
 
     fun getPrivilegesSQL(withGrantOption: Boolean): String {

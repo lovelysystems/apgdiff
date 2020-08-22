@@ -35,7 +35,7 @@ object PgDiffTables {
             val oldCluster: String?
             oldCluster = oldTable?.clusterIndexName
             val newCluster = newTable.clusterIndexName
-            if (oldCluster != null && newCluster == null && newTable!!.containsIndex(oldCluster)) {
+            if (oldCluster != null && newCluster == null && newTable.containsIndex(oldCluster)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("ALTER TABLE ")
@@ -178,7 +178,7 @@ object PgDiffTables {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
             val oldStorage = oldColumn?.storage
             val newStorage = if (newColumn.storage == null
-                || newColumn?.storage.isNullOrEmpty()
+                || newColumn.storage.isNullOrEmpty()
             ) null else newColumn.storage
             if (newStorage == null && oldStorage != null) {
                 searchPathHelper.outputSearchPath(writer)
@@ -227,10 +227,10 @@ object PgDiffTables {
             if (!oldTable!!.containsColumn(column.name)) {
                 statements.add(
                     "\tADD COLUMN " + PgDiffUtils.createIfNotExists
-                            + column!!.getFullDefinition(arguments.isAddDefaults)
+                            + column.getFullDefinition(arguments.isAddDefaults)
                 )
                 if (arguments.isAddDefaults && !column.nullValue
-                    && (column?.defaultValue.isNullOrEmpty())
+                    && (column.defaultValue.isNullOrEmpty())
                 ) {
                     dropDefaultsColumns.add(column)
                 }
@@ -280,13 +280,13 @@ object PgDiffTables {
             }
             val oldColumn = oldTable.getColumn(newColumn.name)!!
             val newColumnName = PgDiffUtils.getQuotedName(newColumn.name)
-            if (oldColumn?.type != newColumn.type) {
+            if (oldColumn.type != newColumn.type) {
                 statements.add(
                     "\tALTER COLUMN " + newColumnName + " TYPE "
                             + newColumn.type + " USING " + newColumnName + "::" + newColumn.type + " /* "
                             + MessageFormat.format(
                         Resources.getString("TypeParameterChange"),
-                        newTable.name, oldColumn!!.type,
+                        newTable.name, oldColumn.type,
                         newColumn.type
                     ) + " */"
                 )
@@ -467,7 +467,7 @@ object PgDiffTables {
     ) {
         if (oldTable?.with == null && newTable.with == null
             || oldTable?.with != null
-            && oldTable?.with == newTable.with
+            && oldTable.with == newTable.with
         ) {
             return
         }
@@ -537,7 +537,7 @@ object PgDiffTables {
             ) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(table!!.getCreationSQL(newSchema))
+                writer.println(table.getCreationSQL(newSchema))
                 writer.println()
                 if (table.ownerTo != null) {
                     writer.println(
@@ -552,34 +552,34 @@ object PgDiffTables {
                                 + PgDiffUtils.getQuotedName(table.name)
                                 + " FROM " + tablePrivilege.roleName + ";"
                     )
-                    if ("" != tablePrivilege!!.getPrivilegesSQL(true)) {
+                    if ("" != tablePrivilege.getPrivilegesSQL(true)) {
                         writer.println(
                             "GRANT "
-                                    + tablePrivilege!!.getPrivilegesSQL(true)
+                                    + tablePrivilege.getPrivilegesSQL(true)
                                     + " ON TABLE "
                                     + PgDiffUtils.getQuotedName(table.name)
                                     + " TO " + tablePrivilege.roleName
                                     + " WITH GRANT OPTION;"
                         )
                     }
-                    if ("" != tablePrivilege!!.getPrivilegesSQL(false)) {
+                    if ("" != tablePrivilege.getPrivilegesSQL(false)) {
                         writer.println(
                             "GRANT "
-                                    + tablePrivilege!!.getPrivilegesSQL(false)
+                                    + tablePrivilege.getPrivilegesSQL(false)
                                     + " ON TABLE "
                                     + PgDiffUtils.getQuotedName(table.name)
                                     + " TO " + tablePrivilege.roleName + ";"
                         )
                     }
                 }
-                if (table!!.hasRLSEnabled() != null && table!!.hasRLSEnabled()!!) {
+                if (table.hasRLSEnabled() != null && table.hasRLSEnabled()!!) {
                     writer.println(
                         "ALTER TABLE "
                                 + PgDiffUtils.getQuotedName(table.name)
                                 + "  ENABLE ROW LEVEL SECURITY;"
                     )
                 }
-                if (table!!.hasRLSForced() != null && table!!.hasRLSForced()!!) {
+                if (table.hasRLSForced() != null && table.hasRLSForced()!!) {
                     writer.println(
                         "ALTER TABLE "
                                 + PgDiffUtils.getQuotedName(table.name)
@@ -643,7 +643,7 @@ object PgDiffTables {
             val quotedTableName = PgDiffUtils.getQuotedName(newTable.name)
             searchPathHelper.outputSearchPath(writer)
             writer.println()
-            writer.println("ALTER " + (if (newTable!!.isForeign) "FOREIGN " else "") + "TABLE " + quotedTableName)
+            writer.println("ALTER " + (if (newTable.isForeign) "FOREIGN " else "") + "TABLE " + quotedTableName)
             for (i in statements.indices) {
                 writer.print(statements[i])
                 writer.println(if (i + 1 < statements.size) "," else ";")
@@ -673,7 +673,7 @@ object PgDiffTables {
         searchPathHelper: SearchPathHelper
     ) {
         var emptyLinePrinted = false
-        for (newColumn in newTable!!.columns) {
+        for (newColumn in newTable.columns) {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
             if (oldColumn != null) {
                 for (oldColumnPrivilege in oldColumn.privileges) {
@@ -703,7 +703,7 @@ object PgDiffTables {
                         oldColumnPrivilege = oldColumn
                             .getPrivilege(newColumnPrivilege.roleName)
                     }
-                    if (!newColumnPrivilege!!.isSimilar(oldColumnPrivilege)) {
+                    if (!newColumnPrivilege.isSimilar(oldColumnPrivilege)) {
                         if (!emptyLinePrinted) {
                             emptyLinePrinted = true
                             writer.println()
@@ -800,7 +800,7 @@ object PgDiffTables {
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
             writer.println(" IS NULL;")
         }
-        for (newColumn in newTable!!.columns) {
+        for (newColumn in newTable.columns) {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
             val oldComment = oldColumn?.comment
             val newComment = newColumn.comment
@@ -844,7 +844,7 @@ object PgDiffTables {
                             + PgDiffUtils.getQuotedName(oldTable.name)
                             + " FROM " + oldTablePrivilege.roleName + ";"
                 )
-            } else if (!oldTablePrivilege!!.isSimilar(newTablePrivilege)) {
+            } else if (!oldTablePrivilege.isSimilar(newTablePrivilege)) {
                 if (!emptyLinePrinted) {
                     emptyLinePrinted = true
                     writer.println()
@@ -875,7 +875,7 @@ object PgDiffTables {
                 }
             } // else similar privilege will not be updated
         }
-        for (newTablePrivilege in newTable!!.privileges) {
+        for (newTablePrivilege in newTable.privileges) {
             val oldTablePrivilege = oldTable
                 .getPrivilege(newTablePrivilege.roleName)
             if (oldTablePrivilege == null) {
@@ -887,7 +887,7 @@ object PgDiffTables {
                             + PgDiffUtils.getQuotedName(newTable.name)
                             + " FROM " + newTablePrivilege.roleName + ";"
                 )
-                if ("" != newTablePrivilege!!.getPrivilegesSQL(true)) {
+                if ("" != newTablePrivilege.getPrivilegesSQL(true)) {
                     writer.println(
                         "GRANT "
                                 + newTablePrivilege.getPrivilegesSQL(true)
@@ -920,7 +920,7 @@ object PgDiffTables {
         if (newOwnerTo != null && newOwnerTo != oldOwnerTo) {
             writer.println()
             writer.println(
-                "ALTER " + (if (newTable!!.isForeign) "FOREIGN " else "") + "TABLE "
+                "ALTER " + (if (newTable.isForeign) "FOREIGN " else "") + "TABLE "
                         + PgDiffUtils.getQuotedName(newTable.name)
                         + " OWNER TO " + newTable.ownerTo + ";"
             )
@@ -933,7 +933,7 @@ object PgDiffTables {
         searchPathHelper: SearchPathHelper
     ) {
         if ((oldTable!!.hasRLSEnabled() == null || oldTable.hasRLSEnabled() != null && !oldTable.hasRLSEnabled()!!)
-            && newTable!!.hasRLSEnabled() != null && newTable.hasRLSEnabled()!!
+            && newTable.hasRLSEnabled() != null && newTable.hasRLSEnabled()!!
         ) {
             searchPathHelper.outputSearchPath(writer)
             writer.println()
@@ -942,7 +942,7 @@ object PgDiffTables {
             writer.println(" ENABLE ROW LEVEL SECURITY;")
         }
         if (oldTable.hasRLSEnabled() != null && oldTable.hasRLSEnabled()!!
-            && (newTable!!.hasRLSEnabled() == null || newTable.hasRLSEnabled() != null && !newTable.hasRLSEnabled()!!)
+            && (newTable.hasRLSEnabled() == null || newTable.hasRLSEnabled() != null && !newTable.hasRLSEnabled()!!)
         ) {
             searchPathHelper.outputSearchPath(writer)
             writer.println()
@@ -951,7 +951,7 @@ object PgDiffTables {
             writer.println(" DISABLE ROW LEVEL SECURITY;")
         }
         if ((oldTable.hasRLSForced() == null || oldTable.hasRLSForced() != null && !oldTable.hasRLSForced()!!)
-            && newTable!!.hasRLSForced() != null && newTable.hasRLSForced()!!
+            && newTable.hasRLSForced() != null && newTable.hasRLSForced()!!
         ) {
             searchPathHelper.outputSearchPath(writer)
             writer.println()
@@ -960,7 +960,7 @@ object PgDiffTables {
             writer.println(" FORCE ROW LEVEL SECURITY;")
         }
         if (oldTable.hasRLSForced() != null && oldTable.hasRLSForced()!!
-            && (newTable!!.hasRLSForced() == null || newTable.hasRLSForced() != null && !newTable.hasRLSForced()!!)
+            && (newTable.hasRLSForced() == null || newTable.hasRLSForced() != null && !newTable.hasRLSForced()!!)
         ) {
             searchPathHelper.outputSearchPath(writer)
             writer.println()
