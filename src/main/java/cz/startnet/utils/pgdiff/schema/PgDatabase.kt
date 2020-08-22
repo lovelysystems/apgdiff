@@ -5,7 +5,6 @@
  */
 package cz.startnet.utils.pgdiff.schema
 
-import com.google.inject.internal.util.ImmutableList
 import java.util.*
 
 /**
