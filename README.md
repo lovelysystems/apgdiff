@@ -1,5 +1,7 @@
 # Another PostgreSQL Diff Tool (aka apgdiff) - Netwo Fork
 
+# NOTE: this is an EXPERIMENTAL fork translated to Kotlin
+
 Another PostgreSQL Diff Tool is free PostgreSQL diff tool that is useful for
 comparison/diffing of database schemas. You can find more information at its
 website at http://www.apgdiff.com/. If you found an issue in apgdiff, please
