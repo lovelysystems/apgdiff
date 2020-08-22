@@ -38,7 +38,7 @@ object PgDiffTriggers {
             for (trigger in getNewTriggers(oldRelation, newRelation)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(trigger.getCreationSQL())
+                writer.println(trigger.creationSQL)
             }
         }
     }
@@ -64,7 +64,7 @@ object PgDiffTriggers {
             for (trigger in getDropTriggers(oldRelation, newRelation)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(trigger.getDropSQL())
+                writer.println(trigger.dropSQL)
             }
         }
     }
@@ -79,9 +79,9 @@ object PgDiffTriggers {
      */
     private fun getDropTriggers(
         oldRelation: PgRelation?,
-        newRelation: PgRelation?
-    ): List<PgTrigger?> {
-        val list: MutableList<PgTrigger?> = ArrayList()
+        newRelation: PgRelation
+    ): List<PgTrigger> {
+        val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null && oldRelation != null) {
             val newTriggers = newRelation.triggers
             for (oldTrigger in oldRelation.triggers) {
@@ -104,8 +104,8 @@ object PgDiffTriggers {
     private fun getNewTriggers(
         oldRelation: PgRelation?,
         newRelation: PgRelation?
-    ): List<PgTrigger?> {
-        val list: MutableList<PgTrigger?> = ArrayList()
+    ): List<PgTrigger> {
+        val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null) {
             if (oldRelation == null) {
                 list.addAll(newRelation.triggers)
@@ -190,9 +190,9 @@ object PgDiffTriggers {
      */
     private fun getEnablerOrDisableTriggers(
         oldRelation: PgRelation?,
-        newRelation: PgRelation?
-    ): List<PgTrigger?> {
-        val list: MutableList<PgTrigger?> = ArrayList()
+        newRelation: PgRelation
+    ): List<PgTrigger> {
+        val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null) {
             for (newTrigger in newRelation.triggers) {
                 val oldTrigger = oldRelation?.getTrigger(newTrigger.name)
@@ -227,7 +227,7 @@ object PgDiffTriggers {
             for (trigger in getEnablerOrDisableTriggers(oldRelation, newRelation)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(trigger.getDisableOrEnableSQL())
+                writer.println(trigger.disableOrEnableSQL)
             }
         }
     }

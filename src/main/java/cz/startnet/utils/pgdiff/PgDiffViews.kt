@@ -27,10 +27,10 @@ object PgDiffViews {
      */
     fun createViews(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
+        oldSchema: PgSchema?, newSchema: PgSchema,
         searchPathHelper: SearchPathHelper
     ) {
-        for (newView in newSchema.getViews()) {
+        for (newView in newSchema.views) {
             val oldView = oldSchema?.getView(newView.name)
             if (oldSchema == null || !oldSchema.containsView(newView.name)
                 || isViewModified(oldView, newView)
@@ -115,7 +115,7 @@ object PgDiffViews {
         oldView: PgView?,
         newView: PgView?
     ): Boolean {
-        if (oldView.getQuery().trim { it <= ' ' } != newView.getQuery().trim { it <= ' ' }) return true
+        if (oldView!!.query.trim { it <= ' ' } != newView!!.query.trim { it <= ' ' }) return true
         if (oldView!!.isMaterialized != newView!!.isMaterialized) return true
         val oldViewColumnNames = oldView.declaredColumnNames
         val newViewColumnNames = newView.declaredColumnNames
@@ -168,7 +168,7 @@ object PgDiffViews {
                 writer.print(PgDiffUtils.getQuotedName(newView.name))
                 writer.println(" IS NULL;")
             }
-            val columnNames: MutableList<String?> = ArrayList(newView.columns.size)
+            val columnNames: MutableList<String> = ArrayList(newView.columns.size)
             for (col in newView.columns) {
                 columnNames.add(col.name)
             }
@@ -192,7 +192,7 @@ object PgDiffViews {
                     writer.print("COMMENT ON COLUMN ")
                     writer.print(PgDiffUtils.getQuotedName(newView.name))
                     writer.print('.')
-                    writer.print(PgDiffUtils.getQuotedName(newCol.name))
+                    writer.print(PgDiffUtils.getQuotedName(newCol!!.name))
                     writer.print(" IS ")
                     writer.print(newCol.comment)
                     writer.println(';')
@@ -204,7 +204,7 @@ object PgDiffViews {
                     writer.print("COMMENT ON COLUMN ")
                     writer.print(PgDiffUtils.getQuotedName(newView.name))
                     writer.print('.')
-                    writer.print(PgDiffUtils.getQuotedName(oldCol.name))
+                    writer.print(PgDiffUtils.getQuotedName(oldCol!!.name))
                     writer.println(" IS NULL;")
                 }
             }

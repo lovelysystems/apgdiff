@@ -121,22 +121,22 @@ object PgDiff {
      */
     private fun diffDatabaseSchemas(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldDatabase: PgDatabase?,
-        newDatabase: PgDatabase?
+        arguments: PgDiffArguments, oldDatabase: PgDatabase,
+        newDatabase: PgDatabase
     ) {
         if (arguments.isAddTransaction) {
             writer.println("START TRANSACTION;")
         }
-        if (oldDatabase.getComment() == null
-            && newDatabase.getComment() != null
-            || oldDatabase.getComment() != null && newDatabase.getComment() != null && oldDatabase.getComment() != newDatabase.getComment()
+        if (oldDatabase.comment == null
+            && newDatabase.comment != null
+            || oldDatabase.comment != null && newDatabase.comment != null && oldDatabase.comment != newDatabase.comment
         ) {
             writer.println()
             writer.print("COMMENT ON DATABASE current_database() IS ")
-            writer.print(newDatabase.getComment())
+            writer.print(newDatabase.comment)
             writer.println(';')
-        } else if (oldDatabase.getComment() != null
-            && newDatabase.getComment() == null
+        } else if (oldDatabase.comment != null
+            && newDatabase.comment == null
         ) {
             writer.println()
             writer.println("COMMENT ON DATABASE current_database() IS NULL;")
@@ -195,7 +195,7 @@ object PgDiff {
             if (newDatabase!!.getSchema(oldSchema.name) == null) {
                 writer.println()
                 writer.println(
-                    "DROP SCHEMA " + PgDiffUtils.getDropIfExists()
+                    "DROP SCHEMA " + PgDiffUtils.dropIfExists
                             + PgDiffUtils.getQuotedName(oldSchema.name)
                             + " CASCADE;"
                 )
@@ -218,7 +218,7 @@ object PgDiff {
             if (newDatabase!!.getExtension(oldExtension.name) == null) {
                 writer.println()
                 writer.println(
-                    "DROP EXTENSION " + PgDiffUtils.getDropIfExists()
+                    "DROP EXTENSION " + PgDiffUtils.dropIfExists
                             + PgDiffUtils.getQuotedName(oldExtension.name)
                             + " CASCADE;"
                 )
@@ -236,8 +236,8 @@ object PgDiff {
      */
     private fun updateSchemas(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldDatabase: PgDatabase?,
-        newDatabase: PgDatabase?
+        arguments: PgDiffArguments, oldDatabase: PgDatabase,
+        newDatabase: PgDatabase
     ) {
         val setSearchPath = (newDatabase!!.schemas.size > 1
                 || newDatabase.schemas[0].name != "public")
@@ -252,7 +252,7 @@ object PgDiff {
             } else {
                 SearchPathHelper(null)
             }
-            val oldSchema = oldDatabase!!.getSchema(newSchema.name)
+            val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema != null) {
                 if (oldSchema.comment == null
                     && newSchema.comment != null

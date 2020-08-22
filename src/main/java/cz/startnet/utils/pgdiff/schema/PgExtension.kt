@@ -35,7 +35,7 @@ class PgExtension(
     /**
      * PgSchema
      */
-    var schema: PgSchema? = null
+    lateinit var schema: PgSchema
     /**
      * Getter for [.version].
      *
@@ -74,11 +74,11 @@ class PgExtension(
         get() {
             val sbSQL = StringBuilder()
             sbSQL.append("CREATE EXTENSION ")
-            sbSQL.append(PgDiffUtils.getCreateIfNotExists())
+            sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (schema != null) {
                 sbSQL.append(" SCHEMA ")
-                sbSQL.append(schema.getName())
+                sbSQL.append(schema.name)
             }
             if (version != null && !version!!.isEmpty()) {
                 sbSQL.append(" VERSION ")

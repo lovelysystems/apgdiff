@@ -119,7 +119,7 @@ object ParserUtils {
      */
     private fun splitNames(string: String?): Array<String> {
         return if (string!!.indexOf('"') == -1) {
-            string.split("\\.").toTypedArray()
+            string.split(".").toTypedArray()
         } else {
             val strings: MutableList<String> = ArrayList(2)
             var startPos = 0

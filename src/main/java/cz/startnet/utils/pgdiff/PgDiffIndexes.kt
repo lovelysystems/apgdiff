@@ -30,12 +30,12 @@ object PgDiffIndexes {
         oldSchema: PgSchema?, newSchema: PgSchema?,
         searchPathHelper: SearchPathHelper
     ) {
-        for (newTable in newSchema.getTables()) {
+        for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
 
             // Add new indexes
             if (oldSchema == null) {
-                for (index in newTable!!.indexes) {
+                for (index in newTable.indexes) {
                     searchPathHelper.outputSearchPath(writer)
                     writer.println()
                     writer.println(index.creationSQL)
@@ -46,7 +46,7 @@ object PgDiffIndexes {
                 )) {
                     searchPathHelper.outputSearchPath(writer)
                     writer.println()
-                    writer.println(index.getCreationSQL())
+                    writer.println(index.creationSQL)
                 }
             }
         }
@@ -65,7 +65,7 @@ object PgDiffIndexes {
         oldSchema: PgSchema?, newSchema: PgSchema?,
         searchPathHelper: SearchPathHelper
     ) {
-        for (newTable in newSchema.getTables()) {
+        for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
             val oldTable: PgTable?
             oldTable = oldSchema?.getTable(newTableName)
@@ -74,7 +74,7 @@ object PgDiffIndexes {
             for (index in getDropIndexes(oldTable, newTable)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(index.getDropSQL())
+                writer.println(index.dropSQL)
             }
         }
     }
@@ -93,8 +93,8 @@ object PgDiffIndexes {
     private fun getDropIndexes(
         oldTable: PgTable?,
         newTable: PgTable?
-    ): List<PgIndex?> {
-        val list: MutableList<PgIndex?> = ArrayList()
+    ): List<PgIndex> {
+        val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null && oldTable != null) {
             for (index in oldTable.indexes) {
                 if (!newTable.containsIndex(index.name)
@@ -118,8 +118,8 @@ object PgDiffIndexes {
     private fun getNewIndexes(
         oldTable: PgTable?,
         newTable: PgTable?
-    ): List<PgIndex?> {
-        val list: MutableList<PgIndex?> = ArrayList()
+    ): List<PgIndex> {
+        val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null) {
             if (oldTable == null) {
                 for (index in newTable.indexes) {

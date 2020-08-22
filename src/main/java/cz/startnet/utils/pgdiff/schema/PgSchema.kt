@@ -27,22 +27,22 @@ class PgSchema
     /**
      * List of functions defined in the schema.
      */
-    private val functions: MutableList<PgFunction> = ArrayList()
+    val functions: MutableList<PgFunction> = ArrayList()
 
     /**
      * List of sequences defined in the schema.
      */
-    private val sequences: MutableList<PgSequence> = ArrayList()
+    val sequences: MutableList<PgSequence> = ArrayList()
 
     /**
      * List of rels defined in the schema.
      */
-    private val rels: MutableList<PgRelation> = ArrayList()
+    val rels: MutableList<PgRelation> = ArrayList()
 
     /**
      * List of types defined in the schema.
      */
-    private val types: MutableList<PgType> = ArrayList()
+    val types: MutableList<PgType> = ArrayList()
 
     /**
      * Array of grand statements
@@ -52,7 +52,7 @@ class PgSchema
     /**
      * List of indexes defined in the schema.
      */
-    private val indexes: MutableList<PgIndex> = ArrayList()
+    val indexes: MutableList<PgIndex> = ArrayList()
 
     /**
      * List of primary keys defined in the schema.
@@ -120,7 +120,7 @@ class PgSchema
         get() {
             val sbSQL = StringBuilder(50)
             sbSQL.append("CREATE SCHEMA ")
-            sbSQL.append(PgDiffUtils.getCreateIfNotExists())
+            sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (authorization != null) {
                 sbSQL.append(" AUTHORIZATION ")
@@ -155,14 +155,14 @@ class PgSchema
         return null
     }
 
-    /**
-     * Getter for [.functions]. The list cannot be modified.
-     *
-     * @return [.functions]
-     */
-    fun getFunctions(): List<PgFunction> {
-        return Collections.unmodifiableList(functions)
-    }
+//    /**
+//     * Getter for [.functions]. The list cannot be modified.
+//     *
+//     * @return [.functions]
+//     */
+//    fun getFunctions(): List<PgFunction> {
+//        return Collections.unmodifiableList(functions)
+//    }
 
     /**
      * Getter for grant statements. The list cannot be modified.
@@ -220,14 +220,14 @@ class PgSchema
         return null
     }
 
-    /**
-     * Getter for [.indexes]. The list cannot be modified.
-     *
-     * @return [.indexes]
-     */
-    fun getIndexes(): List<PgIndex> {
-        return Collections.unmodifiableList(indexes)
-    }
+//    /**
+//     * Getter for [.indexes]. The list cannot be modified.
+//     *
+//     * @return [.indexes]
+//     */
+//    fun getIndexes(): List<PgIndex> {
+//        return Collections.unmodifiableList(indexes)
+//    }
 
     /**
      * Getter for [.primaryKeys]. The list cannot be modified.
@@ -238,14 +238,14 @@ class PgSchema
         return Collections.unmodifiableList(primaryKeys)
     }
 
-    /**
-     * Getter for [.sequences]. The list cannot be modified.
-     *
-     * @return [.sequences]
-     */
-    fun getSequences(): List<PgSequence> {
-        return Collections.unmodifiableList(sequences)
-    }
+//    /**
+//     * Getter for [.sequences]. The list cannot be modified.
+//     *
+//     * @return [.sequences]
+//     */
+//    fun getSequences(): List<PgSequence> {
+//        return Collections.unmodifiableList(sequences)
+//    }
 
     /**
      * Finds table/view according to specified `name`.
@@ -256,7 +256,7 @@ class PgSchema
      */
     fun getRelation(name: String?): PgRelation? {
         for (rel in rels) {
-            if (rel.getName() == name) {
+            if (rel.name == name) {
                 return rel
             }
         }
@@ -291,14 +291,14 @@ class PgSchema
             return list
         }
 
-    /**
-     * Getter for [.rels]. The list cannot be modified.
-     *
-     * @return [.rels]
-     */
-    fun getRels(): List<PgRelation> {
-        return Collections.unmodifiableList(rels)
-    }
+//    /**
+//     * Getter for [.rels]. The list cannot be modified.
+//     *
+//     * @return [.rels]
+//     */
+//    fun getRels(): List<PgRelation> {
+//        return Collections.unmodifiableList(rels)
+//    }
 
     /**
      * Finds view according to specified view `name`.
@@ -391,15 +391,15 @@ class PgSchema
         types.add(type)
     }
 
-    /**
-     * Returns a list of types
-     *
-     * @return types List of PgType
-     */
-    fun getTypes(): List<PgType> {
-        return types
-    }
-
+//    /**
+//     * Returns a list of types
+//     *
+//     * @return types List of PgType
+//     */
+//    fun getTypes(): List<PgType> {
+//        return types
+//    }
+//
     /**
      * Finds type according to specified name `name`.
      *
@@ -442,7 +442,7 @@ class PgSchema
      */
     fun containsRule(name: String): Boolean {
         for (rule in rules) {
-            if (rule.getName() == name) {
+            if (rule.name == name) {
                 return true
             }
         }

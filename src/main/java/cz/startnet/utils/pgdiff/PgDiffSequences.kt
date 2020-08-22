@@ -29,7 +29,7 @@ object PgDiffSequences {
         searchPathHelper: SearchPathHelper
     ) {
         // Add new sequences
-        for (sequence in newSchema!!.sequences) {
+        for (sequence in newSchema?.sequences.orEmpty()) {
             if (oldSchema == null
                 || !oldSchema.containsSequence(sequence.name)
             ) {
@@ -85,7 +85,7 @@ object PgDiffSequences {
         for (sequence in newSchema!!.sequences) {
             if ((oldSchema == null
                         || !oldSchema.containsSequence(sequence.name))
-                && sequence.ownedBy != null && !sequence.ownedBy.isEmpty()
+                && !sequence.ownedBy.isNullOrEmpty()
             ) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
@@ -258,8 +258,7 @@ object PgDiffSequences {
         val emptyLinePrinted = false
         for (oldSequencePrivilege in oldSequence
             .privileges) {
-            val newSequencePrivilege = newSequence
-                .getPrivilege(oldSequencePrivilege.roleName)
+            val newSequencePrivilege = newSequence?.getPrivilege(oldSequencePrivilege.roleName)
             if (newSequencePrivilege == null) {
                 if (!emptyLinePrinted) {
                     writer.println()
@@ -275,7 +274,7 @@ object PgDiffSequences {
                 }
                 writer.println(
                     "REVOKE ALL ON SEQUENCE "
-                            + PgDiffUtils.getQuotedName(newSequence.getName())
+                            + PgDiffUtils.getQuotedName(newSequence.name)
                             + " FROM " + newSequencePrivilege.roleName + ";"
                 )
                 if ("" != newSequencePrivilege.getPrivilegesSQL(true)) {
@@ -283,7 +282,7 @@ object PgDiffSequences {
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(true)
                                 + " ON SEQUENCE "
-                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + PgDiffUtils.getQuotedName(newSequence.name)
                                 + " TO " + newSequencePrivilege.roleName
                                 + " WITH GRANT OPTION;"
                     )
@@ -293,14 +292,13 @@ object PgDiffSequences {
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(false)
                                 + " ON SEQUENCE "
-                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + PgDiffUtils.getQuotedName(newSequence.name)
                                 + " TO " + newSequencePrivilege.roleName + ";"
                     )
                 }
             } // else similar privilege will not be updated
         }
-        for (newSequencePrivilege in newSequence
-            .getPrivileges()) {
+        for (newSequencePrivilege in newSequence?.privileges.orEmpty()) {
             val oldSequencePrivilege = oldSequence
                 .getPrivilege(newSequencePrivilege.roleName)
             if (oldSequencePrivilege == null) {
@@ -309,7 +307,7 @@ object PgDiffSequences {
                 }
                 writer.println(
                     "REVOKE ALL ON SEQUENCE "
-                            + PgDiffUtils.getQuotedName(newSequence.getName())
+                            + PgDiffUtils.getQuotedName(newSequence!!.name)
                             + " FROM " + newSequencePrivilege.roleName + ";"
                 )
                 if ("" != newSequencePrivilege!!.getPrivilegesSQL(true)) {
@@ -317,7 +315,7 @@ object PgDiffSequences {
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(true)
                                 + " ON SEQUENCE "
-                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + PgDiffUtils.getQuotedName(newSequence.name)
                                 + " TO " + newSequencePrivilege.roleName
                                 + " WITH GRANT OPTION;"
                     )
@@ -327,7 +325,7 @@ object PgDiffSequences {
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(false)
                                 + " ON SEQUENCE "
-                                + PgDiffUtils.getQuotedName(newSequence.getName())
+                                + PgDiffUtils.getQuotedName(newSequence.name)
                                 + " TO " + newSequencePrivilege.roleName + ";"
                     )
                 }

@@ -30,10 +30,10 @@ object PgDiffConstraints {
      */
     fun createConstraints(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
+        oldSchema: PgSchema?, newSchema: PgSchema,
         primaryKey: Boolean, searchPathHelper: SearchPathHelper
     ) {
-        for (newTable in newSchema.getTables()) {
+        for (newTable in newSchema.tables) {
             val oldTable: PgTable?
             oldTable = oldSchema?.getTable(newTable.name)
 
@@ -41,7 +41,7 @@ object PgDiffConstraints {
             for (constraint in getNewConstraints(oldTable, newTable, primaryKey)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(constraint.getCreationSQL())
+                writer.println(constraint.creationSQL)
             }
         }
     }
@@ -59,10 +59,10 @@ object PgDiffConstraints {
      */
     fun dropConstraints(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
+        oldSchema: PgSchema?, newSchema: PgSchema,
         primaryKey: Boolean, searchPathHelper: SearchPathHelper
     ) {
-        for (newTable in newSchema.getTables()) {
+        for (newTable in newSchema.tables) {
             val oldTable: PgTable?
             oldTable = oldSchema?.getTable(newTable.name)
 
@@ -70,7 +70,7 @@ object PgDiffConstraints {
             for (constraint in getDropConstraints(oldTable, newTable, primaryKey)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(constraint.getDropSQL())
+                writer.println(constraint.dropSQL)
             }
         }
     }
@@ -91,8 +91,8 @@ object PgDiffConstraints {
     private fun getDropConstraints(
         oldTable: PgTable?,
         newTable: PgTable?, primaryKey: Boolean
-    ): List<PgConstraint?> {
-        val list: MutableList<PgConstraint?> = ArrayList()
+    ): List<PgConstraint> {
+        val list: MutableList<PgConstraint> = ArrayList()
         if (newTable != null && oldTable != null) {
             for (constraint in oldTable.constraints) {
                 if (constraint!!.isPrimaryKeyConstraint == primaryKey
@@ -119,8 +119,8 @@ object PgDiffConstraints {
     private fun getNewConstraints(
         oldTable: PgTable?,
         newTable: PgTable?, primaryKey: Boolean
-    ): List<PgConstraint?> {
-        val list: MutableList<PgConstraint?> = ArrayList()
+    ): List<PgConstraint> {
+        val list: MutableList<PgConstraint> = ArrayList()
         if (newTable != null) {
             if (oldTable == null) {
                 for (constraint in newTable.constraints) {

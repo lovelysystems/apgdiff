@@ -49,8 +49,8 @@ object CreatePolicyParser {
             if (parser.expectOptional("PUBLIC")) {
                 policy.roles.add("PUBLIC")
             } else {
-                var role = parser.parseIdentifier()
-                policy.roles.add(role)
+                var role:String? = parser.parseIdentifier()
+                policy.roles.add(role!!)
                 while (role != null) {
                     if (parser.expectOptional(",")) {
                         parser.skipWhitespace()

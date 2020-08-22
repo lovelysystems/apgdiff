@@ -12,7 +12,7 @@ import cz.startnet.utils.pgdiff.PgDiffUtils
  *
  * @author jalissonmello
  */
-class PgRule(name: String?) : PgRelation() {
+class PgRule(name: String) : PgRelation() {
     /**
      * Getter for [.query].
      *
@@ -87,7 +87,7 @@ class PgRule(name: String?) : PgRelation() {
      * @return created SQL
      */
     override val dropSQL: String
-        get() = ("DROP RULE " + PgDiffUtils.getDropIfExists() + PgDiffUtils.getQuotedName(getName()) + " ON "
+        get() = ("DROP RULE " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + " ON "
                 + PgDiffUtils.getQuotedName(relationName) + ";")
 
     override fun equals(`object`: Any?): Boolean {
@@ -97,7 +97,7 @@ class PgRule(name: String?) : PgRelation() {
         } else if (`object` is PgRule) {
             val rule = `object`
             equals =
-                event === rule.event && relationName == rule.relationName && name == rule.getName() && query == rule.query
+                event === rule.event && relationName == rule.relationName && name == rule.name && query == rule.query
         }
         return equals
     }
@@ -108,6 +108,6 @@ class PgRule(name: String?) : PgRelation() {
      * @param name [.name]
      */
     init {
-        setName(name)
+        this.name = name
     }
 }

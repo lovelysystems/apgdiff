@@ -150,7 +150,7 @@ class PgSequence
     /**
      * List of privileges defined on the sequence.
      */
-    private val privileges: MutableList<PgSequencePrivilege> = ArrayList()
+    val privileges: MutableList<PgSequencePrivilege> = ArrayList()
     /**
      * Getter for [.dataType].
      *
@@ -175,7 +175,7 @@ class PgSequence
         get() {
             val sbSQL = StringBuilder(100)
             sbSQL.append("CREATE SEQUENCE ")
-            sbSQL.append(PgDiffUtils.getCreateIfNotExists())
+            sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (dataType != null) {
                 sbSQL.append(System.getProperty("line.separator"))
@@ -255,11 +255,11 @@ class PgSequence
      * @return created SQL
      */
     val dropSQL: String
-        get() = "DROP SEQUENCE " + PgDiffUtils.getDropIfExists() + PgDiffUtils.getQuotedName(name) + ";"
+        get() = "DROP SEQUENCE " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + ";"
 
-    fun getPrivileges(): List<PgSequencePrivilege> {
-        return Collections.unmodifiableList(privileges)
-    }
+//    fun getPrivileges(): List<PgSequencePrivilege> {
+//        return Collections.unmodifiableList(privileges)
+//    }
 
     fun getPrivilege(roleName: String?): PgSequencePrivilege? {
         for (privilege in privileges) {

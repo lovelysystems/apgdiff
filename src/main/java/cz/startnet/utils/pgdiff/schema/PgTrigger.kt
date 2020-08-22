@@ -23,17 +23,17 @@ class PgTrigger {
         before, after, instead_of;
 
         companion object {
-            private val stringRepresentation: Map<EventTimeQualification, String>? = null
+            private var stringRepresentation: Map<EventTimeQualification, String>? = null
             fun toString(eventTimeQualification: EventTimeQualification): String? {
                 return stringRepresentation!![eventTimeQualification]
             }
 
             init {
                 val aMap = HashMap<EventTimeQualification, String>()
-                cz.startnet.utils.pgdiff.schema.aMap.put(before, "BEFORE")
-                cz.startnet.utils.pgdiff.schema.aMap.put(after, "AFTER")
-                cz.startnet.utils.pgdiff.schema.aMap.put(instead_of, "INSTEAD OF")
-                stringRepresentation = Collections.unmodifiableMap(cz.startnet.utils.pgdiff.schema.aMap)
+                aMap.put(before, "BEFORE")
+                aMap.put(after, "AFTER")
+                aMap.put(instead_of, "INSTEAD OF")
+                stringRepresentation = Collections.unmodifiableMap(aMap)
             }
         }
     }
@@ -169,7 +169,7 @@ class PgTrigger {
     /**
      * Optional list of columns for UPDATE event.
      */
-    private val updateColumns: MutableList<String?> = ArrayList()
+    private val updateColumns: MutableList<String> = ArrayList()
     /**
      * Getter for [.when].
      *
@@ -184,7 +184,7 @@ class PgTrigger {
      * WHEN condition.
      */
     var `when`: String? = null
-        set(when) {
+        set(`when`) {
             field = `when`
         }
     /**
@@ -320,24 +320,24 @@ class PgTrigger {
      * @return created SQL
      */
     val dropSQL: String
-        get() = ("DROP TRIGGER " + PgDiffUtils.getDropIfExists() + PgDiffUtils.getQuotedName(name) + " ON "
+        get() = ("DROP TRIGGER " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + " ON "
                 + PgDiffUtils.getQuotedName(relationName) + ";")
 
-    /**
-     * Getter for [.updateColumns].
-     *
-     * @return [.updateColumns]
-     */
-    fun getUpdateColumns(): List<String?> {
-        return Collections.unmodifiableList(updateColumns)
-    }
+//    /**
+//     * Getter for [.updateColumns].
+//     *
+//     * @return [.updateColumns]
+//     */
+//    fun getUpdateColumns(): List<String> {
+//        return Collections.unmodifiableList(updateColumns)
+//    }
 
     /**
      * Adds column name to the list of update columns.
      *
      * @param columnName column name
      */
-    fun addUpdateColumn(columnName: String?) {
+    fun addUpdateColumn(columnName: String) {
         updateColumns.add(columnName)
     }
 
@@ -355,10 +355,8 @@ class PgTrigger {
                     && isOnTruncate == trigger.isOnTruncate
                     && relationName == trigger.relationName)
             if (equals) {
-                val sorted1: List<String?> = ArrayList(updateColumns)
-                val sorted2: List<String?> = ArrayList(trigger.getUpdateColumns())
-                Collections.sort(sorted1)
-                Collections.sort(sorted2)
+                val sorted1: List<String> = updateColumns.sorted()
+                val sorted2: List<String?> = trigger.updateColumns.sorted()
                 equals = sorted1 == sorted2
             }
         }

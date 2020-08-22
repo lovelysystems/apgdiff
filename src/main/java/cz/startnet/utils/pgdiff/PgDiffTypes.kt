@@ -31,9 +31,9 @@ object PgDiffTypes {
     fun alterTypes(
         writer: PrintWriter,
         arguments: PgDiffArguments, oldSchema: PgSchema?,
-        newSchema: PgSchema?, searchPathHelper: SearchPathHelper
+        newSchema: PgSchema, searchPathHelper: SearchPathHelper
     ) {
-        for (newType in newSchema!!.types) {
+        for (newType in newSchema.types.orEmpty()) {
             if (oldSchema == null
                 || !oldSchema.containsType(newType.name)
             ) {
@@ -59,17 +59,16 @@ object PgDiffTypes {
     private fun addCreateTypeColumns(
         statements: MutableList<String>,
         arguments: PgDiffArguments, oldType: PgType?,
-        newType: PgType?, dropDefaultsColumns: MutableList<PgColumn?>
+        newType: PgType?, dropDefaultsColumns: MutableList<PgColumn>
     ) {
-        for (column in newType!!.columns) {
+        for (column in newType!!.columns.orEmpty()) {
             if (!oldType!!.containsColumn(column.name)) {
                 statements.add(
                     "\tADD ATTRIBUTE "
                             + column!!.getFullDefinition(arguments.isAddDefaults)
                 )
                 if (arguments.isAddDefaults && !column.nullValue
-                    && (column.defaultValue == null
-                            || column.defaultValue.isEmpty())
+                    && (column.defaultValue.isNullOrEmpty())
                 ) {
                     dropDefaultsColumns.add(column)
                 }
@@ -111,13 +110,13 @@ object PgDiffTypes {
     private fun addModifyTypeColumns(
         statements: MutableList<String>,
         arguments: PgDiffArguments, oldType: PgType?,
-        newType: PgType?, dropDefaultsColumns: MutableList<PgColumn?>
+        newType: PgType?, dropDefaultsColumns: MutableList<PgColumn>
     ) {
         for (newColumn in newType!!.columns) {
             if (!oldType!!.containsColumn(newColumn.name)) {
                 continue
             }
-            val oldColumn = oldType.getColumn(newColumn.name)
+            val oldColumn = oldType.getColumn(newColumn.name)!!
             val newColumnName = PgDiffUtils.getQuotedName(newColumn.name)
             if (oldColumn.type != newColumn.type) {
                 statements.add(
@@ -130,8 +129,8 @@ object PgDiffTypes {
                     ) + " */"
                 )
             }
-            val oldDefault = if (oldColumn.defaultValue == null) "" else oldColumn.defaultValue
-            val newDefault = if (newColumn.defaultValue == null) "" else newColumn.defaultValue
+            val oldDefault = oldColumn.defaultValue.orEmpty()
+            val newDefault = newColumn.defaultValue.orEmpty()
             if (oldDefault != newDefault) {
                 if (newDefault.length == 0) {
                     statements.add(
@@ -235,10 +234,10 @@ object PgDiffTypes {
     private fun updateTypeColumns(
         writer: PrintWriter,
         arguments: PgDiffArguments, oldType: PgType?,
-        newType: PgType?, searchPathHelper: SearchPathHelper
+        newType: PgType, searchPathHelper: SearchPathHelper
     ) {
         val statements: MutableList<String> = ArrayList()
-        val dropDefaultsColumns: MutableList<PgColumn?> = ArrayList()
+        val dropDefaultsColumns: MutableList<PgColumn> = ArrayList()
         addDropTypeColumns(statements, oldType, newType)
         addCreateTypeColumns(
             statements, arguments, oldType, newType, dropDefaultsColumns
@@ -247,7 +246,7 @@ object PgDiffTypes {
             statements, arguments, oldType, newType, dropDefaultsColumns
         )
         if (!statements.isEmpty()) {
-            val quotedTypeName = PgDiffUtils.getQuotedName(newType.getName())
+            val quotedTypeName = PgDiffUtils.getQuotedName(newType.name)
             searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.println("ALTER TYPE $quotedTypeName")
@@ -262,7 +261,7 @@ object PgDiffTypes {
                     writer.print("\tALTER ATTRIBUTE ")
                     writer.print(
                         PgDiffUtils.getQuotedName(
-                            dropDefaultsColumns[i].getName()
+                            dropDefaultsColumns[i].name
                         )
                     )
                     writer.print(" DROP DEFAULT")

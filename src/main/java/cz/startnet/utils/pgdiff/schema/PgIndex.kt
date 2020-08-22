@@ -21,7 +21,7 @@ class PgIndex
     /**
      * Name of the index.
      */
-    var name: String?
+    val name: String
 ) {
     /**
      * Getter for [.definition].
@@ -117,7 +117,7 @@ class PgIndex
                 sbSQL.append("UNIQUE ")
             }
             sbSQL.append("INDEX ")
-            sbSQL.append(PgDiffUtils.getCreateIfNotExists())
+            sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             sbSQL.append(" ON ")
             if (only) {
@@ -145,7 +145,7 @@ class PgIndex
      * @return created SQL statement
      */
     val dropSQL: String
-        get() = "DROP INDEX " + PgDiffUtils.getDropIfExists() + PgDiffUtils.getQuotedName(name) + ";"
+        get() = "DROP INDEX " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + ";"
 
     /**
      * {@inheritDoc}

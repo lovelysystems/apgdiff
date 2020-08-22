@@ -43,7 +43,7 @@ object CreateViewParser {
             }
         }
         val columnsExist = parser.expectOptional("(")
-        val columnNames: MutableList<String?> = ArrayList(10)
+        val columnNames: MutableList<String> = ArrayList(10)
         if (columnsExist) {
             while (!parser.expectOptional(")")) {
                 columnNames.add(
@@ -53,7 +53,7 @@ object CreateViewParser {
             }
         }
         parser.expect("AS")
-        val query = parser.rest
+        val query = parser.rest!!
         val view = PgView(ParserUtils.getObjectName(viewName))
         view.isMaterialized = materialized
         view.isTemporary = temporary

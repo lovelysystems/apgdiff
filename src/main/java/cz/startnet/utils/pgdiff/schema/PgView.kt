@@ -45,7 +45,7 @@ class PgView(name: String?) : PgRelation() {
     /**
      * SQL query of the view.
      */
-    var query: String? = null
+    lateinit var query: String
     /**
      * Getter for [.with].
      *
@@ -98,9 +98,9 @@ class PgView(name: String?) : PgRelation() {
      *
      * @param columnNames list of column names
      */
-    var declaredColumnNames: List<String?>?
+    var declaredColumnNames: List<String>?
         get() {
-            val list: MutableList<String?> = ArrayList()
+            val list: MutableList<String> = ArrayList()
             if (!declareColumnNames) return null
             for (column in columns) {
                 list.add(column.name)
@@ -160,7 +160,7 @@ class PgView(name: String?) : PgRelation() {
             sbSQL.append(query)
             sbSQL.append(';')
 
-            /* Column default values */for (col in getColumns()) {
+            /* Column default values */for (col in columns) {
                 val defaultValue = col.defaultValue
                 if (defaultValue != null && !defaultValue.isEmpty()) {
                     sbSQL.append(System.getProperty("line.separator"))
@@ -187,7 +187,7 @@ class PgView(name: String?) : PgRelation() {
      *
      * @return found column or null if no such column has been found
      */
-    override fun getColumn(name: String?): PgColumn? {
+    override fun getColumn(name: String): PgColumn? {
         var col = super.getColumn(name)
         if (col == null && !declareColumnNames) {
             /*
@@ -218,6 +218,6 @@ class PgView(name: String?) : PgRelation() {
      * @param name [.name]
      */
     init {
-        setName(name)
+        this.name = name
     }
 }

@@ -34,11 +34,11 @@ object GrantRevokeParser {
         // Map<String, List<String>> privileges = new TreeMap<String,
         // List<String>>();
         val privileges: MutableList<String?> = ArrayList()
-        val privilegesColumns: MutableList<List<String?>?> = ArrayList()
+        val privilegesColumns: MutableList<List<String>?> = ArrayList()
         val identifiers: MutableList<String?> = ArrayList()
         val roles: MutableList<String?> = ArrayList()
         var grantOption = false
-        val revokeMode: String
+        val revokeMode: String?
         val parser = Parser(statement)
         grant = parser.expect("GRANT", true)
         if (!grant) {
@@ -50,7 +50,7 @@ object GrantRevokeParser {
             "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES",
             "TRIGGER", "USAGE"
         )
-        var columns: List<String?>? = null
+        var columns: List<String>? = null
         if (privilege == null) {
             // unknown privilege so unsupported object privilege
             // object role_name is using a different syntax so will always pass
@@ -130,7 +130,7 @@ object GrantRevokeParser {
         if (objectType == null) {
             objectType = "TABLE"
         }
-        var identifier = parser.parseIdentifier()
+        var identifier: String? = parser.parseIdentifier()
         if ("FUNCTION".equals(objectType, ignoreCase = true)
             || "ALL FUNCTIONS IN SCHEMA".equals(objectType, ignoreCase = true)
         ) {
@@ -163,7 +163,7 @@ object GrantRevokeParser {
             parser.expect("FROM")
         }
         parser.expectOptional("GROUP")
-        var role = parser.parseIdentifier()
+        var role: String? = parser.parseIdentifier()
         roles.add(role)
         while (role != null) {
             if (parser.expectOptional(",")) {
@@ -376,8 +376,8 @@ object GrantRevokeParser {
         parser: Parser,
         database: PgDatabase, statement: String,
         outputIgnoredStatements: Boolean
-    ): List<String?>? {
-        val result: MutableList<String?> = ArrayList()
+    ): List<String>? {
+        val result: MutableList<String> = ArrayList()
         val present = parser.expectOptional("(")
         if (!present) {
             return null

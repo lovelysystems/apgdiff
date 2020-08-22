@@ -18,17 +18,17 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
     /**
      * List of inheritedColumns defined on the table.
      */
-    private val inheritedColumns: MutableList<PgInheritedColumn> = ArrayList()
+    val inheritedColumns: MutableList<PgInheritedColumn> = ArrayList()
 
     /**
      * List of constraints defined on the table.
      */
-    private val constraints: MutableList<PgConstraint> = ArrayList()
+    val constraints: MutableList<PgConstraint> = ArrayList()
 
     /**
      * List of names of inherited tables.
      */
-    private val inherits: MutableList<Pair<String?, String?>>? = ArrayList()
+    val inherits: MutableList<Pair<String?, String?>>? = ArrayList()
     /**
      * Getter for [.with]
      *
@@ -80,7 +80,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
     /**
      * RLS Policies
      */
-    private val policies: MutableList<PgPolicy> = ArrayList()
+    val policies: MutableList<PgPolicy> = ArrayList()
 
     /**
      * PgDatabase
@@ -108,14 +108,14 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         return null
     }
 
-    /**
-     * Getter for [.constraints]. The list cannot be modified.
-     *
-     * @return [.constraints]
-     */
-    fun getConstraints(): List<PgConstraint> {
-        return Collections.unmodifiableList(constraints)
-    }
+//    /**
+//     * Getter for [.constraints]. The list cannot be modified.
+//     *
+//     * @return [.constraints]
+//     */
+//    fun getConstraints(): List<PgConstraint> {
+//        return Collections.unmodifiableList(constraints)
+//    }
 
     /**
      * Returns relation kind for CREATE/ALTER/DROP commands.
@@ -132,7 +132,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
      *
      * @return created SQL statement
      */
-    fun getCreationSQL(schema: PgSchema?): String {
+    fun getCreationSQL(schema: PgSchema): String {
         val sbSQL = StringBuilder(1000)
         sbSQL.append("CREATE ")
         if (isUnlogged) {
@@ -142,7 +142,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
             sbSQL.append("FOREIGN ")
         }
         sbSQL.append("TABLE ")
-        sbSQL.append(PgDiffUtils.getCreateIfNotExists())
+        sbSQL.append(PgDiffUtils.createIfNotExists)
         sbSQL.append(PgDiffUtils.getQuotedName(name))
         sbSQL.append(" (")
         sbSQL.append(System.getProperty("line.separator"))
@@ -174,7 +174,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
                     sbSQL.append(", ")
                 }
                 var inheritTableName: String? = null
-                inheritTableName = if (schema.getName() == inheritPair.l) {
+                inheritTableName = if (schema.name == inheritPair.l) {
                     inheritPair.r
                 } else {
                     String.format("%s.%s", inheritPair.l, inheritPair.r)
@@ -215,7 +215,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         sbSQL.append(';')
 
         //Inherited column default override
-        for (column in getInheritedColumns()) {
+        for (column in inheritedColumns) {
             if (column.defaultValue != null) {
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append(System.getProperty("line.separator"))
@@ -256,7 +256,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
     fun addInherits(schemaName: String?, tableName: String?) {
         inherits!!.add(Pair(schemaName, tableName))
         val inheritedTable = database.getSchema(schemaName)!!.getTable(tableName)
-        for (column in inheritedTable!!.getColumns()) {
+        for (column in inheritedTable!!.columns) {
             val inheritedColumn = PgInheritedColumn(column)
             inheritedColumns.add(inheritedColumn)
         }
@@ -266,29 +266,29 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         }
     }
 
-    /**
-     * Getter for [.inherits].
-     *
-     * @return [.inherits]
-     */
-    fun getInherits(): List<Pair<String, String>> {
-        return Collections.unmodifiableList(inherits)
-    }
-    /**
-     * Getter for [.tablespace].
-     *
-     * @return [.tablespace]
-     */
-    /**
-     * Setter for [.tablespace].
-     *
-     * @param tablespace [.tablespace]
-     */
-    override var tablespace: String?
-        get() = tablespace
-        set(tablespace) {
-            this.tablespace = tablespace
-        }
+//    /**
+//     * Getter for [.inherits].
+//     *
+//     * @return [.inherits]
+//     */
+//    fun getInherits(): List<Pair<String, String>> {
+//        return Collections.unmodifiableList(inherits)
+//    }
+//    /**
+//     * Getter for [.tablespace].
+//     *
+//     * @return [.tablespace]
+//     */
+//    /**
+//     * Setter for [.tablespace].
+//     *
+//     * @param tablespace [.tablespace]
+//     */
+//    override var tablespace: String?
+//        get() = super.tablespace
+//        set(tablespace) {
+//            this.tablespace = tablespace
+//        }
 
     /**
      * Adds `column` to the list of columns.
@@ -327,14 +327,14 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         return null
     }
 
-    /**
-     * Getter for [.inheritedColumns]. The list cannot be modified.
-     *
-     * @return [.inheritedColumns]
-     */
-    fun getInheritedColumns(): List<PgInheritedColumn> {
-        return Collections.unmodifiableList(inheritedColumns)
-    }
+//    /**
+//     * Getter for [.inheritedColumns]. The list cannot be modified.
+//     *
+//     * @return [.inheritedColumns]
+//     */
+//    fun .inheritedColumns: List<PgInheritedColumn> {
+//        return Collections.unmodifiableList(inheritedColumns)
+//    }
 
     /**
      * Adds `constraint` to the list of constraints.
@@ -403,8 +403,8 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
      * Foreign Tables
      */
     override val dropSQL: String
-        get() = "DROP " + (if (isForeign) "FOREIGN " else "") + relationKind + " " + PgDiffUtils.getDropIfExists() +
-                PgDiffUtils.getQuotedName(getName()) + ";"
+        get() = "DROP " + (if (isForeign) "FOREIGN " else "") + relationKind + " " + PgDiffUtils.dropIfExists +
+                PgDiffUtils.getQuotedName(name) + ";"
 
     fun hasRLSEnabled(): Boolean? {
         return rlsEnabled
@@ -435,9 +435,9 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         return null
     }
 
-    fun getPolicies(): List<PgPolicy> {
-        return Collections.unmodifiableList(policies)
-    }
+//    fun getPolicies(): List<PgPolicy> {
+//        return Collections.unmodifiableList(policies)
+//    }
 
     /**
      * Creates a new PgTable object.
@@ -447,7 +447,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
      * @param schema name of schema
      */
     init {
-        setName(name)
+        this.name = name
         this.database = database
         this.schema = schema
     }

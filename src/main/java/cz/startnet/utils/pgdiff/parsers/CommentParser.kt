@@ -66,7 +66,7 @@ object CommentParser {
         val tableName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(tableName)
         val schemaName = ParserUtils.getSchemaName(tableName, database)
-        val table = database.getSchema(schemaName)!!.getTable(objectName)
+        val table = database.getSchema(schemaName)!!.getTable(objectName)!!
         parser.expect("IS")
         table.comment = getComment(parser)
         parser.expect(";")
@@ -87,7 +87,7 @@ object CommentParser {
         val tableName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(tableName)
         val schemaName = ParserUtils.getSchemaName(tableName, database)
-        val constraint = database.getSchema(schemaName)!!.getTable(objectName)!!.getConstraint(constraintName)
+        val constraint = database.getSchema(schemaName)!!.getTable(objectName)!!.getConstraint(constraintName)!!
         parser.expect("IS")
         constraint.comment = getComment(parser)
         parser.expect(";")
@@ -125,7 +125,7 @@ object CommentParser {
         val schema = database.getSchema(schemaName)
         val index = schema!!.getIndex(objectName)
         if (index == null) {
-            val primaryKey = schema.getPrimaryKey(objectName)
+            val primaryKey = schema.getPrimaryKey(objectName)!!
             parser.expect("IS")
             primaryKey.comment = getComment(parser)
             parser.expect(";")
@@ -147,7 +147,7 @@ object CommentParser {
         database: PgDatabase
     ) {
         val schemaName = ParserUtils.getObjectName(parser.parseIdentifier())
-        val schema = database.getSchema(schemaName)
+        val schema = database.getSchema(schemaName)!!
         parser.expect("IS")
         schema.comment = getComment(parser)
         parser.expect(";")
@@ -166,7 +166,7 @@ object CommentParser {
         val sequenceName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(sequenceName)
         val schemaName = ParserUtils.getSchemaName(sequenceName, database)
-        val sequence = database.getSchema(schemaName)!!.getSequence(objectName)
+        val sequence = database.getSchema(schemaName)!!.getSequence(objectName)!!
         parser.expect("IS")
         sequence.comment = getComment(parser)
         parser.expect(";")
@@ -187,7 +187,7 @@ object CommentParser {
         val tableName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(tableName)
         val schemaName = ParserUtils.getSchemaName(tableName, database)
-        val trigger = database.getSchema(schemaName)!!.getTable(objectName)!!.getTrigger(triggerName)
+        val trigger = database.getSchema(schemaName)!!.getTable(objectName)!!.getTrigger(triggerName)!!
         parser.expect("IS")
         trigger.comment = getComment(parser)
         parser.expect(";")
@@ -206,7 +206,7 @@ object CommentParser {
         val viewName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(viewName)
         val schemaName = ParserUtils.getSchemaName(viewName, database)
-        val view = database.getSchema(schemaName)!!.getView(objectName)
+        val view = database.getSchema(schemaName)!!.getView(objectName)!!
         parser.expect("IS")
         view.comment = getComment(parser)
         parser.expect(";")
@@ -281,7 +281,7 @@ object CommentParser {
             } else {
                 parser.position = position2
             }
-            val argument = PgFunction.Argument()
+            val argument = PgFunction.Argument()!!
             argument.dataType = dataType
             argument.mode = mode
             argument.name = argumentName
@@ -292,7 +292,7 @@ object CommentParser {
                 parser.expect(",")
             }
         }
-        val function = schema!!.getFunction(tmpFunction.signature)
+        val function = schema!!.getFunction(tmpFunction.signature)!!
         parser.expect("IS")
         function.comment = getComment(parser)
         parser.expect(";")

@@ -234,8 +234,7 @@ object PgDumpLoader {
         ignoreSlonyTriggers: Boolean, ignoreSchemaCreation: Boolean
     ): PgDatabase {
         val database = PgDatabase()
-        var reader: BufferedReader? = null
-        reader = try {
+        val reader = try {
             BufferedReader(
                 InputStreamReader(inputStream, charsetName)
             )

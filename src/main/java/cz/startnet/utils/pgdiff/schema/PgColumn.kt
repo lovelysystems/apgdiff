@@ -23,7 +23,7 @@ class PgColumn
     /**
      * Name of the column.
      */
-    var name: String?
+    val name: String
 ) {
     /**
      * Getter for [.statistics].
@@ -123,7 +123,7 @@ class PgColumn
     /**
      * List of privileges defined on the table.
      */
-    private val privileges: MutableList<PgColumnPrivilege> = ArrayList()
+    val privileges: MutableList<PgColumnPrivilege> = ArrayList()
 
     /**
      * Returns full definition of the column.
@@ -167,9 +167,9 @@ class PgColumn
         return null
     }
 
-    fun getPrivileges(): List<PgColumnPrivilege> {
-        return Collections.unmodifiableList(privileges)
-    }
+//    fun getPrivileges(): List<PgColumnPrivilege> {
+//        return Collections.unmodifiableList(privileges)
+//    }
 
     /**
      * Parses definition of the column

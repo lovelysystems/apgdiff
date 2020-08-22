@@ -32,7 +32,7 @@ class PgFunction {
     /**
      * List of arguments.
      */
-    private val arguments: MutableList<Argument> = ArrayList()
+    val arguments: MutableList<Argument> = ArrayList()
     /**
      * Getter for [.body].
      *
@@ -114,12 +114,12 @@ class PgFunction {
         get() {
             val sbString = StringBuilder(100)
             sbString.append("DROP FUNCTION ")
-            sbString.append(PgDiffUtils.getDropIfExists())
+            sbString.append(PgDiffUtils.dropIfExists)
             sbString.append(name)
             sbString.append('(')
             var addComma = false
             for (argument in arguments) {
-                if ("OUT".equals(argument.getMode(), ignoreCase = true)) {
+                if ("OUT".equals(argument.mode, ignoreCase = true)) {
                     continue
                 }
                 if (addComma) {
@@ -132,14 +132,14 @@ class PgFunction {
             return sbString.toString()
         }
 
-    /**
-     * Getter for [.arguments]. List cannot be modified.
-     *
-     * @return [.arguments]
-     */
-    fun getArguments(): List<Argument> {
-        return Collections.unmodifiableList(arguments)
-    }
+//    /**
+//     * Getter for [.arguments]. List cannot be modified.
+//     *
+//     * @return [.arguments]
+//     */
+//    fun getArguments(): List<Argument> {
+//        return Collections.unmodifiableList(arguments)
+//    }
 
     /**
      * Adds argument to the list of arguments.
@@ -163,7 +163,7 @@ class PgFunction {
             sbString.append('(')
             var addComma = false
             for (argument in arguments) {
-                if ("OUT".equals(argument.getMode(), ignoreCase = true)) {
+                if ("OUT".equals(argument.mode, ignoreCase = true)) {
                     continue
                 }
                 if (addComma) {
@@ -226,11 +226,11 @@ class PgFunction {
             ) {
                 return false
             }
-            if (arguments.size != function.getArguments().size) {
+            if (arguments.size != function.arguments.size) {
                 return false
             } else {
                 for (i in arguments.indices) {
-                    if (arguments[i] != function.getArguments()[i]) {
+                    if (arguments[i] != function.arguments[i]) {
                         return false
                     }
                 }
@@ -259,7 +259,10 @@ class PgFunction {
         /**
          * Argument mode.
          */
-        private var mode: String? = "IN"
+        var mode: String? = "IN"
+         set(value) {
+             field = if (value.isNullOrEmpty()) "IN" else value
+         }
         /**
          * Getter for [.name].
          *
@@ -303,24 +306,24 @@ class PgFunction {
          */
         var defaultExpression: String? = null
 
-        /**
-         * Getter for [.mode].
-         *
-         * @return [.mode]
-         */
-        fun getMode(): String? {
-            return mode
-        }
+//        /**
+//         * Getter for [.mode].
+//         *
+//         * @return [.mode]
+//         */
+//        fun getMode(): String? {
+//            return mode
+//        }
 
-        /**
-         * Setter for [.mode].
-         *
-         * @param mode [.mode]
-         */
-        fun setMode(mode: String?) {
-            this.mode = if (mode == null || mode.isEmpty()) "IN" else mode
-        }
-
+//        /**
+//         * Setter for [.mode].
+//         *
+//         * @param mode [.mode]
+//         */
+//        fun setMode(mode: String?) {
+//            this.mode = if (mode == null || mode.isEmpty()) "IN" else mode
+//        }
+//
         /**
          * Creates argument declaration.
          *
@@ -358,8 +361,8 @@ class PgFunction {
                 ignoreCase = true
             ))
                     && (if (defaultExpression == null) argument.defaultExpression == null else defaultExpression == defaultExpression)
-                    && (if (mode == null) argument.getMode() == null else mode.equals(
-                argument.getMode(),
+                    && (if (mode == null) argument.mode == null else mode.equals(
+                argument.mode,
                 ignoreCase = true
             ))
                     && if (name == null) argument.name == null else name == argument.name)

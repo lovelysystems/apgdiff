@@ -14,7 +14,7 @@ class PgInheritedColumn(
     /**
      * Inherited column
      */
-    val inheritedColumn: PgColumn?
+    val inheritedColumn: PgColumn
 ) {
     /**
      * Getter for [.inheritedColumn].

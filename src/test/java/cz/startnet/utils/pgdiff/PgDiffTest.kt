@@ -49,8 +49,7 @@ class PgDiffTest(
      * @throws IOException           Thrown if problem occurred while reading
      * expected diff.
      */
-    @Test(timeout = 1000)
-    @Throws(FileNotFoundException::class, IOException::class)
+    @Test
     fun runDiffSameOriginal() {
         val diffInput = ByteArrayOutputStream()
         val writer = PrintWriter(diffInput, true)
@@ -76,8 +75,7 @@ class PgDiffTest(
      * @throws IOException           Thrown if problem occurred while reading
      * expected diff.
      */
-    @Test(timeout = 1000)
-    @Throws(FileNotFoundException::class, IOException::class)
+    @Test
     fun runDiffSameNew() {
         val diffInput = ByteArrayOutputStream()
         val writer = PrintWriter(diffInput, true)
@@ -103,8 +101,7 @@ class PgDiffTest(
      * @throws IOException           Thrown if problem occurred while reading
      * expected diff.
      */
-    @Test(timeout = 1000)
-    @Throws(FileNotFoundException::class, IOException::class)
+    @Test
     fun runDiff() {
         val diffInput = ByteArrayOutputStream()
         val writer = PrintWriter(diffInput, true)

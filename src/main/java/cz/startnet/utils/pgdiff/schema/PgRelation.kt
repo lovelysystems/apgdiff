@@ -17,22 +17,22 @@ abstract class PgRelation {
     /**
      * List of columns defined on the relation.
      */
-    protected val columns: MutableList<PgColumn> = ArrayList()
+    val columns: MutableList<PgColumn> = ArrayList()
 
     /**
      * List of indexes defined on the relation.
      */
-    private val indexes: MutableList<PgIndex> = ArrayList()
+    val indexes: MutableList<PgIndex> = ArrayList()
 
     /**
      * List of triggers defined on the table/view.
      */
-    private val triggers: MutableList<PgTrigger> = ArrayList()
+    val triggers: MutableList<PgTrigger> = ArrayList()
 
     /**
      * List of rules defined on the table/view.
      */
-    private val rules: MutableList<PgRule> = ArrayList()
+    val rules: MutableList<PgRule> = ArrayList()
     /**
      * Getter for [.clusterIndexName].
      *
@@ -93,7 +93,7 @@ abstract class PgRelation {
     /**
      * List of privileges defined on the table.
      */
-    private val privileges: MutableList<PgRelationPrivilege> = ArrayList()
+    val privileges: MutableList<PgRelationPrivilege> = ArrayList()
     /**
      * Getter for [.ownerTo].
      *
@@ -117,7 +117,7 @@ abstract class PgRelation {
      *
      * @return found column or null if no such column has been found
      */
-    open fun getColumn(name: String?): PgColumn? {
+    open fun getColumn(name: String): PgColumn? {
         for (column in columns) {
             if (column.name == name) {
                 return column
@@ -126,14 +126,14 @@ abstract class PgRelation {
         return null
     }
 
-    /**
-     * Getter for [.columns]. The list cannot be modified.
-     *
-     * @return [.columns]
-     */
-    fun getColumns(): List<PgColumn> {
-        return Collections.unmodifiableList(columns)
-    }
+//    /**
+//     * Getter for [.columns]. The list cannot be modified.
+//     *
+//     * @return [.columns]
+//     */
+//    fun getColumns(): List<PgColumn> {
+//        return Collections.unmodifiableList(columns)
+//    }
 
     /**
      * Generates SQL code for declaring relation and column comments
@@ -155,7 +155,7 @@ abstract class PgRelation {
                 sbSQL.append(';')
             }
             for (column in columns) {
-                if (column.comment != null && !column.comment.isEmpty()) {
+                if (!column.comment.isNullOrEmpty()) {
                     sbSQL.append(System.getProperty("line.separator"))
                     sbSQL.append(System.getProperty("line.separator"))
                     sbSQL.append("COMMENT ON COLUMN ")
@@ -202,32 +202,32 @@ abstract class PgRelation {
         return null
     }
 
-    /**
-     * Getter for [.indexes]. The list cannot be modified.
-     *
-     * @return [.indexes]
-     */
-    fun getIndexes(): List<PgIndex> {
-        return Collections.unmodifiableList(indexes)
-    }
+//    /**
+//     * Getter for [.indexes]. The list cannot be modified.
+//     *
+//     * @return [.indexes]
+//     */
+//    fun getIndexes(): List<PgIndex> {
+//        return Collections.unmodifiableList(indexes)
+//    }
 
-    /**
-     * Getter for [.triggers]. The list cannot be modified.
-     *
-     * @return [.triggers]
-     */
-    fun getTriggers(): List<PgTrigger> {
-        return Collections.unmodifiableList(triggers)
-    }
+//    /**
+//     * Getter for [.triggers]. The list cannot be modified.
+//     *
+//     * @return [.triggers]
+//     */
+//    fun getTriggers(): List<PgTrigger> {
+//        return Collections.unmodifiableList(triggers)
+//    }
 
-    /**
-     * Getter for [.rules]. The list cannot be modified.
-     *
-     * @return [.rules]
-     */
-    fun getRules(): List<PgRule> {
-        return Collections.unmodifiableList(rules)
-    }
+//    /**
+//     * Getter for [.rules]. The list cannot be modified.
+//     *
+//     * @return [.rules]
+//     */
+//    fun getRules(): List<PgRule> {
+//        return Collections.unmodifiableList(rules)
+//    }
 
     /**
      * Adds `column` to the list of columns.
@@ -278,7 +278,7 @@ abstract class PgRelation {
      * @return created SQL statement
      */
     open val dropSQL: String
-        get() = "DROP " + relationKind + " " + PgDiffUtils.getDropIfExists() +
+        get() = "DROP " + relationKind + " " + PgDiffUtils.dropIfExists +
                 PgDiffUtils.getQuotedName(name) + ";"
 
     /**
@@ -339,9 +339,9 @@ abstract class PgRelation {
         return false
     }
 
-    fun getPrivileges(): List<PgRelationPrivilege> {
-        return Collections.unmodifiableList(privileges)
-    }
+//    fun getPrivileges(): List<PgRelationPrivilege> {
+//        return Collections.unmodifiableList(privileges)
+//    }
 
     fun addPrivilege(privilege: PgRelationPrivilege) {
         privileges.add(privilege)

@@ -27,7 +27,7 @@ class PgType
     /**
      * List of columns defined on the table.
      */
-    private val columns: MutableList<PgColumn> = ArrayList()
+    val columns: MutableList<PgColumn> = ArrayList()
     private val enumValues: MutableList<String?> = ArrayList()
     /**
      * Getter for [.name].
@@ -57,14 +57,14 @@ class PgType
         return null
     }
 
-    /**
-     * Getter for [.columns]. The list cannot be modified.
-     *
-     * @return [.columns]
-     */
-    fun getColumns(): List<PgColumn> {
-        return Collections.unmodifiableList(columns)
-    }
+//    /**
+//     * Getter for [.columns]. The list cannot be modified.
+//     *
+//     * @return [.columns]
+//     */
+//    fun getColumns(): List<PgColumn> {
+//        return Collections.unmodifiableList(columns)
+//    }
 
     /**
      * Creates and returns SQL for creation of the table.
@@ -134,7 +134,7 @@ class PgType
      * @return created SQL statement
      */
     val dropSQL: String
-        get() = "DROP TYPE " + PgDiffUtils.getDropIfExists() + PgDiffUtils.getQuotedName(name) + ";"
+        get() = "DROP TYPE " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + ";"
 
     /**
      * Adds `column` to the list of columns.

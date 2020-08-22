@@ -89,7 +89,7 @@ object CreateTriggerParser {
         }
         if (parser.expectOptional("WHEN")) {
             parser.expect("(")
-            trigger.setWhen(parser.expression)
+            trigger.`when` =  parser.expression
             parser.expect(")")
         }
         parser.expect("EXECUTE")
@@ -132,6 +132,6 @@ object CreateTriggerParser {
         val schema = database.getSchema(
             ParserUtils.getSchemaName(tableName, database)
         )
-        schema!!.getRelation(trigger.relationName)!!.getTrigger(objectName).isDisable = true
+        schema!!.getRelation(trigger.relationName)!!.getTrigger(objectName)!!.isDisable = true
     }
 }

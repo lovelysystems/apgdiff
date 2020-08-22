@@ -5,6 +5,7 @@
  */
 package cz.startnet.utils.pgdiff.schema
 
+import com.google.inject.internal.util.ImmutableList
 import java.util.*
 
 /**
@@ -16,12 +17,12 @@ class PgDatabase {
     /**
      * List of database schemas.
      */
-    private val schemas: MutableList<PgSchema> = ArrayList(1)
+    val schemas: MutableList<PgSchema> = ArrayList(1)
 
     /**
      * Array of ignored statements.
      */
-    private val ignoredStatements: MutableList<String> = ArrayList()
+    val ignoredStatements: MutableList<String> = ArrayList()
     /**
      * Getter for [.defaultSchema].
      *
@@ -30,7 +31,7 @@ class PgDatabase {
     /**
      * Current default schema.
      */
-    var defaultSchema: PgSchema?
+    lateinit var defaultSchema: PgSchema
         private set
     /**
      * Getter for [.comment].
@@ -50,25 +51,25 @@ class PgDatabase {
     /**
      * List of extensions.
      */
-    private val extensions: MutableList<PgExtension> = ArrayList()
+    val extensions: MutableList<PgExtension> = ArrayList()
 
     /**
      * Sets default schema according to the `name` of the schema.
      *
      * @param name name of the schema
      */
-    fun setDefaultSchema(name: String?) {
-        defaultSchema = getSchema(name)
+    fun setDefaultSchema(name: String) {
+        defaultSchema = getSchema(name)!!
     }
 
-    /**
-     * Getter for [.ignoredStatements].
-     *
-     * @return [.ignoredStatements]
-     */
-    fun getIgnoredStatements(): List<String> {
-        return Collections.unmodifiableList(ignoredStatements)
-    }
+//    /**
+//     * Getter for [.ignoredStatements].
+//     *
+//     * @return [.ignoredStatements]
+//     */
+//    fun getIgnoredStatements(): List<String> {
+//        return Collections.unmodifiableList(ignoredStatements)
+//    }
 
     /**
      * Adds ignored statement to the list of ignored statements.
@@ -99,14 +100,14 @@ class PgDatabase {
         return null
     }
 
-    /**
-     * Getter for [.schemas]. The list cannot be modified.
-     *
-     * @return [.schemas]
-     */
-    fun getSchemas(): List<PgSchema?> {
-        return Collections.unmodifiableList(schemas)
-    }
+//    /**
+//     * Getter for [.schemas]. The list cannot be modified.
+//     *
+//     * @return [.schemas]
+//     */
+//    fun getSchemas(): List<PgSchema?> {
+//        return Collections.unmodifiableList(schemas)
+//    }
 
     /**
      * Adds `schema` to the lists of schemas.
@@ -117,14 +118,14 @@ class PgDatabase {
         schemas.add(schema)
     }
 
-    /**
-     * Getter for [.extensions]. The list cannot be modified.
-     *
-     * @return [.extensions]
-     */
-    fun getExtensions(): List<PgExtension> {
-        return Collections.unmodifiableList(extensions)
-    }
+//    /**
+//     * Getter for [.extensions]. The list cannot be modified.
+//     *
+//     * @return [.extensions]
+//     */
+//    fun getExtensions(): List<PgExtension> {
+//        return Collections.unmodifiableList(extensions)
+//    }
 
     /**
      * Adds `extension` to the list of extensions.
