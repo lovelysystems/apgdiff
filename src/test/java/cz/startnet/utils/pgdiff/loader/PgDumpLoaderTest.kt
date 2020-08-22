@@ -8,7 +8,6 @@ package cz.startnet.utils.pgdiff.loader
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.util.*
 
 /**
  * Tests for PgDiffLoader class.
@@ -45,29 +44,9 @@ class PgDumpLoaderTest
          * @return parameters for the tests
          */
         @JvmStatic
-        @Parameterized.Parameters
+        @Parameterized.Parameters(name = "schema_{0}.sql")
         fun parameters(): Collection<*> {
-            return Arrays.asList(
-                *arrayOf(
-                    arrayOf<Any>(1),
-                    arrayOf<Any>(2),
-                    arrayOf<Any>(3),
-                    arrayOf<Any>(4),
-                    arrayOf<Any>(5),
-                    arrayOf<Any>(6),
-                    arrayOf<Any>(7),
-                    arrayOf<Any>(8),
-                    arrayOf<Any>(9),
-                    arrayOf<Any>(10),
-                    arrayOf<Any>(11),
-                    arrayOf<Any>(12),
-                    arrayOf<Any>(13),
-                    arrayOf<Any>(14),
-                    arrayOf<Any>(15),
-                    arrayOf<Any>(16),
-                    arrayOf<Any>(18)
-                )
-            )
+            return (1..18).toList()
         }
     }
 }
