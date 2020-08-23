@@ -63,12 +63,12 @@ object CreateViewParser {
         view.query = query
         val schemaName = ParserUtils.getSchemaName(viewName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         schema.addRelation(view)
     }
 }

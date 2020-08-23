@@ -23,19 +23,19 @@ object CreatePolicyParser {
         val qualifiedTableName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(qualifiedTableName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         val table = schema.getTable(ParserUtils.getObjectName(qualifiedTableName))
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindTable"), qualifiedTableName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindTable"), qualifiedTableName,
+                    statement
                 )
+            )
         if (parser.expectOptional("FOR")) {
             val command = parser.expectOptionalOneOf(
                 "ALL", "SELECT",
@@ -49,7 +49,7 @@ object CreatePolicyParser {
             if (parser.expectOptional("PUBLIC")) {
                 policy.roles.add("PUBLIC")
             } else {
-                var role:String? = parser.parseIdentifier()
+                var role: String? = parser.parseIdentifier()
                 policy.roles.add(role!!)
                 while (role != null) {
                     if (parser.expectOptional(",")) {

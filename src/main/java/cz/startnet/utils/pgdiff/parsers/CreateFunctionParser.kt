@@ -33,12 +33,12 @@ object CreateFunctionParser {
         val functionName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(functionName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         val function = PgFunction()
         function.name = ParserUtils.getObjectName(functionName)
         schema.addFunction(function)

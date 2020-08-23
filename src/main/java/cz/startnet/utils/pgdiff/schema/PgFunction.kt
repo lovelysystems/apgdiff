@@ -260,9 +260,9 @@ class PgFunction {
          * Argument mode.
          */
         var mode: String? = "IN"
-         set(value) {
-             field = if (value.isNullOrEmpty()) "IN" else value
-         }
+            set(value) {
+                field = if (value.isNullOrEmpty()) "IN" else value
+            }
         /**
          * Getter for [.name].
          *

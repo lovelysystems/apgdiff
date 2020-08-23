@@ -192,12 +192,12 @@ object GrantRevokeParser {
                     database
                 )
                 val schema = database.getSchema(schemaName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindSchema"),
-                                schemaName, statement
-                            )
+                    ?: throw RuntimeException(
+                        MessageFormat.format(
+                            Resources.getString("CannotFindSchema"),
+                            schemaName, statement
                         )
+                    )
                 val objectName = ParserUtils.getObjectName(name)
                 val table = schema.getTable(objectName)
                 val view = schema.getView(objectName)
@@ -216,14 +216,14 @@ object GrantRevokeParser {
                             if (rel.containsColumn(columnName)) {
                                 val column = rel
                                     .getColumn(columnName)
-                                        ?: throw RuntimeException(
-                                            MessageFormat.format(
-                                                Resources.getString("CannotFindTableColumn"),
-                                                columnName,
-                                                rel.name, parser
-                                                    .string
-                                            )
+                                    ?: throw RuntimeException(
+                                        MessageFormat.format(
+                                            Resources.getString("CannotFindTableColumn"),
+                                            columnName,
+                                            rel.name, parser
+                                                .string
                                         )
+                                    )
                                 for (roleName in roles) {
                                     var columnPrivilege = column
                                         .getPrivilege(roleName)
@@ -271,20 +271,20 @@ object GrantRevokeParser {
                     database
                 )
                 val schema = database.getSchema(schemaName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindSchema"),
-                                schemaName, statement
-                            )
+                    ?: throw RuntimeException(
+                        MessageFormat.format(
+                            Resources.getString("CannotFindSchema"),
+                            schemaName, statement
                         )
+                    )
                 val objectName = ParserUtils.getObjectName(name)
                 val sequence = schema.getSequence(objectName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindSequence"), name,
-                                statement
-                            )
+                    ?: throw RuntimeException(
+                        MessageFormat.format(
+                            Resources.getString("CannotFindSequence"), name,
+                            statement
                         )
+                    )
                 for (roleName in roles) {
                     var sequencePrivilege = sequence
                         .getPrivilege(roleName)
@@ -306,12 +306,12 @@ object GrantRevokeParser {
                     // final String sequenceName = parser.parseIdentifier();
                     val schemaName = ParserUtils.getSchemaName(name, database)
                     val schema = database.getSchema(schemaName)
-                            ?: throw RuntimeException(
-                                MessageFormat.format(
-                                    Resources.getString("CannotFindSchema"),
-                                    schemaName, statement
-                                )
+                        ?: throw RuntimeException(
+                            MessageFormat.format(
+                                Resources.getString("CannotFindSchema"),
+                                schemaName, statement
                             )
+                        )
                     for (i in privileges.indices) {
                         val privKey = privileges[i]
                         for (roleName in roles) {

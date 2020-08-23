@@ -32,12 +32,12 @@ object CreateSequenceParser {
         val sequence = PgSequence(ParserUtils.getObjectName(sequenceName))
         val schemaName = ParserUtils.getSchemaName(sequenceName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         schema.addSequence(sequence)
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("AS")) {

@@ -33,12 +33,12 @@ object CreateTypeParser {
         val type = PgType(ParserUtils.getObjectName(typeName))
         val schemaName = ParserUtils.getSchemaName(typeName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         schema.addType(type)
         parser.expect("AS")
         if (parser.expectOptional("ENUM")) {

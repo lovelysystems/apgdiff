@@ -229,12 +229,12 @@ object CommentParser {
         val schema = database.getSchema(schemaName)
         val rel = schema!!.getRelation(relName)
         val column = rel!!.getColumn(objectName)
-                ?: throw ParserException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindColumnInTable"),
-                        columnName, rel.name
-                    )
+            ?: throw ParserException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindColumnInTable"),
+                    columnName, rel.name
                 )
+            )
         parser.expect("IS")
         column.comment = getComment(parser)
         parser.expect(";")

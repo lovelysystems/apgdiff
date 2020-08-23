@@ -49,12 +49,12 @@ object AlterRelationParser {
         val relName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(relName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         val objectName = ParserUtils.getObjectName(relName)
         val rel = schema.getRelation(objectName)
         if (rel == null) {
@@ -268,31 +268,31 @@ object AlterRelationParser {
         if (parser.expectOptional("SET")) {
             if (parser.expectOptional("STATISTICS")) {
                 val column = rel.getColumn(columnName)
+                    ?: throw RuntimeException(
+                        MessageFormat.format(
+                            Resources.getString("CannotFindTableColumn"),
+                            columnName, rel.name, parser.string
+                        )
+                    )
+                column.statistics = parser.parseInteger()
+            } else if (parser.expectOptional("NOT NULL")) {
+                if (rel.containsColumn(columnName)) {
+                    val column = rel.getColumn(columnName)
                         ?: throw RuntimeException(
                             MessageFormat.format(
                                 Resources.getString("CannotFindTableColumn"),
                                 columnName, rel.name, parser.string
                             )
                         )
-                column.statistics = parser.parseInteger()
-            } else if (parser.expectOptional("NOT NULL")) {
-                if (rel.containsColumn(columnName)) {
-                    val column = rel.getColumn(columnName)
-                            ?: throw RuntimeException(
-                                MessageFormat.format(
-                                    Resources.getString("CannotFindTableColumn"),
-                                    columnName, rel.name, parser.string
-                                )
-                            )
                     column.nullValue = false
                 } else if (rel.containsInheritedColumn(columnName)) {
                     val inheritedColumn = rel.getInheritedColumn(columnName)
-                            ?: throw RuntimeException(
-                                MessageFormat.format(
-                                    Resources.getString("CannotFindTableColumn"),
-                                    columnName, rel.name, parser.string
-                                )
+                        ?: throw RuntimeException(
+                            MessageFormat.format(
+                                Resources.getString("CannotFindTableColumn"),
+                                columnName, rel.name, parser.string
                             )
+                        )
                     inheritedColumn.nullValue = false
                 } else {
                     throw ParserException(
@@ -306,23 +306,23 @@ object AlterRelationParser {
                 val defaultValue = parser.expression
                 if (rel.containsColumn(columnName)) {
                     val column = rel.getColumn(columnName)
-                            ?: throw RuntimeException(
-                                MessageFormat.format(
-                                    Resources.getString("CannotFindTableColumn"),
-                                    columnName, rel.name,
-                                    parser.string
-                                )
+                        ?: throw RuntimeException(
+                            MessageFormat.format(
+                                Resources.getString("CannotFindTableColumn"),
+                                columnName, rel.name,
+                                parser.string
                             )
+                        )
                     column.defaultValue = defaultValue
                 } else if (rel.containsInheritedColumn(columnName)) {
                     val column = rel.getInheritedColumn(columnName)
-                            ?: throw RuntimeException(
-                                MessageFormat.format(
-                                    Resources.getString("CannotFindTableColumn"),
-                                    columnName, rel.name,
-                                    parser.string
-                                )
+                        ?: throw RuntimeException(
+                            MessageFormat.format(
+                                Resources.getString("CannotFindTableColumn"),
+                                columnName, rel.name,
+                                parser.string
                             )
+                        )
                     column.defaultValue = defaultValue
                 } else {
                     throw ParserException(
@@ -334,12 +334,12 @@ object AlterRelationParser {
                 }
             } else if (parser.expectOptional("STORAGE")) {
                 val column = rel.getColumn(columnName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindTableColumn"),
-                                columnName, rel.name, parser.string
-                            )
+                    ?: throw RuntimeException(
+                        MessageFormat.format(
+                            Resources.getString("CannotFindTableColumn"),
+                            columnName, rel.name, parser.string
                         )
+                    )
                 if (parser.expectOptional("PLAIN")) {
                     column.storage = "PLAIN"
                 } else if (parser.expectOptional("EXTERNAL")) {
