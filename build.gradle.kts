@@ -9,8 +9,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation(kotlin("test-junit5"))
+    testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
 }
 
 application {
@@ -25,7 +26,7 @@ lovely {
 }
 
 tasks.withType<Test> {
-    useJUnit()
+    useJUnitPlatform()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
