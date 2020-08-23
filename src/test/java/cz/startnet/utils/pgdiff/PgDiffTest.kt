@@ -138,7 +138,7 @@ class PgDiffTest {
             Args("grant_on_table_cols_mixed"),
             Args("grant_on_view_cols_mixed")
 
-        );
+        )
     }
 
     /**

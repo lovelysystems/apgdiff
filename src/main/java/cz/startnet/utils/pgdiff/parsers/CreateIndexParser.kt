@@ -41,12 +41,12 @@ object CreateIndexParser {
         val definition = parser.rest
         val schemaName = ParserUtils.getSchemaName(tableName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         val objectName = ParserUtils.getObjectName(tableName)
         val table = schema.getTable(objectName)
         val view = schema.getView(objectName)

@@ -89,7 +89,7 @@ object CreateTriggerParser {
         }
         if (parser.expectOptional("WHEN")) {
             parser.expect("(")
-            trigger.`when` =  parser.expression
+            trigger.`when` = parser.expression
             parser.expect(")")
         }
         parser.expect("EXECUTE")

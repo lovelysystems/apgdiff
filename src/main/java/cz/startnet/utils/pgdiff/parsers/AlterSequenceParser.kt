@@ -32,20 +32,20 @@ object AlterSequenceParser {
         val sequenceName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(sequenceName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         val objectName = ParserUtils.getObjectName(sequenceName)
         val sequence = schema.getSequence(objectName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSequence"), sequenceName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSequence"), sequenceName,
+                    statement
                 )
+            )
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("OWNED", "BY")) {
                 if (parser.expectOptional("NONE")) {

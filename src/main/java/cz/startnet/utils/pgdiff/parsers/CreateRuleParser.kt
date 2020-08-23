@@ -51,12 +51,12 @@ object CreateRuleParser {
         rule.query = query
         val schemaName = ParserUtils.getSchemaName(ruleName, database)
         val schema = database.getSchema(schemaName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        statement
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    statement
                 )
+            )
         schema.addRelation(rule)
         schema.getRelation(rule.relationName)!!.addRule(rule)
     }
