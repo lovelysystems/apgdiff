@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgFunction
 import java.text.MessageFormat
 
@@ -15,28 +14,26 @@ import java.text.MessageFormat
  *
  * @author fordfrog
  */
-object CreateFunctionParser {
+object CreateFunctionParser : PatternBasedSubParser(
+    "^CREATE[\\s]+(?:OR[\\s]+REPLACE[\\s]+)?FUNCTION[\\s]+.*$"
+) {
     /**
      * Parses CREATE FUNCTION and CREATE OR REPLACE FUNCTION statement.
      *
      * @param database  database
      * @param statement CREATE FUNCTION statement
      */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE")
         parser.expectOptional("OR", "REPLACE")
         parser.expect("FUNCTION")
         val functionName = parser.parseIdentifier()
-        val schemaName = ParserUtils.getSchemaName(functionName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(functionName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         val function = PgFunction()

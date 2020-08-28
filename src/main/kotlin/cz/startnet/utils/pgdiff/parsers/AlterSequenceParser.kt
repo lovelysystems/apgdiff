@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import java.text.MessageFormat
 
 /**
@@ -14,7 +13,10 @@ import java.text.MessageFormat
  *
  * @author mix86
  */
-object AlterSequenceParser {
+object AlterSequenceParser : PatternBasedSubParser(
+    "^ALTER[\\s]+SEQUENCE[\\s]+.*$",
+
+    ) {
     /**
      * Parses ALTER SEQUENCE statement.
      *
@@ -23,19 +25,16 @@ object AlterSequenceParser {
      * @param outputIgnoredStatements whether ignored statements should be
      * output in the diff
      */
-    fun parse(
-        database: PgDatabase,
-        statement: String, outputIgnoredStatements: Boolean
-    ) {
-        val parser = Parser(statement)
+    override fun parse(parser: Parser, ctx: ParserContext) {
+        val parser = Parser(parser.string)
         parser.expect("ALTER", "SEQUENCE")
         val sequenceName = parser.parseIdentifier()
-        val schemaName = ParserUtils.getSchemaName(sequenceName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(sequenceName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         val objectName = ParserUtils.getObjectName(sequenceName)
@@ -43,7 +42,7 @@ object AlterSequenceParser {
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSequence"), sequenceName,
-                    statement
+                    parser.string
                 )
             )
         while (!parser.expectOptional(";")) {

@@ -7,7 +7,6 @@ package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgColumn
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgType
 import java.text.MessageFormat
 
@@ -16,18 +15,12 @@ import java.text.MessageFormat
  *
  * @author fordfrog
  */
-object CreateTypeParser {
-    /**
-     * Parses CREATE TYPE statement.
-     *
-     * @param database database
-     * @param statement CREATE TYPE statement
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+object CreateTypeParser : PatternBasedSubParser(
+    "^CREATE[\\s]+TYPE[\\s]+.*$"
+
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
+        val database = ctx.database
         parser.expect("CREATE", "TYPE")
         val typeName = parser.parseIdentifier()
         val type = PgType(ParserUtils.getObjectName(typeName))
@@ -36,7 +29,7 @@ object CreateTypeParser {
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         schema.addType(type)

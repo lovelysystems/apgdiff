@@ -13,43 +13,33 @@ import java.text.MessageFormat
  *
  * @author fordfrog
  */
-object CommentParser {
-    /**
-     * Parses COMMENT statements.
-     *
-     * @param database                database
-     * @param statement               COMMENT statement
-     * @param outputIgnoredStatements whether ignored statements should be
-     * output into the diff
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String, outputIgnoredStatements: Boolean
-    ) {
-        val parser = Parser(statement)
+object CommentParser : PatternBasedSubParser(
+    "^COMMENT[\\s]+ON[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("COMMENT", "ON")
         if (parser.expectOptional("TABLE")) {
-            parseTable(parser, database)
+            parseTable(parser, ctx.database)
         } else if (parser.expectOptional("COLUMN")) {
-            parseColumn(parser, database)
+            parseColumn(parser, ctx.database)
         } else if (parser.expectOptional("CONSTRAINT")) {
-            parseConstraint(parser, database)
+            parseConstraint(parser, ctx.database)
         } else if (parser.expectOptional("DATABASE")) {
-            parseDatabase(parser, database)
+            parseDatabase(parser, ctx.database)
         } else if (parser.expectOptional("FUNCTION")) {
-            parseFunction(parser, database)
+            parseFunction(parser, ctx.database)
         } else if (parser.expectOptional("INDEX")) {
-            parseIndex(parser, database)
+            parseIndex(parser, ctx.database)
         } else if (parser.expectOptional("SCHEMA")) {
-            parseSchema(parser, database)
+            parseSchema(parser, ctx.database)
         } else if (parser.expectOptional("SEQUENCE")) {
-            parseSequence(parser, database)
+            parseSequence(parser, ctx.database)
         } else if (parser.expectOptional("TRIGGER")) {
-            parseTrigger(parser, database)
+            parseTrigger(parser, ctx.database)
         } else if (parser.expectOptional("VIEW")) {
-            parseView(parser, database)
-        } else if (outputIgnoredStatements) {
-            database.addIgnoredStatement(statement)
+            parseView(parser, ctx.database)
+        } else if (ctx.outputIgnoredStatements) {
+            ctx.database.addIgnoredStatement(parser.string)
         }
     }
 

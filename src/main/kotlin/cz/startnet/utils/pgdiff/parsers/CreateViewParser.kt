@@ -1,12 +1,6 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgView
 import java.text.MessageFormat
 import java.util.*
@@ -16,18 +10,10 @@ import java.util.*
  *
  * @author fordfrog
  */
-object CreateViewParser {
-    /**
-     * Parses CREATE VIEW statement.
-     *
-     * @param database  database
-     * @param statement CREATE VIEW statement
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+object CreateViewParser : PatternBasedSubParser(
+    "^CREATE[\\s]+(?:OR[\\s]+REPLACE[\\s]+)?(?:MATERIALIZED[\\s]+)?VIEW[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE")
         parser.expectOptional("OR", "REPLACE")
         val materialized = parser.expectOptional("MATERIALIZED")
@@ -61,12 +47,12 @@ object CreateViewParser {
         view.with = with.toString()
         view.declaredColumnNames = columnNames
         view.query = query
-        val schemaName = ParserUtils.getSchemaName(viewName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(viewName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         schema.addRelation(view)

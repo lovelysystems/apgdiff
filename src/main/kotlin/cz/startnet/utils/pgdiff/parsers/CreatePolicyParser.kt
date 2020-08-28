@@ -1,39 +1,31 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgPolicy
 import java.text.MessageFormat
 
-object CreatePolicyParser {
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+object CreatePolicyParser : PatternBasedSubParser(
+    "^CREATE[\\s]+POLICY[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         val policy = PgPolicy()
         parser.expect("CREATE", "POLICY")
         val policyName = parser.parseIdentifier()
         parser.expect("ON")
         val qualifiedTableName = parser.parseIdentifier()
-        val schemaName = ParserUtils.getSchemaName(qualifiedTableName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(qualifiedTableName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         val table = schema.getTable(ParserUtils.getObjectName(qualifiedTableName))
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindTable"), qualifiedTableName,
-                    statement
+                    parser.string
                 )
             )
         if (parser.expectOptional("FOR")) {

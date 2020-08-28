@@ -1,41 +1,25 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgSequence
 import java.text.MessageFormat
 
 /**
  * Parses CREATE SEQUENCE statements.
- *
- * @author fordfrog
  */
-object CreateSequenceParser {
-    /**
-     * Parses CREATE SEQUENCE statement.
-     *
-     * @param database  database
-     * @param statement CREATE SEQUENCE statement
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+object CreateSequenceParser : PatternBasedSubParser(
+    "^CREATE[\\s]+SEQUENCE[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE", "SEQUENCE")
         val sequenceName = parser.parseIdentifier()
         val sequence = PgSequence(ParserUtils.getObjectName(sequenceName))
-        val schemaName = ParserUtils.getSchemaName(sequenceName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(sequenceName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         schema.addSequence(sequence)

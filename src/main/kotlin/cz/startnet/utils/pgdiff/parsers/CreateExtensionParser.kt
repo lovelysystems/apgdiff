@@ -1,31 +1,12 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgExtension
 import cz.startnet.utils.pgdiff.schema.PgSchema
 
-/**
- * Parses CREATE EXTENSION statements.
- *
- * @author atila
- */
-object CreateExtensionParser {
-    /**
-     * Parses CREATE EXTENSION statement.
-     *
-     * @param database  database
-     * @param statement CREATE EXTENSION statement
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+object CreateExtensionParser : PatternBasedSubParser(
+    "^CREATE[\\s]+EXTENSION[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE", "EXTENSION")
         parser.expectOptional("IF", "NOT", "EXISTS")
         val extensionName = parser.parseIdentifier()
@@ -40,6 +21,6 @@ object CreateExtensionParser {
         if (parser.expectOptional("FROM")) {
             extension.from = parser.parseString()
         }
-        database.addExtension(extension)
+        ctx.database.addExtension(extension)
     }
 }

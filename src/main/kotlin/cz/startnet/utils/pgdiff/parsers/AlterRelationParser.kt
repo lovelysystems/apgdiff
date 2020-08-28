@@ -10,25 +10,15 @@ import cz.startnet.utils.pgdiff.schema.*
 import java.text.MessageFormat
 import java.util.*
 
+
 /**
- * Parses ALTER TABLE statements.
- *
- * @author fordfrog
+ * Parses ALTER TABLE and ALTER VIEW statements.
  */
-object AlterRelationParser {
-    /**
-     * Parses ALTER TABLE statement.
-     *
-     * @param database                database
-     * @param statement               ALTER TABLE statement
-     * @param outputIgnoredStatements whether ignored statements should be
-     * output in the diff
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String, outputIgnoredStatements: Boolean
-    ) {
-        val parser = Parser(statement)
+object AlterRelationParser : PatternBasedSubParser(
+    "^ALTER[\\s](FOREIGN)*TABLE[\\s]+.*$",
+    "^ALTER[\\s]+(?:MATERIALIZED[\\s]+)?VIEW[\\s]+.*$",
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("ALTER")
 
         /*
@@ -48,12 +38,12 @@ object AlterRelationParser {
             parser.throwUnsupportedCommand()
         }
         val relName = parser.parseIdentifier()
-        val schemaName = ParserUtils.getSchemaName(relName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(relName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         val objectName = ParserUtils.getObjectName(relName)
@@ -62,15 +52,15 @@ object AlterRelationParser {
             val sequence = schema.getSequence(objectName)
             if (sequence != null) {
                 parseSequence(
-                    parser, sequence, outputIgnoredStatements,
-                    relName, database
+                    parser, sequence, ctx.outputIgnoredStatements,
+                    relName, ctx.database
                 )
                 return
             }
             throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindObject"), relName,
-                    statement
+                    parser.string
                 )
             )
         }
@@ -80,7 +70,7 @@ object AlterRelationParser {
         }
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("ALTER")) {
-                parseAlterColumn(parser, rel, outputIgnoredStatements, database)
+                parseAlterColumn(parser, rel, ctx.outputIgnoredStatements, ctx.database)
             } else if (parser.expectOptional("CLUSTER", "ON")) {
                 rel.clusterIndexName = ParserUtils.getObjectName(parser.parseIdentifier())
             } else if (parser.expectOptional("OWNER", "TO")) {
@@ -111,11 +101,11 @@ object AlterRelationParser {
                 table.setRLSForced(false)
             } else if (table != null && parser.expectOptional("ENABLE")) {
                 parseEnable(
-                    parser, outputIgnoredStatements, relName, database
+                    parser, ctx.outputIgnoredStatements, relName, ctx.database
                 )
             } else if (table != null && parser.expectOptional("DISABLE")) {
                 parseDisable(
-                    parser, outputIgnoredStatements, relName, database
+                    parser, ctx.outputIgnoredStatements, relName, ctx.database
                 )
             } else {
                 parser.throwUnsupportedCommand()
@@ -268,7 +258,8 @@ object AlterRelationParser {
     ) {
         parser.expectOptional("COLUMN")
         val columnName = ParserUtils.getObjectName(parser.parseIdentifier())
-        val alterColumnParser = AlterColumnParser(columnName, parser, rel, ParserContext(database, outputIgnoredStatements))
+        val alterColumnParser =
+            AlterColumnParser(columnName, parser, rel, ParserContext(database, outputIgnoredStatements))
         alterColumnParser.parse()
     }
 

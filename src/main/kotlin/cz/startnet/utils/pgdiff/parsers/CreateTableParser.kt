@@ -1,32 +1,13 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.*
 import java.text.MessageFormat
 
-/**
- * Parses CREATE TABLE statements.
- *
- * @author fordfrog
- */
-object CreateTableParser {
-    /**
-     * Parses CREATE TABLE statement.
-     *
-     * @param database  database
-     * @param statement CREATE TABLE statement
-     * @param ignoreSchemaCreation whether schema creation should be ignored
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String, ignoreSchemaCreation: Boolean
-    ) {
-        val parser = Parser(statement)
+object CreateTableParser : PatternBasedSubParser(
+    "^CREATE[\\s]+(UNLOGGED\\s|FOREIGN\\s)*TABLE[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE")
         val unlogged = parser.expectOptional("UNLOGGED")
         val foreign = parser.expectOptional("FOREIGN")
@@ -35,22 +16,22 @@ object CreateTableParser {
         // Optional IF NOT EXISTS, irrelevant for our purposes
         parser.expectOptional("IF", "NOT", "EXISTS")
         val tableName = parser.parseIdentifier()
-        val schemaName = ParserUtils.getSchemaName(tableName, database)
-        var schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(tableName, ctx.database)
+        var schema = ctx.database.getSchema(schemaName)
         if (schema == null) {
-            if (ignoreSchemaCreation) {
+            if (ctx.ignoreSchemaCreation) {
                 schema = PgSchema(schemaName)
-                database.addSchema(schema)
+                ctx.database.addSchema(schema)
             } else {
                 throw RuntimeException(
                     MessageFormat.format(
                         Resources.getString("CannotFindSchema"), schemaName,
-                        statement
+                        parser.string
                     )
                 )
             }
         }
-        val table = PgTable(ParserUtils.getObjectName(tableName), database, schema)
+        val table = PgTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
         table.isUnlogged = unlogged
         table.isForeign = foreign
         schema.addRelation(table)
@@ -79,7 +60,7 @@ object CreateTableParser {
         }
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("INHERITS")) {
-                parseInherits(database, parser, table)
+                parseInherits(ctx.database, parser, table)
             } else if (parser.expectOptional("WITHOUT")) {
                 table.with = "OIDS=false"
             } else if (parser.expectOptional("WITH")) {
@@ -107,7 +88,7 @@ object CreateTableParser {
     /**
      * Parses INHERITS.
      *
-     * @param database database
+     * @param ctx.database ctx.database
      * @param parser parser
      * @param table  pg table
      */

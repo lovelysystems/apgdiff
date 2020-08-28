@@ -1,8 +1,3 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
@@ -15,21 +10,11 @@ import java.util.*
  *
  * @author user
  */
-object GrantRevokeParser {
-    /**
-     * Parses GRANT statement.
-     *
-     * @param database
-     * database
-     * @param statement
-     * GRANT statement
-     * @param outputIgnoredStatements
-     * whether ignored statements should be output in the diff
-     */
-    fun parse(
-        database: PgDatabase, statement: String,
-        outputIgnoredStatements: Boolean
-    ) {
+object GrantRevokeParser : PatternBasedSubParser(
+    "^GRANT[\\s]+.*$",
+    "^REVOKE[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         val grant: Boolean
         // Map<String, List<String>> privileges = new TreeMap<String,
         // List<String>>();
@@ -39,7 +24,7 @@ object GrantRevokeParser {
         val roles: MutableList<String?> = ArrayList()
         var grantOption = false
         val revokeMode: String?
-        val parser = Parser(statement)
+        val parser = Parser(parser.string)
         grant = parser.expect("GRANT", true)
         if (!grant) {
             parser.expect("REVOKE")
@@ -55,8 +40,8 @@ object GrantRevokeParser {
             // unknown privilege so unsupported object privilege
             // object role_name is using a different syntax so will always pass
             // here
-            if (outputIgnoredStatements) {
-                database.addIgnoredStatement(statement)
+            if (ctx.outputIgnoredStatements) {
+                ctx.database.addIgnoredStatement(parser.string)
                 return
             } else {
                 return
@@ -74,8 +59,8 @@ object GrantRevokeParser {
             || "REFERENCES".equals(privilege, ignoreCase = true)
         ) {
             parseColumns(
-                parser, database, statement,
-                outputIgnoredStatements
+                parser, ctx.database, parser.string,
+                ctx.outputIgnoredStatements
             )
         } else {
             null
@@ -98,8 +83,8 @@ object GrantRevokeParser {
                     || "REFERENCES".equals(privilege, ignoreCase = true)
                 ) {
                     parseColumns(
-                        parser, database, statement,
-                        outputIgnoredStatements
+                        parser, ctx.database, parser.string,
+                        ctx.outputIgnoredStatements
                     )
                 } else {
                     null
@@ -113,8 +98,8 @@ object GrantRevokeParser {
         val separator = parser.expectOptional("ON")
         if (!separator) {
             // column object
-            if (outputIgnoredStatements) {
-                database.addIgnoredStatement(statement)
+            if (ctx.outputIgnoredStatements) {
+                ctx.database.addIgnoredStatement(parser.string)
                 return
             }
         }
@@ -135,8 +120,8 @@ object GrantRevokeParser {
             || "ALL FUNCTIONS IN SCHEMA".equals(objectType, ignoreCase = true)
         ) {
             parseConsumeFunctionSignature(
-                parser, database, statement,
-                outputIgnoredStatements
+                parser, ctx.database, parser.string,
+                ctx.outputIgnoredStatements
             )
         }
         identifiers.add(identifier)
@@ -148,8 +133,8 @@ object GrantRevokeParser {
                         .equals(objectType, ignoreCase = true)
                 ) {
                     parseConsumeFunctionSignature(
-                        parser, database, statement,
-                        outputIgnoredStatements
+                        parser, ctx.database, parser.string,
+                        ctx.outputIgnoredStatements
                     )
                 }
                 identifiers.add(identifier)
@@ -179,8 +164,8 @@ object GrantRevokeParser {
         } else {
             revokeMode = parser.expectOptionalOneOf("RESTRICT", "CASCADE")
             if ("CASCADE".equals(revokeMode, ignoreCase = true)) {
-                if (outputIgnoredStatements) {
-                    database.addIgnoredStatement(statement)
+                if (ctx.outputIgnoredStatements) {
+                    ctx.database.addIgnoredStatement(parser.string)
                     return
                 }
             }
@@ -189,13 +174,13 @@ object GrantRevokeParser {
             for (name in identifiers) {
                 val schemaName = ParserUtils.getSchemaName(
                     name,
-                    database
+                    ctx.database
                 )
-                val schema = database.getSchema(schemaName)
+                val schema = ctx.database.getSchema(schemaName)
                     ?: throw RuntimeException(
                         MessageFormat.format(
                             Resources.getString("CannotFindSchema"),
-                            schemaName, statement
+                            schemaName, parser.string
                         )
                     )
                 val objectName = ParserUtils.getObjectName(name)
@@ -204,7 +189,7 @@ object GrantRevokeParser {
                 if (table == null && view == null) throw RuntimeException(
                     MessageFormat.format(
                         Resources.getString("CannotFindObject"), name,
-                        statement
+                        parser.string
                     )
                 )
                 val rel = table ?: view!!
@@ -268,13 +253,13 @@ object GrantRevokeParser {
                 // final String sequenceName = parser.parseIdentifier();
                 val schemaName = ParserUtils.getSchemaName(
                     name,
-                    database
+                    ctx.database
                 )
-                val schema = database.getSchema(schemaName)
+                val schema = ctx.database.getSchema(schemaName)
                     ?: throw RuntimeException(
                         MessageFormat.format(
                             Resources.getString("CannotFindSchema"),
-                            schemaName, statement
+                            schemaName, parser.string
                         )
                     )
                 val objectName = ParserUtils.getObjectName(name)
@@ -282,7 +267,7 @@ object GrantRevokeParser {
                     ?: throw RuntimeException(
                         MessageFormat.format(
                             Resources.getString("CannotFindSequence"), name,
-                            statement
+                            parser.string
                         )
                     )
                 for (roleName in roles) {
@@ -304,12 +289,12 @@ object GrantRevokeParser {
             if (grant) {
                 for (name in identifiers) {
                     // final String sequenceName = parser.parseIdentifier();
-                    val schemaName = ParserUtils.getSchemaName(name, database)
-                    val schema = database.getSchema(schemaName)
+                    val schemaName = ParserUtils.getSchemaName(name, ctx.database)
+                    val schema = ctx.database.getSchema(schemaName)
                         ?: throw RuntimeException(
                             MessageFormat.format(
                                 Resources.getString("CannotFindSchema"),
-                                schemaName, statement
+                                schemaName, parser.string
                             )
                         )
                     for (i in privileges.indices) {
@@ -321,8 +306,8 @@ object GrantRevokeParser {
                 }
             }
         } else {
-            if (outputIgnoredStatements) {
-                database.addIgnoredStatement(statement)
+            if (ctx.outputIgnoredStatements) {
+                ctx.database.addIgnoredStatement(parser.string)
             }
         }
     }
