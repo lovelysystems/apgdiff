@@ -16,7 +16,7 @@ class PgDumpLoaderTest {
         javaClass.getResourceAsStream("/loader_test_files/$sqlFile").use {
             PgDumpLoader.loadDatabaseSchema(
                 it,
-                "UTF-8", false, false, false
+                "UTF-8", true, false, false
             )
         }
     }

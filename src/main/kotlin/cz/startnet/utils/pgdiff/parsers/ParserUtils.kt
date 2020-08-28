@@ -63,7 +63,7 @@ object ParserUtils {
     fun getSchemaName(
         name: String?,
         database: PgDatabase
-    ): String? {
+    ): String {
         val names = splitNames(name)
         return if (names.size < 2) {
             database.defaultSchema.name

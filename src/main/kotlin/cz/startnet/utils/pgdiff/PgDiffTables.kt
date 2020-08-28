@@ -107,12 +107,14 @@ object PgDiffTables {
             addInheritedColumnDefaults(writer, arguments, oldTable, newTable, searchPathHelper)
             checkTablespace(writer, oldTable, newTable, searchPathHelper)
             addAlterStatistics(writer, oldTable, newTable, searchPathHelper)
+            addAlterGenerated(writer, oldTable, newTable, searchPathHelper)
             addAlterStorage(writer, oldTable, newTable, searchPathHelper)
             alterComments(writer, oldTable, newTable, searchPathHelper)
             alterOwnerTo(writer, oldTable, newTable, searchPathHelper)
             alterPrivileges(writer, oldTable, newTable, searchPathHelper)
             alterPrivilegesColumns(writer, oldTable, newTable, searchPathHelper)
             alterRLS(writer, oldTable, newTable, searchPathHelper)
+
         }
     }
 
@@ -162,6 +164,36 @@ object PgDiffTables {
     }
 
     /**
+     * Generate the needed alter table xxx add generated when needed
+     */
+    private fun addAlterGenerated(
+        writer: PrintWriter,
+        oldTable: PgTable?, newTable: PgTable,
+        searchPathHelper: SearchPathHelper
+    ) {
+        for (newColumn in newTable.columns) {
+            val oldColumn = oldTable!!.getColumn(newColumn.name)
+            val oldGenerated = oldColumn?.generated
+            val newGenerated = newColumn.generated
+            if (newGenerated == null && oldGenerated != null) {
+                TODO("generated definition removed from column")
+            }
+            if (newGenerated == null || newGenerated == oldGenerated) {
+                continue
+            }
+            searchPathHelper.outputSearchPath(writer)
+            writer.println()
+            writer.print("ALTER TABLE ")
+            writer.print(PgDiffUtils.getQuotedName(newTable.name))
+            writer.print(" ALTER COLUMN ")
+            writer.print(PgDiffUtils.getQuotedName(newColumn.name))
+            newGenerated.sql(writer)
+            // writer.print(newGenerated.sql)
+            writer.print(';')
+        }
+    }
+
+    /**
      * Generate the needed alter table xxx set storage when needed.
      *
      * @param writer           writer the output should be written to
@@ -171,10 +203,10 @@ object PgDiffTables {
      */
     private fun addAlterStorage(
         writer: PrintWriter,
-        oldTable: PgTable?, newTable: PgTable?,
+        oldTable: PgTable?, newTable: PgTable,
         searchPathHelper: SearchPathHelper
     ) {
-        for (newColumn in newTable!!.columns) {
+        for (newColumn in newTable.columns) {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
             val oldStorage = oldColumn?.storage
             val newStorage = if (newColumn.storage == null
