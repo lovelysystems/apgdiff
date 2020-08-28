@@ -13,17 +13,7 @@ import java.util.*
  *
  * @author fordfrog
  */
-class PgSchema
-/**
- * Creates a new PgSchema object.
- *
- * @param name [.name]
- */(
-    /**
-     * Name of the schema.
-     */
-    val name: String?
-) {
+class PgSchema(val name: String) {
     /**
      * List of functions defined in the schema.
      */
@@ -155,15 +145,6 @@ class PgSchema
         return null
     }
 
-//    /**
-//     * Getter for [.functions]. The list cannot be modified.
-//     *
-//     * @return [.functions]
-//     */
-//    fun getFunctions(): List<PgFunction> {
-//        return Collections.unmodifiableList(functions)
-//    }
-
     /**
      * Getter for grant statements. The list cannot be modified.
      *
@@ -220,33 +201,6 @@ class PgSchema
         return null
     }
 
-//    /**
-//     * Getter for [.indexes]. The list cannot be modified.
-//     *
-//     * @return [.indexes]
-//     */
-//    fun getIndexes(): List<PgIndex> {
-//        return Collections.unmodifiableList(indexes)
-//    }
-
-    /**
-     * Getter for [.primaryKeys]. The list cannot be modified.
-     *
-     * @return [.primaryKeys]
-     */
-    fun getPrimaryKeys(): List<PgConstraint> {
-        return Collections.unmodifiableList(primaryKeys)
-    }
-
-//    /**
-//     * Getter for [.sequences]. The list cannot be modified.
-//     *
-//     * @return [.sequences]
-//     */
-//    fun getSequences(): List<PgSequence> {
-//        return Collections.unmodifiableList(sequences)
-//    }
-
     /**
      * Finds table/view according to specified `name`.
      *
@@ -290,15 +244,6 @@ class PgSchema
             }
             return list
         }
-
-//    /**
-//     * Getter for [.rels]. The list cannot be modified.
-//     *
-//     * @return [.rels]
-//     */
-//    fun getRels(): List<PgRelation> {
-//        return Collections.unmodifiableList(rels)
-//    }
 
     /**
      * Finds view according to specified view `name`.
@@ -391,15 +336,6 @@ class PgSchema
         types.add(type)
     }
 
-//    /**
-//     * Returns a list of types
-//     *
-//     * @return types List of PgType
-//     */
-//    fun getTypes(): List<PgType> {
-//        return types
-//    }
-//
     /**
      * Finds type according to specified name `name`.
      *

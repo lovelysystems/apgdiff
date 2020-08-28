@@ -35,7 +35,8 @@ object AlterRelationParser {
          * PostgreSQL allows using ALTER TABLE on views as well as other
          * relation types, so we just ignore type here and derive its type from
          * the original CREATE command.
-         */parser.expectOptional("FOREIGN")
+         */
+        parser.expectOptional("FOREIGN")
         //OK FOREIGN TABLE
         if (parser.expectOptional("TABLE")) {
             parser.expectOptional("ONLY")
@@ -79,7 +80,7 @@ object AlterRelationParser {
         }
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("ALTER")) {
-                parseAlterColumn(parser, rel)
+                parseAlterColumn(parser, rel, outputIgnoredStatements, database)
             } else if (parser.expectOptional("CLUSTER", "ON")) {
                 rel.clusterIndexName = ParserUtils.getObjectName(parser.parseIdentifier())
             } else if (parser.expectOptional("OWNER", "TO")) {
@@ -261,102 +262,14 @@ object AlterRelationParser {
      */
     private fun parseAlterColumn(
         parser: Parser,
-        rel: PgRelation
+        rel: PgRelation,
+        outputIgnoredStatements: Boolean,
+        database: PgDatabase
     ) {
         parser.expectOptional("COLUMN")
         val columnName = ParserUtils.getObjectName(parser.parseIdentifier())
-        if (parser.expectOptional("SET")) {
-            if (parser.expectOptional("STATISTICS")) {
-                val column = rel.getColumn(columnName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindTableColumn"),
-                            columnName, rel.name, parser.string
-                        )
-                    )
-                column.statistics = parser.parseInteger()
-            } else if (parser.expectOptional("NOT NULL")) {
-                if (rel.containsColumn(columnName)) {
-                    val column = rel.getColumn(columnName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindTableColumn"),
-                                columnName, rel.name, parser.string
-                            )
-                        )
-                    column.nullValue = false
-                } else if (rel.containsInheritedColumn(columnName)) {
-                    val inheritedColumn = rel.getInheritedColumn(columnName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindTableColumn"),
-                                columnName, rel.name, parser.string
-                            )
-                        )
-                    inheritedColumn.nullValue = false
-                } else {
-                    throw ParserException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindColumnInTable"),
-                            columnName, rel.name
-                        )
-                    )
-                }
-            } else if (parser.expectOptional("DEFAULT")) {
-                val defaultValue = parser.expression
-                if (rel.containsColumn(columnName)) {
-                    val column = rel.getColumn(columnName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindTableColumn"),
-                                columnName, rel.name,
-                                parser.string
-                            )
-                        )
-                    column.defaultValue = defaultValue
-                } else if (rel.containsInheritedColumn(columnName)) {
-                    val column = rel.getInheritedColumn(columnName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindTableColumn"),
-                                columnName, rel.name,
-                                parser.string
-                            )
-                        )
-                    column.defaultValue = defaultValue
-                } else {
-                    throw ParserException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindColumnInTable"),
-                            columnName, rel.name
-                        )
-                    )
-                }
-            } else if (parser.expectOptional("STORAGE")) {
-                val column = rel.getColumn(columnName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindTableColumn"),
-                            columnName, rel.name, parser.string
-                        )
-                    )
-                if (parser.expectOptional("PLAIN")) {
-                    column.storage = "PLAIN"
-                } else if (parser.expectOptional("EXTERNAL")) {
-                    column.storage = "EXTERNAL"
-                } else if (parser.expectOptional("EXTENDED")) {
-                    column.storage = "EXTENDED"
-                } else if (parser.expectOptional("MAIN")) {
-                    column.storage = "MAIN"
-                } else {
-                    parser.throwUnsupportedCommand()
-                }
-            } else {
-                parser.throwUnsupportedCommand()
-            }
-        } else {
-            parser.throwUnsupportedCommand()
-        }
+        val alterColumnParser = AlterColumnParser(columnName, parser, rel, ParserContext(database, outputIgnoredStatements))
+        alterColumnParser.parse()
     }
 
     /**

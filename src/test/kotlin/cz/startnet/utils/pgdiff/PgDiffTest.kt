@@ -17,6 +17,7 @@ class PgDiffTest {
 
     fun parameters(): List<Args> {
         return listOf(
+            Args("alter_column_generated"),
             Args("modify_column_type"),
             Args("add_cluster"),
             Args("drop_cluster"),

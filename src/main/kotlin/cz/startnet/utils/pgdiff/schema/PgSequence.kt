@@ -8,159 +8,45 @@ package cz.startnet.utils.pgdiff.schema
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.util.*
 
-/**
- * Stores sequence information.
- *
- * @author fordfrog
- */
-class PgSequence
-/**
- * Creates a new PgSequence object.
- *
- * @param name name of the sequence
- */(
-    /**
-     * Name of the sequence.
-     */
-    var name: String?
+class PgSequence(
+    var name: String
 ) {
-    /**
-     * Getter for [.cache].
-     *
-     * @return [.cache]
-     */
-    /**
-     * Setter for [.cache].
-     *
-     * @param cache [.cache]
-     */
     /**
      * Value for CACHE or null if no value is specified.
      */
     var cache: String? = null
     /**
-     * Getter for [.increment].
-     *
-     * @return [.increment]
-     */
-    /**
-     * Setter for [.increment].
-     *
-     * @param increment [.increment]
-     */
-    /**
      * Value for INCREMENT BY or null if no value is specified.
      */
     var increment: String? = null
-    /**
-     * Getter for [.maxValue].
-     *
-     * @return [.maxValue]
-     */
-    /**
-     * Setter for [.maxValue].
-     *
-     * @param maxValue [.maxValue]
-     */
     /**
      * Value for MAXVALUE or null if no value is specified.
      */
     var maxValue: String? = null
     /**
-     * Getter for [.minValue].
-     *
-     * @return [.minValue]
-     */
-    /**
-     * Setter for [.minValue].
-     *
-     * @param minValue [.minValue]
-     */
-    /**
      * Value for MINVALUE or null if no value is specified.
      */
     var minValue: String? = null
-    /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Setter for [.name].
-     *
-     * @param name [.name]
-     */
-    /**
-     * Getter for [.startWith].
-     *
-     * @return [.startWith]
-     */
-    /**
-     * Setter for [.startWith].
-     *
-     * @param startWith [.startWith]
-     */
     /**
      * Value for START WITH or null if no value is specified.
      */
     var startWith: String? = null
     /**
-     * Getter for [.cycle].
-     *
-     * @return [.cycle]
-     */
-    /**
-     * Setter for [.cycle].
-     *
-     * @param cycle [.cycle]
-     */
-    /**
      * True if CYCLE, false if NO CYCLE.
      */
     var isCycle = false
-    /**
-     * Getter for [.ownedBy].
-     *
-     * @return [.ownedBy]
-     */
-    /**
-     * Setter for [.ownedBy].
-     *
-     * @param ownedBy [.ownedBy]
-     */
     /**
      * Column the sequence is owned by.
      */
     var ownedBy: String? = null
     /**
-     * Getter for [.comment].
-     *
-     * @return [.comment]
-     */
-    /**
-     * Setter for [.comment].
-     *
-     * @param comment [.comment]
-     */
-    /**
      * Comment.
      */
     var comment: String? = null
-
     /**
      * List of privileges defined on the sequence.
      */
     val privileges: MutableList<PgSequencePrivilege> = ArrayList()
-    /**
-     * Getter for [.dataType].
-     *
-     * @return [.dataType]
-     */
-    /**
-     * Setter for [.ownedBy].
-     *
-     * @param dataType [.dataType]
-     */
     /**
      * Value for AS or null if no value is specified.
      */
