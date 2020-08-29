@@ -3,6 +3,8 @@ DROP SCHEMA IF EXISTS testschema1 CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS testschema2;
 
+ALTER SCHEMA testschema2 OWNER TO fordfrog;
+
 SET search_path = public, pg_catalog;
 
 DROP TABLE IF EXISTS testtable2;

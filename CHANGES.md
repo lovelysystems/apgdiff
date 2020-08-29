@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- added support for `ALTER SCHEMA ... OWNER TO ...`
 - added support for `ALTER COLUMN ADD GENERATED ... AS IDENTITY`
 - rewrite to kotlin
 - replaced maven with gradle

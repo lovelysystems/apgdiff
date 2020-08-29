@@ -9,6 +9,7 @@ object CreateSchemaParser : PatternBasedSubParser(
 
     override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE", "SCHEMA")
+        parser.expectOptional("IF NOT EXISTS")
         if (parser.expectOptional("AUTHORIZATION")) {
             val schema = PgSchema(
                 ParserUtils.getObjectName(parser.parseIdentifier())

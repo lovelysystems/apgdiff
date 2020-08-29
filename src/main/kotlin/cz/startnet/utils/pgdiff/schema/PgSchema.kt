@@ -14,6 +14,7 @@ import java.util.*
  * @author fordfrog
  */
 class PgSchema(val name: String) {
+
     /**
      * List of functions defined in the schema.
      */
@@ -101,6 +102,12 @@ class PgSchema(val name: String) {
      */
     var comment: String? = null
 
+
+    var owner: String? = null
+
+    val ownerSQL: String
+        get() = "ALTER SCHEMA ${PgDiffUtils.getQuotedName(name)} OWNER TO $owner;"
+
     /**
      * Creates and returns SQL for creation of the schema.
      *
@@ -117,7 +124,7 @@ class PgSchema(val name: String) {
                 sbSQL.append(PgDiffUtils.getQuotedName(authorization))
             }
             sbSQL.append(';')
-            if (comment != null && !comment!!.isEmpty()) {
+            if (!comment.isNullOrEmpty()) {
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append("COMMENT ON SCHEMA ")
@@ -125,6 +132,11 @@ class PgSchema(val name: String) {
                 sbSQL.append(" IS ")
                 sbSQL.append(comment)
                 sbSQL.append(';')
+            }
+            if (owner != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(ownerSQL)
             }
             return sbSQL.toString()
         }

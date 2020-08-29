@@ -69,6 +69,7 @@ object PgDumpLoader {
         )
         val subParsers = listOf<SubParser>(
             CreateSchemaParser,
+            AlterSchemaParser,
             CreateExtensionParser,
             DefaultSchemaParser,
             CreateTableParser,

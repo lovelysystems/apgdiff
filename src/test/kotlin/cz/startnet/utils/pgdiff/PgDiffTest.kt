@@ -17,6 +17,7 @@ class PgDiffTest {
 
     fun parameters(): List<Args> {
         return listOf(
+            Args("alter_schema"),
             Args("alter_column_generated"),
             Args("modify_column_type"),
             Args("add_cluster"),
@@ -213,7 +214,7 @@ class PgDiffTest {
         }
         reader.close()
 
-        sbExpDiff.toString().trim { it <= ' ' } shouldBe diffInput.toString().trim { it <= ' ' }
+        diffInput.toString().trim { it <= ' ' } shouldBe sbExpDiff.toString().trim { it <= ' ' }
     }
 
     private fun testFileAsStream(path: String): InputStream {

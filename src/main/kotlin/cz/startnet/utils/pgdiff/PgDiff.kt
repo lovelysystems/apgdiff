@@ -82,12 +82,16 @@ object PgDiff {
      */
     private fun createNewSchemas(
         writer: PrintWriter,
-        oldDatabase: PgDatabase?, newDatabase: PgDatabase?
+        oldDatabase: PgDatabase,
+        newDatabase: PgDatabase
     ) {
-        for (newSchema in newDatabase!!.schemas) {
-            if (oldDatabase!!.getSchema(newSchema.name) == null) {
+        for (newSchema in newDatabase.schemas) {
+            val oldSchema = oldDatabase.getSchema(newSchema.name)
+            if (oldSchema == null) {
                 writer.println()
                 writer.println(newSchema.creationSQL)
+            } else if (newSchema.owner != oldSchema.owner) {
+                writer.println(newSchema.ownerSQL)
             }
         }
     }
