@@ -9,17 +9,17 @@ import cz.startnet.utils.pgdiff.Resources
 import java.text.MessageFormat
 import java.util.*
 
+fun interface SubParser {
+
+    operator fun invoke(parser: Parser, ctx: ParserContext): Boolean
+}
+
 /**
  * Class for parsing strings.
  *
  * @author fordfrog
  */
-class Parser(
-    /**
-     * String to be parsed.
-     */
-    val string: String
-) {
+class Parser(val string: String) {
     /**
      * Returns parsed string.
      *

@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgRule
 import java.text.MessageFormat
 
@@ -15,18 +14,10 @@ import java.text.MessageFormat
  *
  * @author jalissonmello
  */
-object CreateRuleParser {
-    /**
-     * Parses CREATE VIEW statement.
-     *
-     * @param database database
-     * @param statement CREATE VIEW statement
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+object CreateRuleParser : PatternBasedSubParser(
+    "^CREATE[\\s]+RULE[\\s]+.*$"
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE")
         parser.expectOptional("OR", "REPLACE")
         parser.expect("RULE")
@@ -49,12 +40,12 @@ object CreateRuleParser {
         val query = parser.rest
         rule.relationName = ParserUtils.getObjectName(relationName)
         rule.query = query
-        val schemaName = ParserUtils.getSchemaName(ruleName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(ruleName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         schema.addRelation(rule)

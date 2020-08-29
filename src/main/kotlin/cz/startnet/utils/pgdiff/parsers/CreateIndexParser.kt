@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgIndex
 import java.text.MessageFormat
 
@@ -15,18 +14,16 @@ import java.text.MessageFormat
  *
  * @author fordfrog
  */
-object CreateIndexParser {
+object CreateIndexParser:PatternBasedSubParser(
+    "^CREATE[\\s]+(?:UNIQUE[\\s]+)?INDEX[\\s]+.*$"
+    ) {
     /**
      * Parses CREATE INDEX statement.
      *
      * @param database  database
      * @param statement CREATE INDEX statement
      */
-    fun parse(
-        database: PgDatabase,
-        statement: String
-    ) {
-        val parser = Parser(statement)
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE")
         val unique = parser.expectOptional("UNIQUE")
         parser.expect("INDEX")
@@ -39,12 +36,12 @@ object CreateIndexParser {
         }
         val tableName = parser.parseIdentifier()
         val definition = parser.rest
-        val schemaName = ParserUtils.getSchemaName(tableName, database)
-        val schema = database.getSchema(schemaName)
+        val schemaName = ParserUtils.getSchemaName(tableName, ctx.database)
+        val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindSchema"), schemaName,
-                    statement
+                    parser.string
                 )
             )
         val objectName = ParserUtils.getObjectName(tableName)
@@ -58,7 +55,7 @@ object CreateIndexParser {
             throw RuntimeException(
                 MessageFormat.format(
                     Resources.getString("CannotFindObject"), tableName,
-                    statement
+                    parser.string
                 )
             )
         }

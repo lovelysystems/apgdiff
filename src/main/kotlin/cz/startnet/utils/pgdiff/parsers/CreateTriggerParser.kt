@@ -1,8 +1,3 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.schema.PgDatabase
@@ -11,22 +6,12 @@ import cz.startnet.utils.pgdiff.schema.PgTrigger.EventTimeQualification
 
 /**
  * Parses CREATE TRIGGER statements.
- *
- * @author fordfrog
  */
-object CreateTriggerParser {
-    /**
-     * Parses CREATE TRIGGER statement.
-     *
-     * @param database            database
-     * @param statement           CREATE TRIGGER statement
-     * @param ignoreSlonyTriggers whether Slony triggers should be ignored
-     */
-    fun parse(
-        database: PgDatabase,
-        statement: String, ignoreSlonyTriggers: Boolean
-    ) {
-        val parser = Parser(statement)
+object CreateTriggerParser : PatternBasedSubParser(
+    "^CREATE[\\s]+TRIGGER[\\s]+.*$"
+
+) {
+    override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE", "TRIGGER")
         val triggerName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(triggerName)
@@ -95,11 +80,11 @@ object CreateTriggerParser {
         parser.expect("EXECUTE")
         parser.expectOptional("PROCEDURE")
         trigger.function = parser.rest
-        val ignoreSlonyTrigger = (ignoreSlonyTriggers
+        val ignoreSlonyTrigger = (ctx.ignoreSlonyTriggers
                 && ("_slony_logtrigger" == trigger.name || "_slony_denyaccess" == trigger.name))
         if (!ignoreSlonyTrigger) {
-            val schema = database.getSchema(
-                ParserUtils.getSchemaName(relationName, database)
+            val schema = ctx.database.getSchema(
+                ParserUtils.getSchemaName(relationName, ctx.database)
             )
             schema!!.getRelation(trigger.relationName)!!.addTrigger(trigger)
         }

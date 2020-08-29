@@ -18,194 +18,11 @@ import java.util.regex.Pattern
  * @author fordfrog
  */
 object PgDumpLoader {
-    //NOPMD
-    /**
-     * Pattern for testing whether it is CREATE SCHEMA statement.
-     */
-    private val PATTERN_CREATE_SCHEMA = Pattern.compile(
-        "^CREATE[\\s]+SCHEMA[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for parsing default schema (search_path).
-     */
-    private val PATTERN_DEFAULT_SCHEMA = Pattern.compile(
-        "^SET[\\s]+search_path[\\s]*=[\\s]*\"?([^,\\s\"]+)\"?"
-                + "(?:,[\\s]+.*)?;$", Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE TABLE statement.
-     */
-    private val PATTERN_CREATE_TABLE = Pattern.compile(
-        "^CREATE[\\s]+(UNLOGGED\\s|FOREIGN\\s)*TABLE[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE VIEW or CREATE MATERIALIZED
-     * VIEW statement.
-     */
-    private val PATTERN_CREATE_VIEW = Pattern.compile(
-        "^CREATE[\\s]+(?:OR[\\s]+REPLACE[\\s]+)?(?:MATERIALIZED[\\s]+)?VIEW[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is ALTER TABLE statement.
-     */
-    private val PATTERN_ALTER_TABLE = Pattern.compile(
-        "^ALTER[\\s](FOREIGN)*TABLE[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE SEQUENCE statement.
-     */
-    private val PATTERN_CREATE_SEQUENCE = Pattern.compile(
-        "^CREATE[\\s]+SEQUENCE[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is ALTER SEQUENCE statement.
-     */
-    private val PATTERN_ALTER_SEQUENCE = Pattern.compile(
-        "^ALTER[\\s]+SEQUENCE[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE INDEX statement.
-     */
-    private val PATTERN_CREATE_INDEX = Pattern.compile(
-        "^CREATE[\\s]+(?:UNIQUE[\\s]+)?INDEX[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is SELECT statement.
-     */
-    private val PATTERN_SELECT = Pattern.compile(
-        "^SELECT[\\s]+.*$", Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is INSERT INTO statement.
-     */
-    private val PATTERN_INSERT_INTO = Pattern.compile(
-        "^INSERT[\\s]+INTO[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is UPDATE statement.
-     */
-    private val PATTERN_UPDATE = Pattern.compile(
-        "^UPDATE[\\s].*$", Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is DELETE FROM statement.
-     */
-    private val PATTERN_DELETE_FROM = Pattern.compile(
-        "^DELETE[\\s]+FROM[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE TRIGGER statement.
-     */
-    private val PATTERN_CREATE_TRIGGER = Pattern.compile(
-        "^CREATE[\\s]+TRIGGER[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE FUNCTION or CREATE OR REPLACE
-     * FUNCTION statement.
-     */
-    private val PATTERN_CREATE_FUNCTION = Pattern.compile(
-        "^CREATE[\\s]+(?:OR[\\s]+REPLACE[\\s]+)?FUNCTION[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is ALTER VIEW statement.
-     */
-    private val PATTERN_ALTER_VIEW = Pattern.compile(
-        "^ALTER[\\s]+(?:MATERIALIZED[\\s]+)?VIEW[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is COMMENT statement.
-     */
-    private val PATTERN_COMMENT = Pattern.compile(
-        "^COMMENT[\\s]+ON[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE TYPE statement.
-     */
-    private val PATTERN_CREATE_TYPE = Pattern.compile(
-        "^CREATE[\\s]+TYPE[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is GRANT statement.
-     */
-    private val PATTERN_GRANT = Pattern.compile(
-        "^GRANT[\\s]+.*$", Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is REVOKE statement.
-     */
-    private val PATTERN_REVOKE = Pattern.compile(
-        "^REVOKE[\\s]+.*$", Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
     /**
      * Pattern for testing a dollar quoting tag.
      */
     private val PATTERN_DOLLAR_TAG = Pattern.compile(
         "[\"\\s]",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE EXTENSION statement.
-     */
-    private val PATTERN_CREATE_EXTENSION = Pattern.compile(
-        "^CREATE[\\s]+EXTENSION[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE POLICY statement.
-     */
-    private val PATTERN_CREATE_POLICY = Pattern.compile(
-        "^CREATE[\\s]+POLICY[\\s]+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE POLICY statement.
-     */
-    private val PATTERN_DISABLE_TRIGGER = Pattern.compile(
-        "ALTER\\s+TABLE+\\s+\\w+.+\\w+\\s+DISABLE+\\s+TRIGGER+\\s+\\w+.*$",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
-    )
-
-    /**
-     * Pattern for testing whether it is CREATE RULE  statement.
-     */
-    private val PATTERN_CREATE_RULE = Pattern.compile(
-        "^CREATE[\\s]+RULE[\\s]+.*$",
         Pattern.CASE_INSENSITIVE or Pattern.DOTALL
     )
 
@@ -244,73 +61,47 @@ object PgDumpLoader {
                         + charsetName, ex
             )
         }
+        val ctx = ParserContext(
+            database,
+            outputIgnoredStatements,
+            ignoreSchemaCreation,
+            ignoreSlonyTriggers
+        )
+        val subParsers = listOf<SubParser>(
+            CreateSchemaParser,
+            CreateExtensionParser,
+            DefaultSchemaParser,
+            CreateTableParser,
+            DisableTriggerParser,
+            AlterRelationParser,
+            CreateSequenceParser,
+            AlterSequenceParser,
+            CreateIndexParser,
+            CreateViewParser,
+            CreateTriggerParser,
+            CreateFunctionParser,
+            CreateTypeParser,
+            CommentParser,
+            // ignore DML
+            PatternBasedSubParser(
+                "^SELECT[\\s]+.*$",
+                "^INSERT[\\s]+INTO[\\s]+.*$",
+                "^UPDATE[\\s].*$",
+                "^DELETE[\\s]+FROM[\\s]+.*$",
+            ),
+            GrantRevokeParser,
+            CreatePolicyParser,
+            CreateRuleParser
+        )
+
         var statement = getWholeStatement(reader)
         while (statement != null) {
-            if (PATTERN_CREATE_SCHEMA.matcher(statement).matches()) {
-                CreateSchemaParser.parse(database, statement)
-            } else if (PATTERN_CREATE_EXTENSION.matcher(statement).matches()) {
-                CreateExtensionParser.parse(database, statement)
-            } else if (PATTERN_DEFAULT_SCHEMA.matcher(statement).matches()) {
-                val matcher = PATTERN_DEFAULT_SCHEMA.matcher(statement)
-                matcher.matches()
-                database.setDefaultSchema(matcher.group(1))
-            } else if (PATTERN_CREATE_TABLE.matcher(statement).matches()) {
-                CreateTableParser.parse(database, statement, ignoreSchemaCreation)
-            } else if ((PATTERN_ALTER_TABLE.matcher(statement).matches()
-                        || PATTERN_ALTER_VIEW.matcher(statement).matches())
-                && !PATTERN_DISABLE_TRIGGER.matcher(statement).matches()
-            ) {
-                AlterRelationParser.parse(
-                    database, statement, outputIgnoredStatements
-                )
-            } else if (PATTERN_CREATE_SEQUENCE.matcher(statement).matches()) {
-                CreateSequenceParser.parse(database, statement)
-            } else if (PATTERN_ALTER_SEQUENCE.matcher(statement).matches()) {
-                AlterSequenceParser.parse(
-                    database, statement, outputIgnoredStatements
-                )
-            } else if (PATTERN_CREATE_INDEX.matcher(statement).matches()) {
-                CreateIndexParser.parse(database, statement)
-            } else if (PATTERN_CREATE_VIEW.matcher(statement).matches()) {
-                CreateViewParser.parse(database, statement)
-            } else if (PATTERN_CREATE_TRIGGER.matcher(statement).matches()) {
-                CreateTriggerParser.parse(
-                    database, statement, ignoreSlonyTriggers
-                )
-            } else if (PATTERN_DISABLE_TRIGGER.matcher(statement).matches()) {
-                CreateTriggerParser.parseDisable(database, statement)
-            } else if (PATTERN_CREATE_FUNCTION.matcher(statement).matches()) {
-                CreateFunctionParser.parse(database, statement)
-            } else if (PATTERN_CREATE_TYPE.matcher(statement).matches()) {
-                CreateTypeParser.parse(database, statement)
-            } else if (PATTERN_COMMENT.matcher(statement).matches()) {
-                CommentParser.parse(
-                    database, statement, outputIgnoredStatements
-                )
-            } else if (PATTERN_SELECT.matcher(statement).matches()
-                || PATTERN_INSERT_INTO.matcher(statement).matches()
-                || PATTERN_UPDATE.matcher(statement).matches()
-                || PATTERN_DELETE_FROM.matcher(statement).matches()
-            ) {
-            } else if (PATTERN_GRANT.matcher(statement).matches()) {
-                GrantRevokeParser.parse(
-                    database, statement,
-                    outputIgnoredStatements
-                )
-            } else if (PATTERN_REVOKE.matcher(statement).matches()) {
-                GrantRevokeParser.parse(
-                    database, statement,
-                    outputIgnoredStatements
-                )
-            } else if (PATTERN_CREATE_POLICY.matcher(statement).matches()) {
-                CreatePolicyParser.parse(database, statement)
-            } else if (PATTERN_CREATE_RULE.matcher(statement).matches()) {
-                CreateRuleParser.parse(database, statement)
-            } else if (outputIgnoredStatements) {
+            val parser = Parser(statement)
+            val matchedSubParser = subParsers.firstOrNull {
+                it(parser, ctx)
+            }
+            if (matchedSubParser == null && outputIgnoredStatements) {
                 database.addIgnoredStatement(statement)
-            } else {
-                // these statements are ignored if outputIgnoredStatements
-                // is false
             }
             statement = getWholeStatement(reader)
         }
