@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- added support for `COMMENT ON TYPE ...`
 - added support for `ALTER TYPE ... OWNER TO ...`
 - added support for `ALTER FUNCTION ... OWNER TO ...`
 - added support for `ALTER SCHEMA ... OWNER TO ...`

@@ -5,6 +5,7 @@ import java.util.*
 
 class PgType(val name: String) {
 
+    var comment: String? = null
     var owner: String? = null
 
     /**
@@ -94,11 +95,19 @@ class PgType(val name: String) {
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append(ownerSQL)
             }
+            if (comment != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(commentSQL)
+            }
             return sbSQL.toString()
         }
 
     val ownerSQL: String
         get() = "ALTER TYPE ${PgDiffUtils.getQuotedName(name)} OWNER TO $owner;"
+
+    val commentSQL: String
+        get() = "COMMENT ON TYPE ${PgDiffUtils.getQuotedName(name)} IS $comment;"
 
     /**
      * Creates and returns SQL statement for dropping the table.
