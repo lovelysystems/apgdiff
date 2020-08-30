@@ -1,8 +1,3 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgColumn
@@ -15,8 +10,6 @@ import java.util.*
 
 /**
  * Diffs types.
- *
- * @author fordfrog
  */
 object PgDiffTypes {
     /**
@@ -33,16 +26,17 @@ object PgDiffTypes {
         arguments: PgDiffArguments, oldSchema: PgSchema?,
         newSchema: PgSchema, searchPathHelper: SearchPathHelper
     ) {
-        for (newType in newSchema.types.orEmpty()) {
-            if (oldSchema == null
-                || !oldSchema.containsType(newType.name)
-            ) {
-                continue
-            }
-            val oldType = oldSchema.getType(newType.name)
+        for (newType in newSchema.types) {
+            val oldType = oldSchema?.getType(newType.name) ?: continue
             updateTypeColumns(
                 writer, arguments, oldType, newType, searchPathHelper
             )
+            if (newType.owner != oldType.owner) {
+                writer.println(newType.ownerSQL)
+            }
+            if (newType.comment != oldType.comment) {
+                writer.println(newType.commentSQL)
+            }
         }
     }
 
@@ -59,9 +53,9 @@ object PgDiffTypes {
     private fun addCreateTypeColumns(
         statements: MutableList<String>,
         arguments: PgDiffArguments, oldType: PgType?,
-        newType: PgType?, dropDefaultsColumns: MutableList<PgColumn>
+        newType: PgType, dropDefaultsColumns: MutableList<PgColumn>
     ) {
-        for (column in newType!!.columns.orEmpty()) {
+        for (column in newType.columns) {
             if (!oldType!!.containsColumn(column.name)) {
                 statements.add(
                     "\tADD ATTRIBUTE "
@@ -132,7 +126,7 @@ object PgDiffTypes {
             val oldDefault = oldColumn.defaultValue.orEmpty()
             val newDefault = newColumn.defaultValue.orEmpty()
             if (oldDefault != newDefault) {
-                if (newDefault.length == 0) {
+                if (newDefault.isEmpty()) {
                     statements.add(
                         "\tALTER ATTRIBUTE " + newColumnName
                                 + " DROP DEFAULT"
@@ -245,7 +239,7 @@ object PgDiffTypes {
         addModifyTypeColumns(
             statements, arguments, oldType, newType, dropDefaultsColumns
         )
-        if (!statements.isEmpty()) {
+        if (statements.isNotEmpty()) {
             val quotedTypeName = PgDiffUtils.getQuotedName(newType.name)
             searchPathHelper.outputSearchPath(writer)
             writer.println()
@@ -254,7 +248,7 @@ object PgDiffTypes {
                 writer.print(statements[i])
                 writer.println(if (i + 1 < statements.size) "," else ";")
             }
-            if (!dropDefaultsColumns.isEmpty()) {
+            if (dropDefaultsColumns.isNotEmpty()) {
                 writer.println()
                 writer.println("ALTER TYPE $quotedTypeName")
                 for (i in dropDefaultsColumns.indices) {

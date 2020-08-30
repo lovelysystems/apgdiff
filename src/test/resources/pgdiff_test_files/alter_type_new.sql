@@ -47,7 +47,9 @@ CREATE TYPE bug_status AS ENUM (
 );
 
 
-ALTER TYPE bug_status OWNER TO dv;
+ALTER TYPE bug_status OWNER TO admin;
+
+COMMENT ON TYPE bug_status IS 'Status of a bug';
 
 --
 -- TOC entry 549 (class 1247 OID 16389)

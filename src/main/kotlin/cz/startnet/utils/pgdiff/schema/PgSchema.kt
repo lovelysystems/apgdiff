@@ -54,54 +54,18 @@ class PgSchema(val name: String) {
      * List of rules defined in the schema.
      */
     private val rules: List<PgRule> = ArrayList()
-    /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Getter for [.authorization].
-     *
-     * @return [.authorization]
-     */
-    /**
-     * Setter for [.authorization].
-     *
-     * @param authorization [.authorization]
-     */
+
     /**
      * Schema authorization.
      */
     var authorization: String? = null
-    /**
-     * Getter for [.definition].
-     *
-     * @return [.definition]
-     */
-    /**
-     * Setter for [.definition].
-     *
-     * @param definition [.definition]
-     */
+
     /**
      * Optional definition of schema elements.
      */
     var definition: String? = null
-    /**
-     * Getter for [.comment].
-     *
-     * @return [.comment]
-     */
-    /**
-     * Setter for [.comment].
-     *
-     * @param comment [.comment]
-     */
-    /**
-     * Comment.
-     */
-    var comment: String? = null
 
+    var comment: String? = null
 
     var owner: String? = null
 
@@ -379,15 +343,6 @@ class PgSchema(val name: String) {
         return list
     }
 
-    /**
-     * Returns true if schema contains type with given `name`, otherwise
-     * false.
-     *
-     * @param name name of the table
-     *
-     * @return true if schema contains table with given `name`, otherwise
-     * false.
-     */
     fun containsRule(name: String): Boolean {
         for (rule in rules) {
             if (rule.name == name) {
@@ -397,15 +352,6 @@ class PgSchema(val name: String) {
         return false
     }
 
-    /**
-     * Returns true if schema contains type with given `name`, otherwise
-     * false.
-     *
-     * @param name name of the table
-     *
-     * @return true if schema contains table with given `name`, otherwise
-     * false.
-     */
     fun containsType(name: String?): Boolean {
         for (type in types) {
             if (type.name == name) {

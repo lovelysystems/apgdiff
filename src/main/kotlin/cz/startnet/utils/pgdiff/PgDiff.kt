@@ -288,7 +288,7 @@ object PgDiff {
                 writer, oldSchema, newSchema, searchPathHelper
             )
             PgDiffFunctions.dropFunctions(
-                writer, arguments, oldSchema, newSchema, searchPathHelper
+                writer, oldSchema, newSchema, searchPathHelper
             )
             PgDiffViews.dropViews(
                 writer, oldSchema, newSchema, searchPathHelper
