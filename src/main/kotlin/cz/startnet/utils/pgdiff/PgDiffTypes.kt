@@ -33,16 +33,14 @@ object PgDiffTypes {
         arguments: PgDiffArguments, oldSchema: PgSchema?,
         newSchema: PgSchema, searchPathHelper: SearchPathHelper
     ) {
-        for (newType in newSchema.types.orEmpty()) {
-            if (oldSchema == null
-                || !oldSchema.containsType(newType.name)
-            ) {
-                continue
-            }
-            val oldType = oldSchema.getType(newType.name)
+        for (newType in newSchema.types) {
+            val oldType = oldSchema?.getType(newType.name) ?: continue
             updateTypeColumns(
                 writer, arguments, oldType, newType, searchPathHelper
             )
+            if (newType.owner != oldType.owner) {
+                writer.println(newType.ownerSQL)
+            }
         }
     }
 

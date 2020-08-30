@@ -1,14 +1,7 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgColumn
 import cz.startnet.utils.pgdiff.schema.PgType
-import java.text.MessageFormat
 
 /**
  * Parses CREATE TABLE statements.
@@ -17,21 +10,12 @@ import java.text.MessageFormat
  */
 object CreateTypeParser : PatternBasedSubParser(
     "^CREATE[\\s]+TYPE[\\s]+.*$"
-
 ) {
     override fun parse(parser: Parser, ctx: ParserContext) {
-        val database = ctx.database
         parser.expect("CREATE", "TYPE")
-        val typeName = parser.parseIdentifier()
-        val type = PgType(ParserUtils.getObjectName(typeName))
-        val schemaName = ParserUtils.getSchemaName(typeName, database)
-        val schema = database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val objectName = ctx.database.getSchemaObjectName(parser.parseIdentifier())
+        val schema = ctx.database.getSchema(objectName)
+        val type = PgType(objectName.name)
         schema.addType(type)
         parser.expect("AS")
         if (parser.expectOptional("ENUM")) {

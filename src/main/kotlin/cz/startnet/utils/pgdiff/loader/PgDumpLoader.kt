@@ -83,6 +83,7 @@ object PgDumpLoader {
             CreateFunctionParser,
             AlterFunctionParser,
             CreateTypeParser,
+            AlterTypeParser,
             CommentParser,
             // ignore DML
             PatternBasedSubParser(

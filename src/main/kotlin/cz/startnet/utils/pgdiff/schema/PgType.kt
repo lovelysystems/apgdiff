@@ -1,44 +1,17 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.util.*
 
-/**
- * Stores table information.
- *
- * @author fordfrog
- */
-class PgType
-/**
- * Creates a new PgTable object.
- *
- * @param name [.name]
- */(
+class PgType(val name: String) {
+
+    var owner: String? = null
+
     /**
-     * Name of the table.
-     */
-    var name: String?
-) {
-    /**
-     * List of columns defined on the table.
+     * List of columns defined on the type
      */
     val columns: MutableList<PgColumn> = ArrayList()
     private val enumValues: MutableList<String?> = ArrayList()
-    /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Setter for [.name].
-     *
-     * @param name [.name]
-     */
     var isEnum = false
 
     /**
@@ -56,15 +29,6 @@ class PgType
         }
         return null
     }
-
-//    /**
-//     * Getter for [.columns]. The list cannot be modified.
-//     *
-//     * @return [.columns]
-//     */
-//    fun getColumns(): List<PgColumn> {
-//        return Collections.unmodifiableList(columns)
-//    }
 
     /**
      * Creates and returns SQL for creation of the table.
@@ -125,8 +89,16 @@ class PgType
                 )
                 sbSQL.append(';')
             }
+            if (owner != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(ownerSQL)
+            }
             return sbSQL.toString()
         }
+
+    val ownerSQL: String
+        get() = "ALTER TYPE ${PgDiffUtils.getQuotedName(name)} OWNER TO $owner;"
 
     /**
      * Creates and returns SQL statement for dropping the table.
@@ -168,7 +140,7 @@ class PgType
      * @return list of columns that have statistics defined
      */
     private val columnsWithStatistics: List<PgColumn>
-        private get() {
+        get() {
             val list: MutableList<PgColumn> = ArrayList()
             for (column in columns) {
                 if (column.statistics != null) {

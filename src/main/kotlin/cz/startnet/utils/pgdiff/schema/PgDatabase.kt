@@ -135,6 +135,24 @@ class PgDatabase {
         }
     }
 
+    /**
+     * Get the schema object name for the given identifier using
+     * the default schema if the identifier is not qualified
+     */
+    fun getSchemaObjectName(identifier: String): PGSchemaObjectName {
+        val parts = identifier.split(".")
+            .map { it.trim('"') }
+        return when (parts.size) {
+            1 -> PGSchemaObjectName(defaultSchema.name, parts[0])
+            2 -> PGSchemaObjectName(parts[0], parts[1])
+            else -> error("unable to parse object identifier $identifier")
+        }
+    }
+
+    fun getSchema(name: PGSchemaObjectName): PgSchema {
+        return getSchema(name.schema)
+            ?: error("schema for $name not found")
+    }
 
     /**
      * Adds `extension` to the list of extensions.
