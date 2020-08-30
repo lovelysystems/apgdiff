@@ -7,3 +7,4 @@ end;
 $$
     LANGUAGE plpgsql;
 
+ALTER FUNCTION multiply_numbers(number2 integer, number1 integer) OWNER TO fordfrog;

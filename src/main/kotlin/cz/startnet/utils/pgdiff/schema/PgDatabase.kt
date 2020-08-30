@@ -5,6 +5,7 @@
  */
 package cz.startnet.utils.pgdiff.schema
 
+import cz.startnet.utils.pgdiff.parsers.ParserUtils
 import java.util.*
 
 /**
@@ -79,6 +80,7 @@ class PgDatabase {
         ignoredStatements.add(ignoredStatement)
     }
 
+
     /**
      * Returns schema of given name or null if the schema has not been found. If
      * schema name is null then default schema is returned.
@@ -117,14 +119,22 @@ class PgDatabase {
         schemas.add(schema)
     }
 
-//    /**
-//     * Getter for [.extensions]. The list cannot be modified.
-//     *
-//     * @return [.extensions]
-//     */
-//    fun getExtensions(): List<PgExtension> {
-//        return Collections.unmodifiableList(extensions)
-//    }
+    /**
+     * Returns schema name from optionally schema qualified name or the default schema
+     *
+     * @param name     optionally schema qualified name
+     *
+     * @return name of the schema
+     */
+    fun getSchemaName(name: String): String {
+        val names = ParserUtils.splitNames(name)
+        return if (names.size < 2) {
+            defaultSchema.name
+        } else {
+            names[0]
+        }
+    }
+
 
     /**
      * Adds `extension` to the list of extensions.

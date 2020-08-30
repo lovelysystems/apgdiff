@@ -21,7 +21,7 @@ object ParserUtils {
      *
      * @return name of the object
      */
-    fun getObjectName(name: String?): String {
+    fun getObjectName(name: String): String {
         val names = splitNames(name)
         return names[names.size - 1]
     }
@@ -34,7 +34,7 @@ object ParserUtils {
      *
      * @return name of the object
      */
-    fun getSecondObjectName(name: String?): String {
+    fun getSecondObjectName(name: String): String {
         val names = splitNames(name)
         return names[names.size - 2]
     }
@@ -47,7 +47,7 @@ object ParserUtils {
      *
      * @return name of the object or null if there is no third object name
      */
-    fun getThirdObjectName(name: String?): String? {
+    fun getThirdObjectName(name: String): String? {
         val names = splitNames(name)
         return if (names.size >= 3) names[names.size - 3] else null
     }
@@ -61,7 +61,7 @@ object ParserUtils {
      * @return name of the schema
      */
     fun getSchemaName(
-        name: String?,
+        name: String,
         database: PgDatabase
     ): String {
         val names = splitNames(name)
@@ -117,8 +117,8 @@ object ParserUtils {
      *
      * @return array of names
      */
-    private fun splitNames(string: String?): Array<String> {
-        return if (string!!.indexOf('"') == -1) {
+    fun splitNames(string: String): Array<String> {
+        return if (string.indexOf('"') == -1) {
             string.split(".").toTypedArray()
         } else {
             val strings: MutableList<String> = ArrayList(2)

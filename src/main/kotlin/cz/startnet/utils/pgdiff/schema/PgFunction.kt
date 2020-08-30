@@ -1,66 +1,26 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.util.*
 
-/**
- * Stores function information.
- *
- * @author fordfrog
- */
-class PgFunction {
-    /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Setter for [.name].
-     *
-     * @param name [.name]
-     */
-    /**
-     * Name of the function including argument types.
-     */
-    var name: String? = null
+class PgFunction(val name: String, val schema: String) {
 
     /**
      * List of arguments.
      */
     val arguments: MutableList<Argument> = ArrayList()
-    /**
-     * Getter for [.body].
-     *
-     * @return [.body]
-     */
-    /**
-     * Setter for [.body].
-     *
-     * @param body [.body]
-     */
+
     /**
      * Whole definition of the function from RETURNS keyword.
      */
     var body: String? = null
-    /**
-     * Getter for [.comment].
-     *
-     * @return [.comment]
-     */
-    /**
-     * Setter for [.comment].
-     *
-     * @param comment [.comment]
-     */
+
     /**
      * Comment.
      */
     var comment: String? = null
+
+    var owner: String? = null
 
     /**
      * Returns creation SQL of the function.
@@ -84,25 +44,27 @@ class PgFunction {
             sbSQL.append(") ")
             sbSQL.append(body)
             sbSQL.append(';')
-            if (comment != null && !comment!!.isEmpty()) {
+            if (!comment.isNullOrEmpty()) {
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append(System.getProperty("line.separator"))
                 sbSQL.append("COMMENT ON FUNCTION ")
-                sbSQL.append(PgDiffUtils.getQuotedName(name))
-                sbSQL.append('(')
-                addComma = false
-                for (argument in arguments) {
-                    if (addComma) {
-                        sbSQL.append(", ")
-                    }
-                    sbSQL.append(argument.getDeclaration(false))
-                    addComma = true
-                }
-                sbSQL.append(") IS ")
+                sbSQL.append(signatureSQL)
+                sbSQL.append(" IS ")
                 sbSQL.append(comment)
                 sbSQL.append(';')
             }
+            if (owner != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("ALTER FUNCTION $signatureSQL OWNER TO $owner;")
+            }
             return sbSQL.toString()
+        }
+
+    val signatureSQL: String
+        get() {
+            val args = arguments.map { it.getDeclaration(false) }.joinToString(", ")
+            return "${PgDiffUtils.getQuotedName(name)}($args)"
         }
 
     /**
@@ -115,31 +77,10 @@ class PgFunction {
             val sbString = StringBuilder(100)
             sbString.append("DROP FUNCTION ")
             sbString.append(PgDiffUtils.dropIfExists)
-            sbString.append(name)
-            sbString.append('(')
-            var addComma = false
-            for (argument in arguments) {
-                if ("OUT".equals(argument.mode, ignoreCase = true)) {
-                    continue
-                }
-                if (addComma) {
-                    sbString.append(", ")
-                }
-                sbString.append(argument.getDeclaration(false))
-                addComma = true
-            }
-            sbString.append(");")
+            sbString.append(signatureSQL)
+            sbString.append(";")
             return sbString.toString()
         }
-
-//    /**
-//     * Getter for [.arguments]. List cannot be modified.
-//     *
-//     * @return [.arguments]
-//     */
-//    fun getArguments(): List<Argument> {
-//        return Collections.unmodifiableList(arguments)
-//    }
 
     /**
      * Adds argument to the list of arguments.
@@ -263,67 +204,22 @@ class PgFunction {
             set(value) {
                 field = if (value.isNullOrEmpty()) "IN" else value
             }
-        /**
-         * Getter for [.name].
-         *
-         * @return [.name]
-         */
-        /**
-         * Setter for [.name].
-         *
-         * @param name [.name]
-         */
+
         /**
          * Argument name.
          */
         var name: String? = null
-        /**
-         * Getter for [.dataType].
-         *
-         * @return [.dataType]
-         */
-        /**
-         * Setter for [.dataType].
-         *
-         * @param dataType [.dataType]
-         */
+
         /**
          * Argument data type.
          */
         var dataType: String? = null
-        /**
-         * Getter for [.defaultExpression].
-         *
-         * @return [.defaultExpression]
-         */
-        /**
-         * Setter for [.defaultExpression].
-         *
-         * @param defaultExpression [.defaultExpression]
-         */
+
         /**
          * Argument default expression.
          */
         var defaultExpression: String? = null
 
-//        /**
-//         * Getter for [.mode].
-//         *
-//         * @return [.mode]
-//         */
-//        fun getMode(): String? {
-//            return mode
-//        }
-
-//        /**
-//         * Setter for [.mode].
-//         *
-//         * @param mode [.mode]
-//         */
-//        fun setMode(mode: String?) {
-//            this.mode = if (mode == null || mode.isEmpty()) "IN" else mode
-//        }
-//
         /**
          * Creates argument declaration.
          *

@@ -81,6 +81,7 @@ object PgDumpLoader {
             CreateViewParser,
             CreateTriggerParser,
             CreateFunctionParser,
+            AlterFunctionParser,
             CreateTypeParser,
             CommentParser,
             // ignore DML
