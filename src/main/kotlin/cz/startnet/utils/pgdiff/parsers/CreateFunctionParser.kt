@@ -1,13 +1,57 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgFunction
 import java.text.MessageFormat
+
+
+/**
+ * Parses a function signature and returns a PGFunction
+ */
+fun Parser.parseFunctionSignature(ctx: ParserContext): PgFunction {
+    val functionName = parseIdentifier()
+    val schemaName = ctx.database.getSchemaName(functionName)
+    val objectName = ParserUtils.getObjectName(functionName)
+    val func = PgFunction(objectName, schemaName)
+    expect("(")
+    while (!expectOptional(")")) {
+        val mode: String?
+        mode = if (expectOptional("IN")) {
+            "IN"
+        } else if (expectOptional("OUT")) {
+            "OUT"
+        } else if (expectOptional("INOUT")) {
+            "INOUT"
+        } else if (expectOptional("VARIADIC")) {
+            "VARIADIC"
+        } else {
+            null
+        }
+        val posPreType = this.position
+        var argumentName: String? = null
+        var dataType = parseDataType()
+        val posPostType = this.position
+        if (!expectOptional(")") && !expectOptional(",")) {
+            this.position = posPreType
+            argumentName = ParserUtils.getObjectName(parseIdentifier())
+            dataType = parseDataType()
+        } else {
+            this.position = posPostType
+        }
+        val argument = PgFunction.Argument()
+        argument.dataType = dataType
+        argument.mode = mode
+        argument.name = argumentName
+        func.addArgument(argument)
+        if (expectOptional(")")) {
+            break
+        } else {
+            expect(",")
+        }
+    }
+    return func
+}
+
 
 /**
  * Parses CREATE FUNCTION and CREATE OR REPLACE FUNCTION statements.
@@ -27,66 +71,16 @@ object CreateFunctionParser : PatternBasedSubParser(
         parser.expect("CREATE")
         parser.expectOptional("OR", "REPLACE")
         parser.expect("FUNCTION")
-        val functionName = parser.parseIdentifier()
-        val schemaName = ParserUtils.getSchemaName(functionName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
+
+        val function = parser.parseFunctionSignature(ctx)
+        val schema = ctx.database.getSchema(function.schema)
             ?: throw RuntimeException(
                 MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
+                    Resources.getString("CannotFindSchema"), function.schema,
                     parser.string
                 )
             )
-        val function = PgFunction()
-        function.name = ParserUtils.getObjectName(functionName)
         schema.addFunction(function)
-        parser.expect("(")
-        while (!parser.expectOptional(")")) {
-            val mode: String?
-            mode = if (parser.expectOptional("IN")) {
-                "IN"
-            } else if (parser.expectOptional("OUT")) {
-                "OUT"
-            } else if (parser.expectOptional("INOUT")) {
-                "INOUT"
-            } else if (parser.expectOptional("VARIADIC")) {
-                "VARIADIC"
-            } else {
-                null
-            }
-            val position = parser.position
-            var argumentName: String? = null
-            var dataType = parser.parseDataType()
-            val position2 = parser.position
-            if (!parser.expectOptional(")") && !parser.expectOptional(",")
-                && !parser.expectOptional("=")
-                && !parser.expectOptional("DEFAULT")
-            ) {
-                parser.position = position
-                argumentName = ParserUtils.getObjectName(parser.parseIdentifier())
-                dataType = parser.parseDataType()
-            } else {
-                parser.position = position2
-            }
-            val defaultExpression: String?
-            defaultExpression = if (parser.expectOptional("=")
-                || parser.expectOptional("DEFAULT")
-            ) {
-                parser.expression
-            } else {
-                null
-            }
-            val argument = PgFunction.Argument()
-            argument.dataType = dataType
-            argument.defaultExpression = defaultExpression
-            argument.mode = mode
-            argument.name = argumentName
-            function.addArgument(argument)
-            if (parser.expectOptional(")")) {
-                break
-            } else {
-                parser.expect(",")
-            }
-        }
         function.body = parser.rest
     }
 }

@@ -7,3 +7,4 @@ end;
 $$
     LANGUAGE plpgsql;
 
+ALTER FUNCTION power_number("input" integer) OWNER TO fordfrog;

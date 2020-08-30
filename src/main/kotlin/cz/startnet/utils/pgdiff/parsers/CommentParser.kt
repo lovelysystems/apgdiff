@@ -5,7 +5,6 @@ package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgDatabase
-import cz.startnet.utils.pgdiff.schema.PgFunction
 import java.text.MessageFormat
 
 /**
@@ -27,7 +26,7 @@ object CommentParser : PatternBasedSubParser(
         } else if (parser.expectOptional("DATABASE")) {
             parseDatabase(parser, ctx.database)
         } else if (parser.expectOptional("FUNCTION")) {
-            parseFunction(parser, ctx.database)
+            parseFunction(parser, ctx)
         } else if (parser.expectOptional("INDEX")) {
             parseIndex(parser, ctx.database)
         } else if (parser.expectOptional("SCHEMA")) {
@@ -236,57 +235,15 @@ object CommentParser : PatternBasedSubParser(
      * @param parser   parser
      * @param database database
      */
-    private fun parseFunction(
-        parser: Parser,
-        database: PgDatabase
-    ) {
-        val functionName = parser.parseIdentifier()
-        val objectName = ParserUtils.getObjectName(functionName)
-        val schemaName = ParserUtils.getSchemaName(functionName, database)
-        val schema = database.getSchema(schemaName)
-        parser.expect("(")
-        val tmpFunction = PgFunction()
-        tmpFunction.name = objectName
-        while (!parser.expectOptional(")")) {
-            val mode: String?
-            mode = if (parser.expectOptional("IN")) {
-                "IN"
-            } else if (parser.expectOptional("OUT")) {
-                "OUT"
-            } else if (parser.expectOptional("INOUT")) {
-                "INOUT"
-            } else if (parser.expectOptional("VARIADIC")) {
-                "VARIADIC"
-            } else {
-                null
-            }
-            val position = parser.position
-            var argumentName: String? = null
-            var dataType = parser.parseDataType()
-            val position2 = parser.position
-            if (!parser.expectOptional(")") && !parser.expectOptional(",")) {
-                parser.position = position
-                argumentName = ParserUtils.getObjectName(parser.parseIdentifier())
-                dataType = parser.parseDataType()
-            } else {
-                parser.position = position2
-            }
-            val argument = PgFunction.Argument()
-            argument.dataType = dataType
-            argument.mode = mode
-            argument.name = argumentName
-            tmpFunction.addArgument(argument)
-            if (parser.expectOptional(")")) {
-                break
-            } else {
-                parser.expect(",")
-            }
-        }
+    private fun parseFunction(parser: Parser, ctx: ParserContext) {
+        val tmpFunction = parser.parseFunctionSignature(ctx)
+        val schema = ctx.database.getSchema(tmpFunction.schema)
         val function = schema!!.getFunction(tmpFunction.signature)!!
         parser.expect("IS")
         function.comment = getComment(parser)
         parser.expect(";")
     }
+
 
     /**
      * Parses comment from parser. If comment is "null" string then null is

@@ -20,7 +20,7 @@ object GrantRevokeParser : PatternBasedSubParser(
         // List<String>>();
         val privileges: MutableList<String?> = ArrayList()
         val privilegesColumns: MutableList<List<String>?> = ArrayList()
-        val identifiers: MutableList<String?> = ArrayList()
+        val identifiers: MutableList<String> = ArrayList()
         val roles: MutableList<String?> = ArrayList()
         var grantOption = false
         val revokeMode: String?
@@ -115,7 +115,7 @@ object GrantRevokeParser : PatternBasedSubParser(
         if (objectType == null) {
             objectType = "TABLE"
         }
-        var identifier: String? = parser.parseIdentifier()
+        var identifier = parser.parseIdentifier()
         if ("FUNCTION".equals(objectType, ignoreCase = true)
             || "ALL FUNCTIONS IN SCHEMA".equals(objectType, ignoreCase = true)
         ) {
@@ -125,23 +125,20 @@ object GrantRevokeParser : PatternBasedSubParser(
             )
         }
         identifiers.add(identifier)
-        while (identifier != null) {
-            if (parser.expectOptional(",")) {
-                identifier = parser.parseIdentifier()
-                if ("FUNCTION".equals(objectType, ignoreCase = true)
-                    || "ALL FUNCTIONS IN SCHEMA"
-                        .equals(objectType, ignoreCase = true)
-                ) {
-                    parseConsumeFunctionSignature(
-                        parser, ctx.database, parser.string,
-                        ctx.outputIgnoredStatements
-                    )
-                }
-                identifiers.add(identifier)
-            } else {
-                identifier = null
+        while (parser.expectOptional(",")) {
+            identifier = parser.parseIdentifier()
+            if ("FUNCTION".equals(objectType, ignoreCase = true)
+                || "ALL FUNCTIONS IN SCHEMA"
+                    .equals(objectType, ignoreCase = true)
+            ) {
+                parseConsumeFunctionSignature(
+                    parser, ctx.database, parser.string,
+                    ctx.outputIgnoredStatements
+                )
             }
+            identifiers.add(identifier)
         }
+
         if (grant) {
             parser.expect("TO")
         } else {
@@ -172,10 +169,7 @@ object GrantRevokeParser : PatternBasedSubParser(
         }
         if ("TABLE".equals(objectType, ignoreCase = true)) {
             for (name in identifiers) {
-                val schemaName = ParserUtils.getSchemaName(
-                    name,
-                    ctx.database
-                )
+                val schemaName = ctx.database.getSchemaName(name)
                 val schema = ctx.database.getSchema(schemaName)
                     ?: throw RuntimeException(
                         MessageFormat.format(
@@ -251,10 +245,7 @@ object GrantRevokeParser : PatternBasedSubParser(
         } else if ("SEQUENCE".equals(objectType, ignoreCase = true)) {
             for (name in identifiers) {
                 // final String sequenceName = parser.parseIdentifier();
-                val schemaName = ParserUtils.getSchemaName(
-                    name,
-                    ctx.database
-                )
+                val schemaName = ctx.database.getSchemaName(name)
                 val schema = ctx.database.getSchema(schemaName)
                     ?: throw RuntimeException(
                         MessageFormat.format(
@@ -289,7 +280,7 @@ object GrantRevokeParser : PatternBasedSubParser(
             if (grant) {
                 for (name in identifiers) {
                     // final String sequenceName = parser.parseIdentifier();
-                    val schemaName = ParserUtils.getSchemaName(name, ctx.database)
+                    val schemaName = ctx.database.getSchemaName(name)
                     val schema = ctx.database.getSchema(schemaName)
                         ?: throw RuntimeException(
                             MessageFormat.format(
