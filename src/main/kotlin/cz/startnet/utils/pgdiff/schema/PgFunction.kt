@@ -117,13 +117,13 @@ class PgFunction(val name: String, val schema: String) {
             return sbString.toString()
         }
 
-    override fun equals(`object`: Any?): Boolean {
-        if (`object` !is PgFunction) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is PgFunction) {
             return false
-        } else if (`object` === this) {
+        } else if (other === this) {
             return true
         }
-        return equals(`object`, false)
+        return equals(other, false)
     }
 
     /**
@@ -148,9 +148,7 @@ class PgFunction(val name: String, val schema: String) {
             equals = true
         } else if (`object` is PgFunction) {
             val function = `object`
-            if (name == null && function.name != null
-                || name != null && name != function.name
-            ) {
+            if (name != function.name) {
                 return false
             }
             val thisBody: String?
@@ -233,25 +231,25 @@ class PgFunction(val name: String, val schema: String) {
                 sbString.append(mode)
                 sbString.append(' ')
             }
-            if (name != null && !name!!.isEmpty()) {
+            if (!name.isNullOrEmpty()) {
                 sbString.append(PgDiffUtils.getQuotedName(name))
                 sbString.append(' ')
             }
             sbString.append(dataType)
-            if (includeDefaultValue && defaultExpression != null && !defaultExpression!!.isEmpty()) {
+            if (includeDefaultValue && !defaultExpression.isNullOrEmpty()) {
                 sbString.append(" = ")
                 sbString.append(defaultExpression)
             }
             return sbString.toString()
         }
 
-        override fun equals(obj: Any?): Boolean {
-            if (obj !is Argument) {
+        override fun equals(other: Any?): Boolean {
+            if (other !is Argument) {
                 return false
-            } else if (this === obj) {
+            } else if (this === other) {
                 return true
             }
-            val argument = obj
+            val argument = other
             return ((if (dataType == null) argument.dataType == null else dataType.equals(
                 argument.dataType,
                 ignoreCase = true
