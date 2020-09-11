@@ -39,7 +39,7 @@ object PgDiffTables {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("ALTER TABLE ")
-                writer.print(PgDiffUtils.getQuotedName(newTable.name))
+                writer.print(PgDiffUtils.getQuotedName(newTable.name!!))
                 writer.println(" SET WITHOUT CLUSTER;")
             }
         }

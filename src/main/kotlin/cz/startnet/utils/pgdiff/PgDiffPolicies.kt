@@ -106,7 +106,7 @@ object PgDiffPolicies {
             "CREATE POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
                     + " ON "
-                    + PgDiffUtils.getQuotedName(policy.tableName)
+                    + PgDiffUtils.getQuotedName(policy.tableName!!)
         )
         writer.print(" FOR " + policy.command)
         var roles = ""
@@ -138,7 +138,7 @@ object PgDiffPolicies {
             "ALTER POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
                     + " ON "
-                    + PgDiffUtils.getQuotedName(policy.tableName)
+                    + PgDiffUtils.getQuotedName(policy.tableName!!)
         )
         var roles = ""
         writer.print(" TO ")
@@ -169,7 +169,7 @@ object PgDiffPolicies {
             "DROP POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
                     + " ON "
-                    + PgDiffUtils.getQuotedName(policy.tableName)
+                    + PgDiffUtils.getQuotedName(policy.tableName!!)
                     + ";"
         )
     }
