@@ -492,10 +492,10 @@ object PgDiffUtils {
      * @return quoted string if needed, otherwise not quoted string
      */
     fun getQuotedName(
-        name: String?,
+        name: String,
         excludeKeywords: Boolean
-    ): String? {
-        if (name!!.indexOf('-') != -1 || name.indexOf('.') != -1) {
+    ): String {
+        if (name.indexOf('-') != -1 || name.indexOf('.') != -1) {
             return '"'.toString() + name + '"'
         }
         for (i in 0 until name.length) {
@@ -525,7 +525,8 @@ object PgDiffUtils {
      *
      * @return quoted string if needed, otherwise not quoted string
      */
-    fun getQuotedName(name: String?): String? {
+    fun getQuotedName(name: String?): String {
+        checkNotNull(name)
         return getQuotedName(name, false)
     }
 

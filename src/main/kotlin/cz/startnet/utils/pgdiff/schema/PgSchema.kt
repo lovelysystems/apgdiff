@@ -36,6 +36,11 @@ class PgSchema(val name: String) {
     val types: MutableList<PgType> = ArrayList()
 
     /**
+     * List of types defined in the schema.
+     */
+    val domains: DBObjectContainer<PgDomain> = DBObjectContainer()
+
+    /**
      * Array of grand statements
      */
     private val grantStatements: MutableList<String> = ArrayList()
@@ -83,9 +88,9 @@ class PgSchema(val name: String) {
             sbSQL.append("CREATE SCHEMA ")
             sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
-            if (authorization != null) {
+            authorization?.let{
                 sbSQL.append(" AUTHORIZATION ")
-                sbSQL.append(PgDiffUtils.getQuotedName(authorization))
+                sbSQL.append(PgDiffUtils.getQuotedName(it))
             }
             sbSQL.append(';')
             if (!comment.isNullOrEmpty()) {

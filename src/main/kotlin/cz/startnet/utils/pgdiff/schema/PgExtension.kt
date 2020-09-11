@@ -1,65 +1,12 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 
-/**
- *
- * @author atila
- */
-class PgExtension(
-    /**
-     * Name of the extension.
-     */
-    val name: String?
-) {
-    /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Getter for [.schema].
-     *
-     * @return [.schema]
-     */
-    /**
-     * Setter for [.schema].
-     *
-     * @param schema [.schema]
-     */
-    /**
-     * PgSchema
-     */
+class PgExtension(val name: String) {
+
     lateinit var schema: PgSchema
-    /**
-     * Getter for [.version].
-     *
-     * @return [.version]
-     */
-    /**
-     * Setter for [.version].
-     *
-     * @param version [.version]
-     */
-    /**
-     * Version of the extension.
-     */
     var version: String? = null
-    /**
-     * Getter for [.from].
-     *
-     * @return [.from]
-     */
-    /**
-     * Setter for [.from].
-     *
-     * @param from [.from]
-     */
+
     /**
      * Previous version of the extension.
      */

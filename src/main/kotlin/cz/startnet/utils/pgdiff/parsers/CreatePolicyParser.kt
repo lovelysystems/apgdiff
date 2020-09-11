@@ -8,9 +8,9 @@ object CreatePolicyParser : PatternBasedSubParser(
     "^CREATE[\\s]+POLICY[\\s]+.*$"
 ) {
     override fun parse(parser: Parser, ctx: ParserContext) {
-        val policy = PgPolicy()
         parser.expect("CREATE", "POLICY")
         val policyName = parser.parseIdentifier()
+        val policy = PgPolicy(policyName)
         parser.expect("ON")
         val qualifiedTableName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(qualifiedTableName, ctx.database)
@@ -66,7 +66,6 @@ object CreatePolicyParser : PatternBasedSubParser(
             policy.withCheck = parser.expression
             parser.expect(")")
         }
-        policy.name = policyName
         policy.tableName = table.name
         table.addPolicy(policy)
     }

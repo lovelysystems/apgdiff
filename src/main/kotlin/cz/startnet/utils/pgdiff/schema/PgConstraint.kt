@@ -13,17 +13,7 @@ import java.util.regex.Pattern
  *
  * @author fordfrog
  */
-class PgConstraint
-/**
- * Creates a new PgConstraint object.
- *
- * @param name [.name]
- */(
-    /**
-     * Name of the constraint.
-     */
-    var name: String?
-) {
+class PgConstraint(var name: String) {
     /**
      * Getter for [.definition].
      *

@@ -4,7 +4,8 @@ import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.*
 import java.text.MessageFormat
 
-object CreateTableParser : PatternBasedSubParser(
+object
+CreateTableParser : PatternBasedSubParser(
     "^CREATE[\\s]+(UNLOGGED\\s|FOREIGN\\s)*TABLE[\\s]+.*$"
 ) {
     override fun parse(parser: Parser, ctx: ParserContext) {

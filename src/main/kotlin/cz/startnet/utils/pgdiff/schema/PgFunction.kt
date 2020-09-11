@@ -231,10 +231,11 @@ class PgFunction(val name: String, val schema: String) {
                 sbString.append(mode)
                 sbString.append(' ')
             }
-            if (!name.isNullOrEmpty()) {
-                sbString.append(PgDiffUtils.getQuotedName(name))
+            name?.takeIf { it.isNotEmpty() }?.let {
+                sbString.append(cz.startnet.utils.pgdiff.PgDiffUtils.getQuotedName(it))
                 sbString.append(' ')
             }
+
             sbString.append(dataType)
             if (includeDefaultValue && !defaultExpression.isNullOrEmpty()) {
                 sbString.append(" = ")

@@ -188,7 +188,7 @@ object PgDiffConstraints {
                         writer.print(" ON ")
                         writer.print(
                             PgDiffUtils.getQuotedName(
-                                newConstraint.tableName
+                                newConstraint.tableName!!
                             )
                         )
                     }
@@ -218,7 +218,7 @@ object PgDiffConstraints {
                         writer.print(" ON ")
                         writer.print(
                             PgDiffUtils.getQuotedName(
-                                newConstraint.tableName
+                                newConstraint.tableName!!
                             )
                         )
                     }

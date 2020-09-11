@@ -17,6 +17,7 @@ class PgDiffTest {
 
     fun parameters(): List<Args> {
         return listOf(
+            Args("create_domain"),
             Args("alter_schema"),
             Args("alter_column_generated"),
             Args("modify_column_type"),

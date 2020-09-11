@@ -10,6 +10,7 @@ object CommentParser : PatternBasedSubParser(
     val subParsers = listOf(
         "TABLE" to ::parseTable,
         "TYPE" to ::parseType,
+        "DOMAIN" to ::parseDomain,
         "COLUMN" to ::parseColumn,
         "CONSTRAINT" to ::parseConstraint,
         "DATABASE" to ::parseDatabase,
@@ -49,6 +50,15 @@ object CommentParser : PatternBasedSubParser(
             ?: error("type $objectName not found")
         parser.expect("IS")
         type.comment = getComment(parser)
+        parser.expect(";")
+    }
+
+    private fun parseDomain(parser: Parser, ctx: ParserContext) {
+        val objectName = ctx.database.getSchemaObjectName(parser.parseIdentifier())
+        val domain = ctx.database.getSchema(objectName).domains.get(objectName.name)
+            ?: error("domain $objectName not found")
+        parser.expect("IS")
+        domain.comment = getComment(parser)
         parser.expect(";")
     }
 
