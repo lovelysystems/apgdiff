@@ -21,6 +21,11 @@ class PgSchema(val name: String) {
     val functions: MutableList<PgFunction> = ArrayList()
 
     /**
+     * List of operators defined in the schema.
+     */
+    val operators = mutableListOf<PgOperator>()
+
+    /**
      * List of sequences defined in the schema.
      */
     val sequences: MutableList<PgSequence> = ArrayList()
@@ -110,21 +115,9 @@ class PgSchema(val name: String) {
             return sbSQL.toString()
         }
 
-    /**
-     * Finds function according to specified function `signature`.
-     *
-     * @param signature signature of the function to be searched
-     *
-     * @return found function or null if no such function has been found
-     */
-    fun getFunction(signature: String?): PgFunction? {
-        for (function in functions) {
-            if (function.signature == signature) {
-                return function
-            }
-        }
-        return null
-    }
+    fun getFunction(signature: String?): PgFunction? = functions.firstOrNull { it.signature == signature }
+
+    fun getOperator(signature: String?): PgOperator? = operators.firstOrNull { it.signature == signature }
 
     /**
      * Getter for grant statements. The list cannot be modified.

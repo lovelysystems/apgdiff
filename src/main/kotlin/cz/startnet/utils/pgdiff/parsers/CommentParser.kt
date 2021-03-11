@@ -15,6 +15,7 @@ object CommentParser : PatternBasedSubParser(
         "CONSTRAINT" to ::parseConstraint,
         "DATABASE" to ::parseDatabase,
         "FUNCTION" to ::parseFunction,
+        "OPERATOR" to ::parseOperator,
         "INDEX" to ::parseIndex,
         "SCHEMA" to ::parseSchema,
         "SEQUENCE" to ::parseSequence,
@@ -164,6 +165,13 @@ object CommentParser : PatternBasedSubParser(
         val function = schema!!.getFunction(tmpFunction.signature)!!
         parser.expect("IS")
         function.comment = getComment(parser)
+        parser.expect(";")
+    }
+
+    private fun parseOperator(parser: Parser, ctx: ParserContext) {
+        val operator = parser.parseOperatorSignature(ctx)
+        parser.expect("IS")
+        operator.comment = getComment(parser)
         parser.expect(";")
     }
 

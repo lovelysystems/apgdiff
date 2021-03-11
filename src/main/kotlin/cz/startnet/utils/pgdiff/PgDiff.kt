@@ -325,6 +325,7 @@ object PgDiff {
             PgDiffTypes.dropTypes(writer, oldSchema, newSchema, searchPathHelper)
 
             PgDiffDomains(newSchema, oldSchema, writer, searchPathHelper)()
+            PgDiffOperators(newSchema, oldSchema, writer, searchPathHelper)()
 
             PgDiffGrant.createGrants(writer, oldSchema, newSchema)
             PgDiffTables.createTables(

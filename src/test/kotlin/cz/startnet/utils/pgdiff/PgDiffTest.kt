@@ -5,6 +5,7 @@ import io.kotest.matchers.string.shouldBeEmpty
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.InputStream
 import java.io.PrintWriter
 import java.util.*
@@ -17,6 +18,7 @@ class PgDiffTest {
 
     fun parameters(): List<Args> {
         return listOf(
+            Args("create_operator"),
             Args("create_domain"),
             Args("alter_schema"),
             Args("alter_column_generated"),
@@ -219,7 +221,7 @@ class PgDiffTest {
     }
 
     private fun testFileAsStream(path: String): InputStream {
-        return javaClass.getResourceAsStream("/pgdiff_test_files/" + path) ?: error("sql file not found $path")
+        return File("src/test/resources/pgdiff_test_files").resolve(path).inputStream()
     }
 }
 
