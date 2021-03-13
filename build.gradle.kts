@@ -1,7 +1,7 @@
 plugins {
     id("com.lovelysystems.gradle") version ("1.3.2")
     application
-    kotlin("jvm") version "1.4.0"
+    kotlin("jvm") version "1.4.31"
 }
 
 repositories {
@@ -15,7 +15,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "cz.startnet.utils.pgdiff.Main"
+    mainClass.set("cz.startnet.utils.pgdiff.Main")
     applicationName = "apgdiff"
 }
 
