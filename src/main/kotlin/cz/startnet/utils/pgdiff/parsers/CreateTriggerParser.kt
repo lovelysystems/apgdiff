@@ -78,7 +78,9 @@ object CreateTriggerParser : PatternBasedSubParser(
             parser.expect(")")
         }
         parser.expect("EXECUTE")
-        parser.expectOptional("PROCEDURE")
+        parser.expectOptional("PROCEDURE").or(
+            parser.expectOptional("FUNCTION")
+        )
         trigger.function = parser.rest
         val ignoreSlonyTrigger = (ctx.ignoreSlonyTriggers
                 && ("_slony_logtrigger" == trigger.name || "_slony_denyaccess" == trigger.name))

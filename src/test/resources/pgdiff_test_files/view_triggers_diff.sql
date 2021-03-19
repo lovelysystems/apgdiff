@@ -7,12 +7,3 @@ CREATE TRIGGER trg_testview_instead_of_delete_new_name
 	FOR EACH ROW
 	EXECUTE PROCEDURE fn_trg_testview();
 
-CREATE TRIGGER trg_testview_before_update
-	BEFORE UPDATE ON testview
-	FOR EACH ROW
-	EXECUTE PROCEDURE fn_trg_testview();
-
-CREATE TRIGGER trg_testview_after_insert
-	AFTER INSERT ON testview
-	FOR EACH ROW
-	EXECUTE PROCEDURE fn_trg_testview();
