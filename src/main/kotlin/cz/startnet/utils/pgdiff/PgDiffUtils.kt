@@ -495,7 +495,7 @@ object PgDiffUtils {
         name: String,
         excludeKeywords: Boolean
     ): String {
-        if (name.indexOf('-') != -1 || name.indexOf('.') != -1) {
+        if (name.indexOf('$') != -1 || name.indexOf('-') != -1 || name.indexOf('.') != -1) {
             return '"'.toString() + name + '"'
         }
         for (i in 0 until name.length) {
