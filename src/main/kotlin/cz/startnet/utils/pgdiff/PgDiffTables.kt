@@ -313,14 +313,14 @@ object PgDiffTables {
             val oldColumn = oldTable.getColumn(newColumn.name)!!
             val newColumnName = PgDiffUtils.getQuotedName(newColumn.name)
             if (oldColumn.type != newColumn.type) {
+                val using = if (newTable.isForeign) {
+                    ""
+                } else {
+                    " USING " + newColumnName + "::" + newColumn.type
+                }
                 statements.add(
                     "\tALTER COLUMN " + newColumnName + " TYPE "
-                            + newColumn.type + " USING " + newColumnName + "::" + newColumn.type + " /* "
-                            + MessageFormat.format(
-                        Resources.getString("TypeParameterChange"),
-                        newTable.name, oldColumn.type,
-                        newColumn.type
-                    ) + " */"
+                            + newColumn.type + using
                 )
             }
             val oldDefault = oldColumn.defaultValue.orEmpty()
