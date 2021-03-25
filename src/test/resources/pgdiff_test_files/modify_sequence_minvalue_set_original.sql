@@ -1,24 +1,3 @@
---
--- PostgreSQL database dump
---
-
-SET client_encoding = 'UTF8';
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON SCHEMA public IS 'Standard public schema';
-
-
-SET search_path = public, pg_catalog;
-
---
--- Name: testseq; Type: SEQUENCE; Schema: public; Owner: fordfrog
---
-
 CREATE SEQUENCE testseq
     START WITH 1
     INCREMENT BY 10
@@ -26,20 +5,8 @@ CREATE SEQUENCE testseq
     NO MINVALUE
     CACHE 1;
 
-
-ALTER TABLE public.testseq OWNER TO fordfrog;
-
---
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
--- PostgreSQL database dump complete
---
+-- NOTE: the migration of the new min value without a restart will only work if the sequence is above the new min value
+-- in real world this would not matter if the diff runs against an existing db since it might be already above minvalue
+-- TODO: use setval in generated diff to set the sequence to at least minval
+SELECT setval('testseq ', 10000);
 

@@ -50,7 +50,7 @@ class PgDiffTest {
             Args("add_constraint"),
             Args("modify_constraint"),
             Args("drop_constraint"),
-            Args("add_unique_constraint", false, false, false, true),
+            Args("add_unique_constraint", false, false, false),
             Args("read_inherits"),
             Args("add_inherits"),
             Args("modify_inherits"),
@@ -62,7 +62,7 @@ class PgDiffTest {
             Args("drop_sequence"),
             Args("modify_sequence_increment"),
             Args("modify_sequence_start_ignore_off"),
-            Args("modify_sequence_start_ignore_on", false, false, false, true),
+            Args("modify_sequence_start_ignore_on", false, false, false),
             Args("modify_sequence_minvalue_set"),
             Args("modify_sequence_minvalue_unset"),
             Args("modify_sequence_maxvalue_set"),
@@ -83,7 +83,7 @@ class PgDiffTest {
             Args("add_function_similar"),
             Args("drop_function_similar"),
             Args("modify_function_similar"),
-            Args("function_equal_whitespace", false, false, true, false),
+            Args("function_equal_whitespace", false, false, true),
             Args("add_trigger"),
             Args("drop_trigger"),
             Args("modify_trigger"),
@@ -93,23 +93,23 @@ class PgDiffTest {
             Args("add_materialized_view"),
             Args("drop_materialized_view"),
             Args("modify_materialized_view"),
-            Args("add_defaults", true, false, false, false),
+            Args("add_defaults", true, false, false),
             Args("multiple_schemas"),
-            Args("multiple_schemas", false, true, false, false),
-            Args("alter_view_drop_default", false, true, false, false),
-            Args("alter_view_add_default", false, true, false, false),
-            Args("add_comments", false, true, false, false),
-            Args("drop_comments", false, true, false, false),
-            Args("alter_comments", false, true, false, false),
-            Args("alter_view_change_default", false, true, false, false),
-            Args("add_sequence_bug2100013", false, true, false, false),
+            Args("multiple_schemas", false, true, false),
+            Args("alter_view_drop_default", false, true, false),
+            Args("alter_view_add_default", false, true, false),
+            Args("add_comments", false, true, false),
+            Args("drop_comments", false, true, false),
+            Args("alter_comments", false, true, false),
+            Args("alter_view_change_default", false, true, false),
+            Args("add_sequence_bug2100013", false, true, false),
             Args("add_sequence_issue225"),
-            Args("view_bug3080388", false, true, false, false),
-            Args("function_bug3084274", false, true, false, false),
-            Args("add_comment_new_column", false, true, false, false),
-            Args("quoted_schema", false, true, false, false),
-            Args("add_column_add_defaults", true, true, false, false),
-            Args("add_owned_sequence", false, true, false, false),
+            Args("view_bug3080388", false, true, false),
+            Args("function_bug3084274", false, true, false),
+            Args("add_comment_new_column", false, true, false),
+            Args("quoted_schema", false, true, false),
+            Args("add_column_add_defaults", true, true, false),
+            Args("add_owned_sequence", false, true, false),
             Args("add_empty_table"),
             Args("view_colnames"),
             Args("add_table_bug102"),
@@ -201,7 +201,6 @@ class PgDiffTest {
         val arguments = PgDiffArguments()
         arguments.isAddDefaults = args.addDefaults
         arguments.isIgnoreFunctionWhitespace = args.ignoreFunctionWhitespace
-        arguments.isIgnoreStartWith = args.ignoreStartWith
         PgDiffUtils.setUseExists(true)
         PgDiff.createDiff(
             writer, arguments,
@@ -244,11 +243,6 @@ data class Args(
      * Value for the same named command line argument.
      */
     val ignoreFunctionWhitespace: Boolean = false,
-    /**
-     * Value for the same named command line argument.
-     */
-    val ignoreStartWith: Boolean = false
-
 ) {
     override fun toString(): String {
         return fileNameTemplate

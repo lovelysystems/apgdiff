@@ -184,14 +184,12 @@ object PgDiffSequences {
                 sbSQL.append("\tMAXVALUE ")
                 sbSQL.append(newMaxValue)
             }
-            if (!arguments.isIgnoreStartWith) {
-                val oldStart = oldSequence.startWith
-                val newStart = newSequence.startWith
-                if (newStart != null && newStart != oldStart) {
-                    sbSQL.append(System.getProperty("line.separator"))
-                    sbSQL.append("\tRESTART WITH ")
-                    sbSQL.append(newStart)
-                }
+            val oldStart = oldSequence.startWith
+            val newStart = newSequence.startWith
+            if (newStart != null && newStart != oldStart) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append("\tSTART WITH ")
+                sbSQL.append(newStart)
             }
             val oldCache = oldSequence.cache
             val newCache = newSequence.cache

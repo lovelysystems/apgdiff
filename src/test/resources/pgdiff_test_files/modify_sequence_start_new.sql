@@ -1,0 +1,10 @@
+CREATE SEQUENCE testseq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.testseq OWNER TO postgres;
+
