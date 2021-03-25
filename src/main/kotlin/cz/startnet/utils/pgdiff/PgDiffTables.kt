@@ -102,7 +102,6 @@ object PgDiffTables {
             updateTableColumns(
                 writer, arguments, oldTable, newTable, searchPathHelper
             )
-            checkWithOIDS(writer, oldTable, newTable, searchPathHelper)
             checkInherits(writer, oldTable, newTable, newSchema, searchPathHelper)
             addInheritedColumnDefaults(writer, arguments, oldTable, newTable, searchPathHelper)
             checkTablespace(writer, oldTable, newTable, searchPathHelper)
@@ -479,46 +478,6 @@ object PgDiffTables {
                 }
                 writer.println(";")
             }
-        }
-    }
-
-    /**
-     * Checks whether OIDS are dropped from the new table. There is no way to
-     * add OIDS to existing table so we do not create SQL statement for addition
-     * of OIDS but we issue warning.
-     *
-     * @param writer           writer the output should be written to
-     * @param oldTable         original table
-     * @param newTable         new table
-     * @param searchPathHelper search path helper
-     */
-    private fun checkWithOIDS(
-        writer: PrintWriter,
-        oldTable: PgTable?, newTable: PgTable,
-        searchPathHelper: SearchPathHelper
-    ) {
-        if (oldTable?.with == null && newTable.with == null
-            || oldTable?.with != null
-            && oldTable.with == newTable.with
-        ) {
-            return
-        }
-        searchPathHelper.outputSearchPath(writer)
-        writer.println()
-        writer.println(
-            "ALTER TABLE "
-                    + PgDiffUtils.getQuotedName(newTable.name)
-        )
-        if (newTable.with == null
-            || "OIDS=false".equals(newTable.with, ignoreCase = true)
-        ) {
-            writer.println("\tSET WITHOUT OIDS;")
-        } else if ("OIDS".equals(newTable.with, ignoreCase = true)
-            || "OIDS=true".equals(newTable.with, ignoreCase = true)
-        ) {
-            writer.println("\tSET WITH OIDS;")
-        } else {
-            writer.println("\tSET " + newTable.with + ";")
         }
     }
 

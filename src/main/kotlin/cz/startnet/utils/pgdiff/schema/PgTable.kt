@@ -29,19 +29,9 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
      * List of names of inherited tables.
      */
     val inherits: MutableList<Pair<String?, String?>>? = ArrayList()
+
     /**
-     * Getter for [.with]
-     *
-     * @return [.with]
-     */
-    /**
-     * Setter for [.with].
-     *
-     * @param with [.with]
-     */
-    /**
-     * WITH clause. If value is null then it is not set, otherwise can be set to
-     * OIDS=true, OIDS=false, or storage parameters can be set.
+     * The with clause, currently not implemented
      */
     var with: String? = null
 
@@ -184,19 +174,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
             sbSQL.append(")")
         }
         if (with != null && !with!!.isEmpty()) {
-            sbSQL.append(System.getProperty("line.separator"))
-            if ("OIDS=false".equals(with, ignoreCase = true)) {
-                sbSQL.append("WITHOUT OIDS")
-            } else {
-                sbSQL.append("WITH ")
-                if ("OIDS".equals(with, ignoreCase = true)
-                    || "OIDS=true".equals(with, ignoreCase = true)
-                ) {
-                    sbSQL.append("OIDS")
-                } else {
-                    sbSQL.append(with)
-                }
-            }
+            TODO("with clause in table creation not supported")
         }
         if (isForeign) {
             sbSQL.append("SERVER ")
