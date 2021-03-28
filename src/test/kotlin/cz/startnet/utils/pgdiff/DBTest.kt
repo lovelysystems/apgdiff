@@ -5,14 +5,11 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import org.testcontainers.utility.DockerImageName
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintWriter
 
 
 class VanillaDBContainer(imageName: String) :
@@ -60,26 +57,9 @@ class VanillaDBContainer(imageName: String) :
             it.stdout
         }
     }
-
-
-}
-
-fun PgDiff.createDiff(oldDump: String, newDump: String): String {
-    val diffInput = ByteArrayOutputStream()
-    val writer = PrintWriter(diffInput)
-    val arguments = PgDiffArguments()
-    PgDiff.createDiff(
-        writer, arguments,
-        oldDump.byteInputStream(),
-        newDump.byteInputStream()
-    )
-    writer.close()
-    return diffInput.toString()
 }
 
 class DBTest {
-
-    val testFileDir = File("src/test/resources/pgdiff_test_files")
 
     val dbContainer = VanillaDBContainer("postgres:12.6").withFileSystemBind(
         testFileDir.absolutePath, "/testfiles"
@@ -100,28 +80,21 @@ class DBTest {
         dbContainer.stop()
     }
 
-    private val testFilePattern = Regex("^(.*)_original.sql")
-
-    fun sqlFiles() = testFileDir.list()!!.map {
-        testFilePattern.matchEntire(it)?.groups?.get(1)?.value
-    }.filterNotNull().sorted()
-
 
     @ParameterizedTest
-    @MethodSource("sqlFiles")
-    fun migratedDBEqualsNew(name: String) {
+    @ArgumentsSource(SQLDiffFilesArgumentsProvider::class)
+    fun migratedDBEqualsNew(testFiles: SQLDiffTestFiles) {
 
-        // val name = "add_cluster"
+        val name = testFiles.name
+        val oldDB = "${testFiles.name}_old"
+        val newDB = "${testFiles.name}_new"
 
-        val oldDB = "${name}_old"
-        val newDB = "${name}_new"
-
-        dbContainer.createDB(oldDB, "/testfiles/${name}_original.sql")
+        dbContainer.createDB(oldDB, "/testfiles/${testFiles.old.name}")
         // dump the original
         val oldDump = dbContainer.dumpDB(oldDB)
 
         // load the new
-        dbContainer.createDB(newDB, "/testfiles/${name}_new.sql")
+        dbContainer.createDB(newDB, "/testfiles/${testFiles.new.name}")
         // dump the new
         val newDump = dbContainer.dumpDB(newDB)
 
@@ -129,16 +102,15 @@ class DBTest {
         // run diff on both dumps
 
         val firstDiff = PgDiff.createDiff(oldDump, newDump)
-        val diffFile = testFileDir.resolve("${name}_diff.sql")
-
+        val df = testFiles.diff
         // write the diff file
-        if (!diffFile.exists() || diffFile.readText() != firstDiff) {
-            diffFile.writeText(firstDiff)
+        if (!df.exists() || df.readText() != firstDiff) {
+            df.writeText(firstDiff)
         }
 
 
         // apply diff to original
-        dbContainer.runFile(oldDB, "/testfiles/${diffFile.name}")
+        dbContainer.runFile(oldDB, "/testfiles/${df.name}")
 
         // dmp the original with applied diff
         val migratedDump = dbContainer.dumpDB(oldDB)
@@ -152,7 +124,5 @@ class DBTest {
                 migratedDump shouldBe newDump
             }
         }
-
     }
-
 }
