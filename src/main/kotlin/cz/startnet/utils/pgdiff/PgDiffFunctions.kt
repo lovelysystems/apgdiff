@@ -33,13 +33,23 @@ object PgDiffFunctions {
         for (newFunction in newSchema!!.functions) {
             val oldFunction: PgFunction?
             oldFunction = oldSchema?.getFunction(newFunction.signature)
+
             if (oldFunction == null || !newFunction.equals(
                     oldFunction, arguments.isIgnoreFunctionWhitespace
                 )
             ) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(newFunction.creationSQL)
+                // drop the function if args differ since the signature cannot be changed via replace
+                val toDrop = (oldFunction != null && oldFunction.arguments != newFunction.arguments)
+                if (toDrop) {
+                    writer.println(newFunction.dropSQL)
+                }
+                oldFunction?.let {
+                    if (it.arguments != newFunction.arguments) {
+                    }
+                }
+                writer.println(newFunction.creationSQL(!toDrop))
             }
         }
     }

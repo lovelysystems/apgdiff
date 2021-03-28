@@ -1,10 +1,11 @@
 
-CREATE OR REPLACE FUNCTION multiply_numbers(number2 integer, number1 integer) RETURNS integer
+DROP FUNCTION multiply_numbers(integer, integer);
+CREATE FUNCTION multiply_numbers(number2 integer, number1 integer) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 begin
-        return number2 * number1;
+    return number2 * number1;
 end;
-$$
-    LANGUAGE plpgsql;
+$$;
 
-ALTER FUNCTION multiply_numbers(number2 integer, number1 integer) OWNER TO fordfrog;
+ALTER FUNCTION multiply_numbers(integer, integer) OWNER TO postgres;

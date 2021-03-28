@@ -1,10 +1,11 @@
 
-CREATE OR REPLACE FUNCTION power_number(number integer) RETURNS integer
+DROP FUNCTION power_number(integer);
+CREATE FUNCTION power_number(arg_new integer) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 begin
-	return number * number;
+    return arg_new * arg_new;
 end;
-$$
-    LANGUAGE plpgsql;
+$$;
 
-ALTER FUNCTION power_number(number integer) OWNER TO fordfrog;
+ALTER FUNCTION power_number(integer) OWNER TO postgres;
