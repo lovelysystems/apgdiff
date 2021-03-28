@@ -62,18 +62,8 @@ CreateTableParser : PatternBasedSubParser(
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("INHERITS")) {
                 parseInherits(ctx.database, parser, table)
-            } else if (parser.expectOptional("WITHOUT")) {
-                table.with = "OIDS=false"
             } else if (parser.expectOptional("WITH")) {
-                if (parser.expectOptional("OIDS")
-                    || parser.expectOptional("OIDS=true")
-                ) {
-                    table.with = "OIDS=true"
-                } else if (parser.expectOptional("OIDS=false")) {
-                    table.with = "OIDS=false"
-                } else {
-                    table.with = parser.expression
-                }
+                TODO("with clause for tables not implemented")
             } else if (parser.expectOptional("TABLESPACE")) {
                 table.tablespace = parser.parseString()
             } else if (parser.expectOptional("SERVER")) {
