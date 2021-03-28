@@ -377,10 +377,40 @@ object PgDiffTables {
      */
     private fun checkInherits(
         writer: PrintWriter,
-        oldTable: PgTable?, newTable: PgTable?,
+        oldTable: PgTable?,
+        newTable: PgTable?,
         newSchema: PgSchema?,
         searchPathHelper: SearchPathHelper
     ) {
+        for (inheritPairN in newTable!!.inherits.orEmpty()) {
+            val schemaName = inheritPairN.l
+            val tableName = inheritPairN.r
+            var isFound = false
+            for (inheritPairO in oldTable!!.inherits.orEmpty()) {
+                if (schemaName == inheritPairO.l && tableName == inheritPairO.r) {
+                    isFound = true
+                    break
+                }
+            }
+            if (!isFound) {
+                var inheritTableName: String? = null
+                inheritTableName = if (newSchema?.name == schemaName) {
+                    PgDiffUtils.getQuotedName(tableName)
+                } else {
+                    String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
+                }
+                searchPathHelper.outputSearchPath(writer)
+                writer.println()
+                writer.println(
+                    "ALTER TABLE "
+                            + PgDiffUtils.getQuotedName(newTable.name)
+                )
+                writer.println(
+                    "\tINHERIT "
+                            + inheritTableName + ';'
+                )
+            }
+        }
         for (inheritPairO in oldTable!!.inherits.orEmpty()) {
             val schemaName = inheritPairO.l
             val tableName = inheritPairO.r
@@ -410,35 +440,7 @@ object PgDiffTables {
                 )
             }
         }
-        for (inheritPairN in newTable!!.inherits.orEmpty()) {
-            val schemaName = inheritPairN.l
-            val tableName = inheritPairN.r
-            var isFound = false
-            for (inheritPairO in oldTable.inherits.orEmpty()) {
-                if (schemaName == inheritPairO.l && tableName == inheritPairO.r) {
-                    isFound = true
-                    break
-                }
-            }
-            if (!isFound) {
-                var inheritTableName: String? = null
-                inheritTableName = if (newSchema?.name == schemaName) {
-                    PgDiffUtils.getQuotedName(tableName)
-                } else {
-                    String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
-                }
-                searchPathHelper.outputSearchPath(writer)
-                writer.println()
-                writer.println(
-                    "ALTER TABLE "
-                            + PgDiffUtils.getQuotedName(newTable.name)
-                )
-                writer.println(
-                    "\tINHERIT "
-                            + inheritTableName + ';'
-                )
-            }
-        }
+
     }
 
     /**
