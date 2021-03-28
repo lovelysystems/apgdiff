@@ -16,13 +16,13 @@ COMMENT ON SCHEMA public IS 'Standard public schema';
 
 
 --
--- Name: testschema2; Type: SCHEMA; Schema: -; Owner: fordfrog
+-- Name: testschema2; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
 CREATE SCHEMA testschema2;
 
 
-ALTER SCHEMA testschema2 OWNER TO fordfrog;
+ALTER SCHEMA testschema2 OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
@@ -31,7 +31,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: testtable1; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: testtable1; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable1 (
@@ -39,10 +39,10 @@ CREATE TABLE testtable1 (
 );
 
 
-ALTER TABLE public.testtable1 OWNER TO fordfrog;
+ALTER TABLE public.testtable1 OWNER TO postgres;
 
 --
--- Name: testtable1_id_seq; Type: SEQUENCE; Schema: public; Owner: fordfrog
+-- Name: testtable1_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE testtable1_id_seq
@@ -53,24 +53,24 @@ CREATE SEQUENCE testtable1_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.testtable1_id_seq OWNER TO fordfrog;
+ALTER TABLE public.testtable1_id_seq OWNER TO postgres;
 
 --
--- Name: testtable1_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fordfrog
+-- Name: testtable1_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE testtable1_id_seq OWNED BY testtable1.id;
 
 
 --
--- Name: testtable1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fordfrog
+-- Name: testtable1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('testtable1_id_seq', 1, false);
 
 
 --
--- Name: testtable3; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: testtable3; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable3 (
@@ -78,10 +78,10 @@ CREATE TABLE testtable3 (
 );
 
 
-ALTER TABLE public.testtable3 OWNER TO fordfrog;
+ALTER TABLE public.testtable3 OWNER TO postgres;
 
 --
--- Name: testtable3_id_seq; Type: SEQUENCE; Schema: public; Owner: fordfrog
+-- Name: testtable3_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE testtable3_id_seq
@@ -92,17 +92,17 @@ CREATE SEQUENCE testtable3_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.testtable3_id_seq OWNER TO fordfrog;
+ALTER TABLE public.testtable3_id_seq OWNER TO postgres;
 
 --
--- Name: testtable3_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fordfrog
+-- Name: testtable3_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE testtable3_id_seq OWNED BY testtable3.id;
 
 
 --
--- Name: testtable3_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fordfrog
+-- Name: testtable3_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('testtable3_id_seq', 1, false);
@@ -111,7 +111,7 @@ SELECT pg_catalog.setval('testtable3_id_seq', 1, false);
 SET search_path = testschema2, pg_catalog;
 
 --
--- Name: testtable1; Type: TABLE; Schema: testschema2; Owner: fordfrog; Tablespace:
+-- Name: testtable1; Type: TABLE; Schema: testschema2; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable1 (
@@ -119,10 +119,10 @@ CREATE TABLE testtable1 (
 );
 
 
-ALTER TABLE testschema2.testtable1 OWNER TO fordfrog;
+ALTER TABLE testschema2.testtable1 OWNER TO postgres;
 
 --
--- Name: testtable1_id_seq; Type: SEQUENCE; Schema: testschema2; Owner: fordfrog
+-- Name: testtable1_id_seq; Type: SEQUENCE; Schema: testschema2; Owner: postgres
 --
 
 CREATE SEQUENCE testtable1_id_seq
@@ -133,17 +133,17 @@ CREATE SEQUENCE testtable1_id_seq
     CACHE 1;
 
 
-ALTER TABLE testschema2.testtable1_id_seq OWNER TO fordfrog;
+ALTER TABLE testschema2.testtable1_id_seq OWNER TO postgres;
 
 --
--- Name: testtable1_id_seq; Type: SEQUENCE OWNED BY; Schema: testschema2; Owner: fordfrog
+-- Name: testtable1_id_seq; Type: SEQUENCE OWNED BY; Schema: testschema2; Owner: postgres
 --
 
 ALTER SEQUENCE testtable1_id_seq OWNED BY testtable1.id;
 
 
 --
--- Name: testtable1_id_seq; Type: SEQUENCE SET; Schema: testschema2; Owner: fordfrog
+-- Name: testtable1_id_seq; Type: SEQUENCE SET; Schema: testschema2; Owner: postgres
 --
 
 SELECT pg_catalog.setval('testtable1_id_seq', 1, false);
@@ -152,14 +152,14 @@ SELECT pg_catalog.setval('testtable1_id_seq', 1, false);
 SET search_path = public, pg_catalog;
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: fordfrog
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE testtable1 ALTER COLUMN id SET DEFAULT nextval('testtable1_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: fordfrog
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE testtable3 ALTER COLUMN id SET DEFAULT nextval('testtable3_id_seq'::regclass);
@@ -168,7 +168,7 @@ ALTER TABLE testtable3 ALTER COLUMN id SET DEFAULT nextval('testtable3_id_seq'::
 SET search_path = testschema2, pg_catalog;
 
 --
--- Name: id; Type: DEFAULT; Schema: testschema2; Owner: fordfrog
+-- Name: id; Type: DEFAULT; Schema: testschema2; Owner: postgres
 --
 
 ALTER TABLE testtable1 ALTER COLUMN id SET DEFAULT nextval('testtable1_id_seq'::regclass);
@@ -177,13 +177,13 @@ ALTER TABLE testtable1 ALTER COLUMN id SET DEFAULT nextval('testtable1_id_seq'::
 SET search_path = public, pg_catalog;
 
 --
--- Data for Name: testtable1; Type: TABLE DATA; Schema: public; Owner: fordfrog
+-- Data for Name: testtable1; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
 
 --
--- Data for Name: testtable3; Type: TABLE DATA; Schema: public; Owner: fordfrog
+-- Data for Name: testtable3; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
@@ -191,7 +191,7 @@ SET search_path = public, pg_catalog;
 SET search_path = testschema2, pg_catalog;
 
 --
--- Data for Name: testtable1; Type: TABLE DATA; Schema: testschema2; Owner: fordfrog
+-- Data for Name: testtable1; Type: TABLE DATA; Schema: testschema2; Owner: postgres
 --
 
 

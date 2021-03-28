@@ -135,17 +135,8 @@ class PgSequence(
             return sbSQL.toString()
         }
 
-    /**
-     * Creates and returns SQL statement for dropping the sequence.
-     *
-     * @return created SQL
-     */
     val dropSQL: String
-        get() = "DROP SEQUENCE " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + ";"
-
-//    fun getPrivileges(): List<PgSequencePrivilege> {
-//        return Collections.unmodifiableList(privileges)
-//    }
+        get() = "DROP SEQUENCE IF EXISTS " + PgDiffUtils.getQuotedName(name) + ";"
 
     fun getPrivilege(roleName: String?): PgSequencePrivilege? {
         for (privilege in privileges) {
