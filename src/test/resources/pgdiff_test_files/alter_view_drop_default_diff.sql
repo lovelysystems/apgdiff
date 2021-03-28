@@ -1,1 +1,2 @@
+
 ALTER TABLE test ALTER COLUMN test_col DROP DEFAULT;

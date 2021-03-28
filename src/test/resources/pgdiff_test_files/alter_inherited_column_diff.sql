@@ -1,6 +1,6 @@
 
 ALTER TABLE ONLY childtable
-	ALTER COLUMN a SET DEFAULT "child a";
+	ALTER COLUMN a SET DEFAULT 'child a'::text;
 
 ALTER TABLE ONLY grandchildtable
-	ALTER COLUMN a SET DEFAULT "grandchild a";
+	ALTER COLUMN a SET DEFAULT 'grandchild a'::text;

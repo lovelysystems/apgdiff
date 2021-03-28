@@ -1,4 +1,4 @@
 CREATE VIEW test AS
-	SELECT test_col FROM test2;
+SELECT current_timestamp as test_col;
 
-ALTER VIEW test ALTER COLUMN test_col SET DEFAULT 1;
+ALTER VIEW test ALTER COLUMN test_col SET DEFAULT '2020-01-01';

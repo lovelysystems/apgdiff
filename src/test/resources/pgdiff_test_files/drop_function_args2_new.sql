@@ -13,11 +13,6 @@ SET client_min_messages = warning;
 COMMENT ON SCHEMA public IS 'Standard public schema';
 
 
---
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: 
---
-
-CREATE PROCEDURAL LANGUAGE plpgsql;
 
 
 SET search_path = public, pg_catalog;
@@ -27,7 +22,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: test_table; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: test_table; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE test_table (
@@ -35,10 +30,10 @@ CREATE TABLE test_table (
 );
 
 
-ALTER TABLE public.test_table OWNER TO fordfrog;
+ALTER TABLE public.test_table OWNER TO postgres;
 
 --
--- Name: test_table_pkey; Type: CONSTRAINT; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: test_table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY test_table

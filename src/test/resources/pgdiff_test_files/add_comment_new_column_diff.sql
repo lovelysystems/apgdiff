@@ -1,5 +1,6 @@
+
 ALTER TABLE agent
-	ADD COLUMN IF NOT EXISTS abc BIGINT;
+	ADD COLUMN abc bigint;
 
 COMMENT ON COLUMN agent.id IS 'This ID support schema name';
 

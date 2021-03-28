@@ -1,5 +1,5 @@
-CREATE DOMAIN public.benefits AS jsonb
-    CONSTRAINT benefits_check CHECK (check_microschema('Benefits'::text, VALUE));
+CREATE DOMAIN public.benefits AS text
+    CONSTRAINT benefits_check CHECK (length(VALUE)>1);
 
 -- new domain
 CREATE DOMAIN sha1_digest AS text

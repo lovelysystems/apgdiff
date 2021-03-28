@@ -16,7 +16,7 @@ COMMENT ON SCHEMA public IS 'Standard public schema';
 SET search_path = public, pg_catalog;
 
 --
--- Name: testseq; Type: SEQUENCE; Schema: public; Owner: fordfrog
+-- Name: testseq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE alert_alert_id_seq
@@ -37,7 +37,7 @@ CREATE SEQUENCE sequence_10
     CACHE 1;
 
 
-ALTER TABLE public.alert_alert_id_seq OWNER TO fordfrog;
+ALTER TABLE public.alert_alert_id_seq OWNER TO postgres;
 
 SET default_tablespace = '';
 

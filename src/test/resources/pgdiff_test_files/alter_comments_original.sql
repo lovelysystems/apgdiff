@@ -16,7 +16,7 @@ CREATE FUNCTION test_fnc(arg character varying) RETURNS boolean
 RETURN true;
 END;$$;
 
-ALTER FUNCTION public.test_fnc(arg character varying) OWNER TO fordfrog;
+ALTER FUNCTION public.test_fnc(arg character varying) OWNER TO postgres;
 
 COMMENT ON FUNCTION test_fnc(arg character varying) IS 'test function';
 
@@ -26,7 +26,7 @@ CREATE FUNCTION trigger_fnc() RETURNS trigger
     AS $$begin
 end;$$;
 
-ALTER FUNCTION public.trigger_fnc() OWNER TO fordfrog;
+ALTER FUNCTION public.trigger_fnc() OWNER TO postgres;
 
 
 CREATE TABLE test (
@@ -35,7 +35,7 @@ CREATE TABLE test (
     CONSTRAINT text_check CHECK ((length((text)::text) > 0))
 );
 
-ALTER TABLE public.test OWNER TO fordfrog;
+ALTER TABLE public.test OWNER TO postgres;
 
 COMMENT ON TABLE test IS 'test table';
 
@@ -54,7 +54,7 @@ CREATE SEQUENCE test_id_seq
     NO MAXVALUE
     CACHE 1;
 
-ALTER TABLE public.test_id_seq OWNER TO fordfrog;
+ALTER TABLE public.test_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE test_id_seq OWNED BY test.id;
 
@@ -64,7 +64,7 @@ COMMENT ON SEQUENCE test_id_seq IS 'test table sequence';
 CREATE VIEW test_view AS
     SELECT test.id, test.text FROM test;
 
-ALTER TABLE public.test_view OWNER TO fordfrog;
+ALTER TABLE public.test_view OWNER TO postgres;
 
 COMMENT ON VIEW test_view IS 'test view';
 

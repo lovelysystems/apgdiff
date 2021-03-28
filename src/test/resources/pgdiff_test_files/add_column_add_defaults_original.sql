@@ -29,7 +29,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: table1; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: table1; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE table1 (
@@ -37,10 +37,10 @@ CREATE TABLE table1 (
 );
 
 
-ALTER TABLE public.table1 OWNER TO fordfrog;
+ALTER TABLE public.table1 OWNER TO postgres;
 
 --
--- Data for Name: table1; Type: TABLE DATA; Schema: public; Owner: fordfrog
+-- Data for Name: table1; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY table1 (col1) FROM stdin;

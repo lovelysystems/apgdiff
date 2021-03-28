@@ -16,7 +16,7 @@ COMMENT ON SCHEMA public IS 'Standard public schema';
 SET search_path = public, pg_catalog;
 
 --
--- Name: testseq; Type: SEQUENCE; Schema: public; Owner: fordfrog
+-- Name: testseq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE testseq
@@ -27,14 +27,14 @@ CREATE SEQUENCE testseq
     CACHE 1;
 
 
-ALTER TABLE public.testseq OWNER TO fordfrog;
+ALTER TABLE public.testseq OWNER TO postgres;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: testtable; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: testtable; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable (
@@ -45,10 +45,10 @@ CREATE TABLE testtable (
 );
 
 
-ALTER TABLE public.testtable OWNER TO fordfrog;
+ALTER TABLE public.testtable OWNER TO postgres;
 
 --
--- Name: testindex; Type: INDEX; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: testindex; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX testindex ON testtable USING btree (field3);

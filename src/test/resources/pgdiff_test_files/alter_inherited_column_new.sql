@@ -19,14 +19,14 @@ CREATE TABLE childtable (
 )
 INHERITS (parenttable);
 
-ALTER TABLE ONLY childtable ALTER COLUMN a SET DEFAULT "child a";
+ALTER TABLE ONLY childtable ALTER COLUMN a SET DEFAULT 'child a';
 
 CREATE TABLE grandchildtable (
     c text
 )
 INHERITS (childtable);
 
-ALTER TABLE ONLY grandchildtable ALTER COLUMN a SET DEFAULT "grandchild a";
+ALTER TABLE ONLY grandchildtable ALTER COLUMN a SET DEFAULT 'grandchild a';
 
 
 

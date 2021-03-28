@@ -22,7 +22,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: testtable; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: testtable; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable (
@@ -31,20 +31,20 @@ CREATE TABLE testtable (
 );
 
 
-ALTER TABLE public.testtable OWNER TO fordfrog;
+ALTER TABLE public.testtable OWNER TO postgres;
 
 --
--- Name: testview; Type: VIEW; Schema: public; Owner: fordfrog
+-- Name: testview; Type: VIEW; Schema: public; Owner: postgres
 --
 
 CREATE VIEW testview AS
     SELECT testtable.id, testtable.name FROM testtable;
 
 
-ALTER TABLE public.testview OWNER TO fordfrog;
+ALTER TABLE public.testview OWNER TO postgres;
 
 --
--- Data for Name: testtable; Type: TABLE DATA; Schema: public; Owner: fordfrog
+-- Data for Name: testtable; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 

@@ -20,7 +20,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: parenttable; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: parenttable; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE parenttable (
@@ -28,10 +28,10 @@ CREATE TABLE parenttable (
 );
 
 
-ALTER TABLE public.parenttable OWNER TO fordfrog;
+ALTER TABLE public.parenttable OWNER TO postgres;
 
 --
--- Name: testtable; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: testtable; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable (
@@ -40,7 +40,7 @@ CREATE TABLE testtable (
 INHERITS (parenttable);
 
 
-ALTER TABLE public.testtable OWNER TO fordfrog;
+ALTER TABLE public.testtable OWNER TO postgres;
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres

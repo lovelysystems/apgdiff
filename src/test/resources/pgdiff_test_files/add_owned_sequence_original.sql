@@ -29,7 +29,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: table1; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: table1; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE table1 (
@@ -37,10 +37,10 @@ CREATE TABLE table1 (
 );
 
 
-ALTER TABLE public.table1 OWNER TO fordfrog;
+ALTER TABLE public.table1 OWNER TO postgres;
 
 --
--- Name: table1_col1_seq; Type: SEQUENCE; Schema: public; Owner: fordfrog
+-- Name: table1_col1_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE table1_col1_seq
@@ -51,31 +51,31 @@ CREATE SEQUENCE table1_col1_seq
     CACHE 1;
 
 
-ALTER TABLE public.table1_col1_seq OWNER TO fordfrog;
+ALTER TABLE public.table1_col1_seq OWNER TO postgres;
 
 --
--- Name: table1_col1_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fordfrog
+-- Name: table1_col1_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE table1_col1_seq OWNED BY table1.col1;
 
 
 --
--- Name: table1_col1_seq; Type: SEQUENCE SET; Schema: public; Owner: fordfrog
+-- Name: table1_col1_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('table1_col1_seq', 1, false);
 
 
 --
--- Name: col1; Type: DEFAULT; Schema: public; Owner: fordfrog
+-- Name: col1; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY table1 ALTER COLUMN col1 SET DEFAULT nextval('table1_col1_seq'::regclass);
 
 
 --
--- Data for Name: table1; Type: TABLE DATA; Schema: public; Owner: fordfrog
+-- Data for Name: table1; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY table1 (col1) FROM stdin;

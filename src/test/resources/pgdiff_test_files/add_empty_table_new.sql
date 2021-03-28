@@ -29,14 +29,14 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: empty_table; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: empty_table; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE empty_table (
 );
 
 
-ALTER TABLE public.empty_table OWNER TO fordfrog;
+ALTER TABLE public.empty_table OWNER TO postgres;
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres

@@ -1,3 +1,6 @@
+CREATE EXTENSION postgres_fdw;
+CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host 'foo', dbname 'foodb', port '5432');
+
 CREATE FOREIGN TABLE foreign_to_alter (
     id bigint,
     user_id bigint,
@@ -7,10 +10,9 @@ CREATE FOREIGN TABLE foreign_to_alter (
     pre_match_stake_coef numeric,
     punter_limits character varying,
     name character varying(60),
-    colour_cat character varying(30),
-    deleted boolean
+    colour_cat character varying(30)
 )
-SERVER ats
+SERVER myserver
 OPTIONS (
     updatable 'false'
 );

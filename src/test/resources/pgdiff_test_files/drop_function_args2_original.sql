@@ -13,17 +13,12 @@ SET client_min_messages = warning;
 COMMENT ON SCHEMA public IS 'Standard public schema';
 
 
---
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: 
---
-
-CREATE PROCEDURAL LANGUAGE plpgsql;
 
 
 SET search_path = public, pg_catalog;
 
 --
--- Name: multiply_numbers(integer, integer); Type: FUNCTION; Schema: public; Owner: fordfrog
+-- Name: multiply_numbers(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION multiply_numbers(number1 integer, number2 integer) RETURNS integer
@@ -35,14 +30,14 @@ $$
     LANGUAGE plpgsql;
 
 
-ALTER FUNCTION public.multiply_numbers(number1 integer, number2 integer) OWNER TO fordfrog;
+ALTER FUNCTION public.multiply_numbers(number1 integer, number2 integer) OWNER TO postgres;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: test_table; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: test_table; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE test_table (
@@ -50,10 +45,10 @@ CREATE TABLE test_table (
 );
 
 
-ALTER TABLE public.test_table OWNER TO fordfrog;
+ALTER TABLE public.test_table OWNER TO postgres;
 
 --
--- Name: test_table_pkey; Type: CONSTRAINT; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: test_table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY test_table

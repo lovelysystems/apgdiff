@@ -16,7 +16,7 @@ COMMENT ON SCHEMA public IS 'Standard public schema';
 SET search_path = public, pg_catalog;
 
 --
--- Name: testseq; Type: SEQUENCE; Schema: public; Owner: fordfrog
+-- Name: testseq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE testseq
@@ -28,7 +28,7 @@ CREATE SEQUENCE testseq
     CYCLE;
 
 
-ALTER TABLE public.testseq OWNER TO fordfrog;
+ALTER TABLE public.testseq OWNER TO postgres;
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
