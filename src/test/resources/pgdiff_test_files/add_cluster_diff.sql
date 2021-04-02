@@ -5,6 +5,7 @@ CREATE SEQUENCE testtable2_id_seq
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
+ALTER SEQUENCE testtable2_id_seq OWNER TO postgres;
 
 CREATE TABLE testtable2 (
 	id integer DEFAULT nextval('public.testtable2_id_seq'::regclass) NOT NULL,

@@ -51,10 +51,8 @@ object AlterRelationParser : PatternBasedSubParser(
         if (rel == null) {
             val sequence = schema.getSequence(objectName)
             if (sequence != null) {
-                parseSequence(
-                    parser, sequence, ctx.outputIgnoredStatements,
-                    relName, ctx.database
-                )
+                // use the sequence parser since for historical reasons it is also ok to use ALTER TABLE with sequences
+                AlterSequenceParser.parseAlter(sequence, parser, ctx)
                 return
             }
             throw RuntimeException(
@@ -292,38 +290,5 @@ object AlterRelationParser : PatternBasedSubParser(
         table.addConstraint(constraint)
         constraint.definition = parser.expression
         constraint.tableName = table.name
-    }
-
-    /**
-     * Parses ALTER TABLE sequence.
-     *
-     * @param parser                  parser
-     * @param sequence                sequence
-     * @param outputIgnoredStatements whether ignored statements should be
-     * output in the diff
-     * @param sequenceName            sequence name as it was specified in the
-     * statement
-     * @param database                database information
-     */
-    private fun parseSequence(
-        parser: Parser,
-        sequence: PgSequence, outputIgnoredStatements: Boolean,
-        sequenceName: String?, database: PgDatabase
-    ) {
-        while (!parser.expectOptional(";")) {
-            if (parser.expectOptional("OWNER", "TO")) {
-                // we do not parse this one so we just consume the identifier
-                if (outputIgnoredStatements) {
-                    database.addIgnoredStatement(
-                        "ALTER TABLE " + sequenceName
-                                + " OWNER TO " + parser.parseIdentifier() + ';'
-                    )
-                } else {
-                    parser.parseIdentifier()
-                }
-            } else {
-                parser.throwUnsupportedCommand()
-            }
-        }
     }
 }

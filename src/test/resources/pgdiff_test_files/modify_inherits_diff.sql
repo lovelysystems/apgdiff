@@ -5,6 +5,7 @@ CREATE SEQUENCE new_parent_id_seq
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
+ALTER SEQUENCE new_parent_id_seq OWNER TO postgres;
 
 CREATE TABLE new_parent (
 	id bigint DEFAULT nextval('public.new_parent_id_seq'::regclass) NOT NULL

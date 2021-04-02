@@ -76,7 +76,7 @@ class PgDiffDomains(
     }
 
     fun drop() {
-        val toDrop = oldSchema?.domains?.filter { newSchema.domains.containsSame(it) }
+        val toDrop = oldSchema?.domains?.filter { !newSchema.domains.containsSame(it) }
         if (!toDrop.isNullOrEmpty()) {
             searchPathHelper.outputSearchPath(writer)
             toDrop.forEach {

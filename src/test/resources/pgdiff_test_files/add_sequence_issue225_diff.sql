@@ -6,3 +6,4 @@ CREATE SEQUENCE alert_alert_id_seq
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
+ALTER SEQUENCE alert_alert_id_seq OWNER TO postgres;

@@ -6,19 +6,20 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
+import java.io.PrintWriter
 import java.util.*
 
-class PgSequence(
-    var name: String
-) {
+class PgSequence(name: String) : DBObject("SEQUENCE", name) {
     /**
      * Value for CACHE or null if no value is specified.
      */
     var cache: String? = null
+
     /**
      * Value for INCREMENT BY or null if no value is specified.
      */
     var increment: String? = null
+
     /**
      * Value for MAXVALUE or null if no value is specified.
      */
@@ -39,14 +40,12 @@ class PgSequence(
      * Column the sequence is owned by.
      */
     var ownedBy: String? = null
-    /**
-     * Comment.
-     */
-    var comment: String? = null
+
     /**
      * List of privileges defined on the sequence.
      */
     val privileges: MutableList<PgSequencePrivilege> = ArrayList()
+
     /**
      * Value for AS or null if no value is specified.
      */
@@ -134,9 +133,6 @@ class PgSequence(
             sbSQL.append(';')
             return sbSQL.toString()
         }
-
-    val dropSQL: String
-        get() = "DROP SEQUENCE IF EXISTS " + PgDiffUtils.getQuotedName(name) + ";"
 
     fun getPrivilege(roleName: String?): PgSequencePrivilege? {
         for (privilege in privileges) {

@@ -5,6 +5,7 @@ CREATE SEQUENCE table2_col1_seq
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
+ALTER SEQUENCE table2_col1_seq OWNER TO postgres;
 
 CREATE TABLE table2 (
 	col1 integer DEFAULT nextval('public.table2_col1_seq'::regclass) NOT NULL
