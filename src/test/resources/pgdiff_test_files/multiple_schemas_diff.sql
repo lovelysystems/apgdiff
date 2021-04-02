@@ -1,46 +1,46 @@
 
-DROP SCHEMA IF EXISTS testschema1 CASCADE;
+CREATE SCHEMA testschema2;
 
-CREATE SCHEMA IF NOT EXISTS testschema2;
-
-ALTER SCHEMA testschema2 OWNER TO fordfrog;
+ALTER SCHEMA testschema2 OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
-DROP TABLE IF EXISTS testtable2;
+DROP TABLE testtable2;
 
 DROP SEQUENCE IF EXISTS testtable2_id_seq;
 
-CREATE SEQUENCE IF NOT EXISTS testtable3_id_seq
+CREATE SEQUENCE testtable3_id_seq
 	START WITH 1
 	INCREMENT BY 1
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
 
-CREATE TABLE IF NOT EXISTS testtable3 (
-	id bigint DEFAULT nextval('testtable3_id_seq'::regclass) NOT NULL
+CREATE TABLE testtable3 (
+	id bigint DEFAULT nextval('public.testtable3_id_seq'::regclass) NOT NULL
 );
 
-ALTER TABLE testtable3 OWNER TO fordfrog;
+ALTER TABLE testtable3 OWNER TO postgres;
 
 ALTER SEQUENCE testtable3_id_seq
-	OWNED BY testtable3.id;
+	OWNED BY public.testtable3.id;
 
 SET search_path = testschema2, pg_catalog;
 
-CREATE SEQUENCE IF NOT EXISTS testtable1_id_seq
+CREATE SEQUENCE testtable1_id_seq
 	START WITH 1
 	INCREMENT BY 1
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
 
-CREATE TABLE IF NOT EXISTS testtable1 (
-	id integer DEFAULT nextval('testtable1_id_seq'::regclass) NOT NULL
+CREATE TABLE testtable1 (
+	id integer DEFAULT nextval('testschema2.testtable1_id_seq'::regclass) NOT NULL
 );
 
-ALTER TABLE testtable1 OWNER TO fordfrog;
+ALTER TABLE testtable1 OWNER TO postgres;
 
 ALTER SEQUENCE testtable1_id_seq
-	OWNED BY testtable1.id;
+	OWNED BY testschema2.testtable1.id;
+
+DROP SCHEMA testschema1 CASCADE;

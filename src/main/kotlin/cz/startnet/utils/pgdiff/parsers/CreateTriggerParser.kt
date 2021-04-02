@@ -54,12 +54,7 @@ object CreateTriggerParser : PatternBasedSubParser(
         val referencing = "REFERENCING"
         if (parser.expectOptional(referencing)) {
             trigger.referencing = "\t" + referencing
-            while (parser.getSubString(
-                    parser.position - 5,
-                    parser.position - 4
-                ) != System.getProperty("line.separator")
-            ) {
-                parseReferencing(parser, trigger)
+            while (parseReferencing(parser, trigger)) {
             }
         }
         if (parser.expectOptional("FOR")) {
@@ -78,7 +73,9 @@ object CreateTriggerParser : PatternBasedSubParser(
             parser.expect(")")
         }
         parser.expect("EXECUTE")
-        parser.expectOptional("PROCEDURE")
+        parser.expectOptional("PROCEDURE").or(
+            parser.expectOptional("FUNCTION")
+        )
         trigger.function = parser.rest
         val ignoreSlonyTrigger = (ctx.ignoreSlonyTriggers
                 && ("_slony_logtrigger" == trigger.name || "_slony_denyaccess" == trigger.name))
@@ -90,16 +87,16 @@ object CreateTriggerParser : PatternBasedSubParser(
         }
     }
 
-    private fun parseReferencing(parser: Parser, trigger: PgTrigger) {
-        if (parser.expectOptional("NEW")) {
+    private fun parseReferencing(parser: Parser, trigger: PgTrigger): Boolean {
+        if (parser.expectOptional("NEW", "TABLE", "AS")) {
             trigger.referencing = trigger.referencing + " NEW "
-        }
-        if (parser.expectOptional("OLD")) {
+        } else if (parser.expectOptional("OLD", "TABLE", "AS")) {
             trigger.referencing = trigger.referencing + " OLD "
+        } else {
+            return false
         }
-        parser.expect("TABLE")
-        parser.expect("AS")
-        trigger.referencing = trigger.referencing + "TABLE AS " + parser.parseString()
+        trigger.referencing += "TABLE AS " + parser.parseString()
+        return true
     }
 
     fun parseDisable(

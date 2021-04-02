@@ -20,7 +20,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: testtable; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: testtable; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable (
@@ -31,17 +31,17 @@ CREATE TABLE testtable (
 );
 
 
-ALTER TABLE public.testtable OWNER TO fordfrog;
+ALTER TABLE public.testtable OWNER TO postgres;
 
 --
--- Name: testindex; Type: INDEX; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: testindex; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX testindex ON testtable USING btree (field1);
 
 
 --
--- Name: testindex2; Type: INDEX; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: testindex2; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX testindex2 ON testtable USING btree (field2);
@@ -50,7 +50,7 @@ ALTER TABLE testtable CLUSTER ON testindex2;
 
 
 --
--- Name: testindex3; Type: INDEX; Schema: public; Owner: fordfrog; Tablespace:
+-- Name: testindex3; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX testindex3 ON ONLY testtable USING btree (field3);

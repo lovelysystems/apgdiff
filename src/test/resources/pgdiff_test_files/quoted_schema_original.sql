@@ -9,13 +9,13 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: ABC; Type: SCHEMA; Schema: -; Owner: fordfrog
+-- Name: ABC; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
 CREATE SCHEMA "ABC";
 
 
-ALTER SCHEMA "ABC" OWNER TO fordfrog;
+ALTER SCHEMA "ABC" OWNER TO postgres;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
@@ -38,7 +38,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: testtable; Type: TABLE; Schema: ABC; Owner: fordfrog; Tablespace: 
+-- Name: testtable; Type: TABLE; Schema: ABC; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE testtable (
@@ -49,10 +49,10 @@ CREATE TABLE testtable (
 );
 
 
-ALTER TABLE "ABC".testtable OWNER TO fordfrog;
+ALTER TABLE "ABC".testtable OWNER TO postgres;
 
 --
--- Data for Name: testtable; Type: TABLE DATA; Schema: ABC; Owner: fordfrog
+-- Data for Name: testtable; Type: TABLE DATA; Schema: ABC; Owner: postgres
 --
 
 COPY testtable (field1, field2, field3, field4) FROM stdin;
@@ -60,7 +60,7 @@ COPY testtable (field1, field2, field3, field4) FROM stdin;
 
 
 --
--- Name: testindex; Type: INDEX; Schema: ABC; Owner: fordfrog; Tablespace: 
+-- Name: testindex; Type: INDEX; Schema: ABC; Owner: postgres; Tablespace:
 --
 
 CREATE INDEX testindex ON testtable USING btree (field3);

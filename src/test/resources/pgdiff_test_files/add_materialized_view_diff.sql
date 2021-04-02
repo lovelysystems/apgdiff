@@ -1,5 +1,8 @@
 
 CREATE MATERIALIZED VIEW testview AS
-	SELECT testtable.id, testtable.name FROM testtable;
+	SELECT testtable.id,
+    testtable.name
+   FROM public.testtable
+  WITH NO DATA;
 
-ALTER VIEW testview OWNER TO fordfrog;
+ALTER MATERIALIZED VIEW testview OWNER TO postgres;

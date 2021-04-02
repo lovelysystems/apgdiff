@@ -11,6 +11,7 @@ repositories {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation(kotlin("test-junit5"))
+    testImplementation("org.testcontainers:testcontainers:1.15.2")
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
 }
 

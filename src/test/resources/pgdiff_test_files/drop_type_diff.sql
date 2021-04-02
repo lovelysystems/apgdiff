@@ -1,5 +1,6 @@
-DROP TABLE IF EXISTS t1;
 
-DROP TYPE IF EXISTS bug_status;
+DROP TABLE t1;
 
-DROP TYPE IF EXISTS descr_type;
+DROP TYPE bug_status;
+
+DROP TYPE descr_type;

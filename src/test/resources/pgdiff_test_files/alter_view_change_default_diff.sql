@@ -1,1 +1,2 @@
-ALTER TABLE test ALTER COLUMN test_col SET DEFAULT 1;
+
+ALTER TABLE test ALTER COLUMN test_col SET DEFAULT '2020-01-01 00:00:00+00'::timestamp with time zone;

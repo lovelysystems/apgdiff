@@ -145,11 +145,11 @@ object PgDiff {
             writer.println()
             writer.println("COMMENT ON DATABASE current_database() IS NULL;")
         }
-        dropOldSchemas(writer, oldDatabase, newDatabase)
         createNewSchemas(writer, oldDatabase, newDatabase)
         dropOldExtensions(writer, oldDatabase, newDatabase)
         createNewExtensions(writer, oldDatabase, newDatabase)
         updateSchemas(writer, arguments, oldDatabase, newDatabase)
+        dropOldSchemas(writer, oldDatabase, newDatabase)
         if (arguments.isAddTransaction) {
             writer.println()
             writer.println("COMMIT TRANSACTION;")

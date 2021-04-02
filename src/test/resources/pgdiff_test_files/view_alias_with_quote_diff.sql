@@ -1,4 +1,6 @@
-DROP VIEW IF EXISTS foo;
+
+DROP VIEW foo;
 
 CREATE VIEW foo AS
-	SELECT bar AS "Foo's bar" FROM tableName;
+	SELECT table_name.bar AS "Foo's bar"
+   FROM public.table_name;

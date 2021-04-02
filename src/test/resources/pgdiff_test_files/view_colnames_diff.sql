@@ -1,4 +1,5 @@
-DROP VIEW IF EXISTS vx;
 
-CREATE VIEW vx (x) AS
-	select 2;
+DROP VIEW vx;
+
+CREATE VIEW vx AS
+	SELECT 2 AS x;

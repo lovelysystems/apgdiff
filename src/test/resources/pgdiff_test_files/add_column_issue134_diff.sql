@@ -1,2 +1,3 @@
+
 ALTER TABLE test1
-	ADD COLUMN IF NOT EXISTS type SMALLINT;
+	ADD COLUMN type smallint;

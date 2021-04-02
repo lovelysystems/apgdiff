@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS empty_table (
+
+CREATE TABLE empty_table (
 );
 
-ALTER TABLE empty_table OWNER TO fordfrog;
+ALTER TABLE empty_table OWNER TO postgres;

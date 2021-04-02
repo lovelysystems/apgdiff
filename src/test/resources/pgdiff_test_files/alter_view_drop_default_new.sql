@@ -1,2 +1,2 @@
 CREATE VIEW test AS
-	SELECT test_col FROM test2;
+SELECT current_timestamp as test_col;

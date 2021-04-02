@@ -13,17 +13,12 @@ SET client_min_messages = warning;
 COMMENT ON SCHEMA public IS 'Standard public schema';
 
 
---
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: 
---
-
-CREATE PROCEDURAL LANGUAGE plpgsql;
 
 
 SET search_path = public, pg_catalog;
 
 --
--- Name: test_table_trigger(); Type: FUNCTION; Schema: public; Owner: fordfrog
+-- Name: test_table_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION test_table_trigger() RETURNS "trigger"
@@ -35,14 +30,14 @@ $$
     LANGUAGE plpgsql;
 
 
-ALTER FUNCTION public.test_table_trigger() OWNER TO fordfrog;
+ALTER FUNCTION public.test_table_trigger() OWNER TO postgres;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: test_table; Type: TABLE; Schema: public; Owner: fordfrog; Tablespace: 
+-- Name: test_table; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE test_table (
@@ -51,10 +46,10 @@ CREATE TABLE test_table (
 );
 
 
-ALTER TABLE public.test_table OWNER TO fordfrog;
+ALTER TABLE public.test_table OWNER TO postgres;
 
 --
--- Name: test_table_trigger; Type: TRIGGER; Schema: public; Owner: fordfrog
+-- Name: test_table_trigger; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
 CREATE TRIGGER test_table_trigger

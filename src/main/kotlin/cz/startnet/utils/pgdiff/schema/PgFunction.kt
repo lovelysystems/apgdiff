@@ -22,48 +22,46 @@ class PgFunction(val name: String, val schema: String) {
 
     var owner: String? = null
 
-    /**
-     * Returns creation SQL of the function.
-     *
-     * @return creation SQL
-     */
-    val creationSQL: String
-        get() {
-            val sbSQL = StringBuilder(500)
+    fun creationSQL(replace: Boolean = true): String {
+        val sbSQL = StringBuilder(500)
+        if (replace) {
             sbSQL.append("CREATE OR REPLACE FUNCTION ")
-            sbSQL.append(PgDiffUtils.getQuotedName(name))
-            sbSQL.append('(')
-            var addComma = false
-            for (argument in arguments) {
-                if (addComma) {
-                    sbSQL.append(", ")
-                }
-                sbSQL.append(argument.getDeclaration(true))
-                addComma = true
-            }
-            sbSQL.append(") ")
-            sbSQL.append(body)
-            sbSQL.append(';')
-            if (!comment.isNullOrEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append("COMMENT ON FUNCTION ")
-                sbSQL.append(signatureSQL)
-                sbSQL.append(" IS ")
-                sbSQL.append(comment)
-                sbSQL.append(';')
-            }
-            if (owner != null) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append("ALTER FUNCTION $signatureSQL OWNER TO $owner;")
-            }
-            return sbSQL.toString()
+        } else {
+            sbSQL.append("CREATE FUNCTION ")
         }
+        sbSQL.append(PgDiffUtils.getQuotedName(name))
+        sbSQL.append('(')
+        var addComma = false
+        for (argument in arguments) {
+            if (addComma) {
+                sbSQL.append(", ")
+            }
+            sbSQL.append(argument.getDeclaration(true))
+            addComma = true
+        }
+        sbSQL.append(") ")
+        sbSQL.append(body)
+        sbSQL.append(';')
+        if (!comment.isNullOrEmpty()) {
+            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.append("COMMENT ON FUNCTION ")
+            sbSQL.append(signatureSQL)
+            sbSQL.append(" IS ")
+            sbSQL.append(comment)
+            sbSQL.append(';')
+        }
+        if (owner != null) {
+            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.append("ALTER FUNCTION $signatureSQL OWNER TO $owner;")
+        }
+        return sbSQL.toString()
+    }
 
     val signatureSQL: String
         get() {
-            val args = arguments.map { it.getDeclaration(false) }.joinToString(", ")
+            val args = arguments.map { it.dataType }.joinToString(", ")
             return "${PgDiffUtils.getQuotedName(name)}($args)"
         }
 

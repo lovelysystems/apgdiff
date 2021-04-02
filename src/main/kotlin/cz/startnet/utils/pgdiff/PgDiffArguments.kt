@@ -114,20 +114,6 @@ class PgDiffArguments {
      */
     var isIgnoreFunctionWhitespace = false
     /**
-     * Getter for [.ignoreStartWith].
-     *
-     * @return [.ignoreStartWith]
-     */
-    /**
-     * Setter for [.ignoreStartWith].
-     *
-     * @param ignoreStartWith [.ignoreStartWith]
-     */
-    /**
-     * Whether to ignore START WITH on SEQUENCEs.
-     */
-    var isIgnoreStartWith = false
-    /**
      * Getter for [.version].
      *
      * @return [.version]
@@ -230,8 +216,6 @@ class PgDiffArguments {
                 isIgnoreFunctionWhitespace = true
             } else if ("--ignore-slony-triggers" == args[i]) {
                 isIgnoreSlonyTriggers = true
-            } else if ("--ignore-start-with" == args[i]) {
-                isIgnoreStartWith = true
             } else if ("--ignore-schema-creation" == args[i]) {
                 isIgnoreSchemaCreation = true
             } else if ("--in-charset-name" == args[i]) {

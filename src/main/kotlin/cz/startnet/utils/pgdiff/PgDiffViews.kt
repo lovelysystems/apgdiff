@@ -41,7 +41,7 @@ object PgDiffViews {
                 if (newView.ownerTo != null && oldView == null) {
                     writer.println()
                     writer.println(
-                        "ALTER VIEW "
+                        "ALTER ${newView.relationKind} "
                                 + PgDiffUtils.getQuotedName(newView.name)
                                 + " OWNER TO " + newView.ownerTo + ";"
                     )
@@ -152,7 +152,7 @@ object PgDiffViews {
             ) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.print("COMMENT ON VIEW ")
+                writer.print("COMMENT ON ${newView.relationKind} ")
                 writer.print(
                     PgDiffUtils.getQuotedName(newView.name)
                 )
@@ -164,7 +164,7 @@ object PgDiffViews {
             ) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.print("COMMENT ON VIEW ")
+                writer.print("COMMENT ON ${newView.relationKind} ")
                 writer.print(PgDiffUtils.getQuotedName(newView.name))
                 writer.println(" IS NULL;")
             }
@@ -211,7 +211,7 @@ object PgDiffViews {
             if (oldView.ownerTo != null && newView.ownerTo != oldView.ownerTo) {
                 writer.println()
                 writer.println(
-                    "ALTER VIEW "
+                    "ALTER ${newView.relationKind} "
                             + PgDiffUtils.getQuotedName(newView.name)
                             + " OWNER TO " + newView.ownerTo + ";"
                 )
