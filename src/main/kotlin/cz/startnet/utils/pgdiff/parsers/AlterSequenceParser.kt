@@ -6,6 +6,7 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
+import cz.startnet.utils.pgdiff.schema.PgSequence
 import java.text.MessageFormat
 
 /**
@@ -28,6 +29,7 @@ object AlterSequenceParser : PatternBasedSubParser(
     override fun parse(parser: Parser, ctx: ParserContext) {
         val parser = Parser(parser.string)
         parser.expect("ALTER", "SEQUENCE")
+
         val sequenceName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(sequenceName, ctx.database)
         val schema = ctx.database.getSchema(schemaName)
@@ -45,8 +47,18 @@ object AlterSequenceParser : PatternBasedSubParser(
                     parser.string
                 )
             )
+        parseAlter(sequence, parser, ctx)
+    }
+
+
+    /**
+     * Parses just the alter definition after ALTER SEQUENCE or ALTER TABLE, since it is allowed to use ALTER TABLE
+     */
+    fun parseAlter(sequence: PgSequence, parser: Parser, ctx: ParserContext) {
         while (!parser.expectOptional(";")) {
-            if (parser.expectOptional("OWNED", "BY")) {
+            if (parser.expectOptional("OWNER", "TO")) {
+                sequence.owner = parser.parseIdentifier();
+            } else if (parser.expectOptional("OWNED", "BY")) {
                 if (parser.expectOptional("NONE")) {
                     sequence.ownedBy = null
                 } else {
@@ -56,5 +68,7 @@ object AlterSequenceParser : PatternBasedSubParser(
                 parser.throwUnsupportedCommand()
             }
         }
+
+
     }
 }

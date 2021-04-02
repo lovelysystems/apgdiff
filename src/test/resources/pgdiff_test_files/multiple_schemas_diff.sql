@@ -15,6 +15,7 @@ CREATE SEQUENCE testtable3_id_seq
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
+ALTER SEQUENCE testtable3_id_seq OWNER TO postgres;
 
 CREATE TABLE testtable3 (
 	id bigint DEFAULT nextval('public.testtable3_id_seq'::regclass) NOT NULL
@@ -33,6 +34,7 @@ CREATE SEQUENCE testtable1_id_seq
 	NO MAXVALUE
 	NO MINVALUE
 	CACHE 1;
+ALTER SEQUENCE testtable1_id_seq OWNER TO postgres;
 
 CREATE TABLE testtable1 (
 	id integer DEFAULT nextval('testschema2.testtable1_id_seq'::regclass) NOT NULL

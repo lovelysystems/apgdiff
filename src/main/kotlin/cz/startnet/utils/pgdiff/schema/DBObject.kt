@@ -21,9 +21,9 @@ open class DBObject(val objectType: String, val name: String) {
         )
     }
 
-    fun dropSQL(writer: PrintWriter) {
+    open fun dropSQL(writer: PrintWriter) {
         writer.println(
-            "DROP $objectType  ${PgDiffUtils.dropIfExists} ${quotedIdentifier()};"
+            "DROP $objectType IF EXISTS ${quotedIdentifier()};"
         )
     }
 
@@ -41,7 +41,7 @@ class DBObjectContainer<T : DBObject> : ArrayList<T>() {
     }
 
     fun contains(name: String): Boolean {
-        return get(name) == null
+        return get(name) != null
     }
 
     fun containsSame(other: T): Boolean {

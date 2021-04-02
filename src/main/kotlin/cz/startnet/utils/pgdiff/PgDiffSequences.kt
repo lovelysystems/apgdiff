@@ -25,45 +25,47 @@ object PgDiffSequences {
      */
     fun createSequences(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
+        oldSchema: PgSchema?, newSchema: PgSchema,
         searchPathHelper: SearchPathHelper
     ) {
         // Add new sequences
-        for (sequence in newSchema?.sequences.orEmpty()) {
-            if (oldSchema == null
-                || !oldSchema.containsSequence(sequence.name)
-            ) {
-                searchPathHelper.outputSearchPath(writer)
-                writer.println()
-                writer.println(sequence.creationSQL)
-                for (sequencePrivilege in sequence
-                    .privileges) {
+        for (sequence in newSchema.sequences) {
+            if (oldSchema != null && oldSchema.sequences.containsSame(sequence)) {
+                continue
+            }
+            searchPathHelper.outputSearchPath(writer)
+            writer.println()
+            writer.println(sequence.creationSQL)
+            for (sequencePrivilege in sequence
+                .privileges) {
+                writer.println(
+                    "REVOKE ALL ON SEQUENCE "
+                            + PgDiffUtils.getQuotedName(sequence.name)
+                            + " FROM " + sequencePrivilege.roleName + ";"
+                )
+                if ("" != sequencePrivilege.getPrivilegesSQL(true)) {
                     writer.println(
-                        "REVOKE ALL ON SEQUENCE "
+                        "GRANT "
+                                + sequencePrivilege.getPrivilegesSQL(true)
+                                + " ON SEQUENCE "
                                 + PgDiffUtils.getQuotedName(sequence.name)
-                                + " FROM " + sequencePrivilege.roleName + ";"
+                                + " TO " + sequencePrivilege.roleName
+                                + " WITH GRANT OPTION;"
                     )
-                    if ("" != sequencePrivilege.getPrivilegesSQL(true)) {
-                        writer.println(
-                            "GRANT "
-                                    + sequencePrivilege.getPrivilegesSQL(true)
-                                    + " ON SEQUENCE "
-                                    + PgDiffUtils.getQuotedName(sequence.name)
-                                    + " TO " + sequencePrivilege.roleName
-                                    + " WITH GRANT OPTION;"
-                        )
-                    }
-                    if ("" != sequencePrivilege.getPrivilegesSQL(false)) {
-                        writer.println(
-                            "GRANT "
-                                    + sequencePrivilege.getPrivilegesSQL(false)
-                                    + " ON SEQUENCE "
-                                    + PgDiffUtils.getQuotedName(sequence.name)
-                                    + " TO " + sequencePrivilege.roleName
-                                    + ";"
-                        )
-                    }
                 }
+                if ("" != sequencePrivilege.getPrivilegesSQL(false)) {
+                    writer.println(
+                        "GRANT "
+                                + sequencePrivilege.getPrivilegesSQL(false)
+                                + " ON SEQUENCE "
+                                + PgDiffUtils.getQuotedName(sequence.name)
+                                + " TO " + sequencePrivilege.roleName
+                                + ";"
+                    )
+                }
+            }
+            sequence.owner.let {
+                sequence.ownerSQL(writer)
             }
         }
     }
@@ -116,7 +118,7 @@ object PgDiffSequences {
             if (!newSchema!!.containsSequence(sequence.name)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
-                writer.println(sequence.dropSQL)
+                sequence.dropSQL(writer)
             }
         }
     }
@@ -133,14 +135,14 @@ object PgDiffSequences {
     fun alterSequences(
         writer: PrintWriter,
         arguments: PgDiffArguments, oldSchema: PgSchema?,
-        newSchema: PgSchema?, searchPathHelper: SearchPathHelper
+        newSchema: PgSchema, searchPathHelper: SearchPathHelper
     ) {
         if (oldSchema == null) {
             return
         }
         val sbSQL = StringBuilder(100)
-        for (newSequence in newSchema!!.sequences) {
-            val oldSequence = oldSchema.getSequence(newSequence.name) ?: continue
+        for (newSequence in newSchema.sequences) {
+            val oldSequence = oldSchema.sequences.getSame(newSequence) ?: continue
             sbSQL.setLength(0)
             val oldDataType = oldSequence.dataType
             val newDataType = newSequence.dataType
@@ -245,6 +247,10 @@ object PgDiffSequences {
                 writer.println(" IS NULL;")
             }
             alterPrivileges(writer, oldSequence, newSequence, searchPathHelper)
+
+            if (oldSequence.owner != newSequence.owner){
+                newSequence.ownerSQL(writer)
+            }
         }
     }
 

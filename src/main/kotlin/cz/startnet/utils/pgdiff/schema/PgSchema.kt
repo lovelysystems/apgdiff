@@ -28,7 +28,7 @@ class PgSchema(val name: String) {
     /**
      * List of sequences defined in the schema.
      */
-    val sequences: MutableList<PgSequence> = ArrayList()
+    val sequences: DBObjectContainer<PgSequence> = DBObjectContainer()
 
     /**
      * List of rels defined in the schema.
