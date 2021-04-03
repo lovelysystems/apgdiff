@@ -12,11 +12,6 @@ package cz.startnet.utils.pgdiff.loader
  */
 class FileException : RuntimeException {
     /**
-     * Creates a new instance of `FileException` without detail message.
-     */
-    constructor()
-
-    /**
      * Constructs an instance of `FileException` with the specified detail
      * message.
      *

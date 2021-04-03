@@ -30,10 +30,8 @@ object PgDiffTables {
         searchPathHelper: SearchPathHelper
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTable.name)
-            val oldCluster: String?
-            oldCluster = oldTable?.clusterIndexName
+            val oldTable: PgTable? = oldSchema?.getTable(newTable.name)
+            val oldCluster: String? = oldTable?.clusterIndexName
             val newCluster = newTable.clusterIndexName
             if (oldCluster != null && newCluster == null && newTable.containsIndex(oldCluster)) {
                 searchPathHelper.outputSearchPath(writer)
@@ -59,10 +57,8 @@ object PgDiffTables {
         searchPathHelper: SearchPathHelper
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTable.name)
-            val oldCluster: String?
-            oldCluster = oldTable?.clusterIndexName
+            val oldTable: PgTable? = oldSchema?.getTable(newTable.name)
+            val oldCluster: String? = oldTable?.clusterIndexName
             val newCluster = newTable.clusterIndexName
             if (oldCluster == null && newCluster != null
                 || oldCluster != null && newCluster != null && newCluster.compareTo(oldCluster) != 0
@@ -103,15 +99,15 @@ object PgDiffTables {
                 writer, arguments, oldTable, newTable, searchPathHelper
             )
             checkInherits(writer, oldTable, newTable, newSchema, searchPathHelper)
-            addInheritedColumnDefaults(writer, arguments, oldTable, newTable, searchPathHelper)
+            addInheritedColumnDefaults(writer, oldTable, newTable)
             checkTablespace(writer, oldTable, newTable, searchPathHelper)
             addAlterStatistics(writer, oldTable, newTable, searchPathHelper)
             addAlterGenerated(writer, oldTable, newTable, searchPathHelper)
             addAlterStorage(writer, oldTable, newTable, searchPathHelper)
             alterComments(writer, oldTable, newTable, searchPathHelper)
-            alterOwnerTo(writer, oldTable, newTable, searchPathHelper)
-            alterPrivileges(writer, oldTable, newTable, searchPathHelper)
-            alterPrivilegesColumns(writer, oldTable, newTable, searchPathHelper)
+            alterOwnerTo(writer, oldTable, newTable)
+            alterPrivileges(writer, oldTable, newTable)
+            alterPrivilegesColumns(writer, oldTable, newTable)
             alterRLS(writer, oldTable, newTable, searchPathHelper)
 
         }
@@ -187,7 +183,6 @@ object PgDiffTables {
             writer.print(" ALTER COLUMN ")
             writer.print(PgDiffUtils.getQuotedName(newColumn.name))
             newGenerated.sql(writer)
-            // writer.print(newGenerated.sql)
             writer.print(';')
         }
     }
@@ -325,7 +320,7 @@ object PgDiffTables {
             val oldDefault = oldColumn.defaultValue.orEmpty()
             val newDefault = newColumn.defaultValue.orEmpty()
             if (oldDefault != newDefault) {
-                if (newDefault.length == 0) {
+                if (newDefault.isEmpty()) {
                     statements.add(
                         "\tALTER COLUMN " + newColumnName
                                 + " DROP DEFAULT"
@@ -393,8 +388,7 @@ object PgDiffTables {
                 }
             }
             if (!isFound) {
-                var inheritTableName: String? = null
-                inheritTableName = if (newSchema?.name == schemaName) {
+                val inheritTableName: String = if (newSchema?.name == schemaName) {
                     PgDiffUtils.getQuotedName(tableName)
                 } else {
                     String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
@@ -415,15 +409,14 @@ object PgDiffTables {
             val schemaName = inheritPairO.l
             val tableName = inheritPairO.r
             var isFound = false
-            for (inheritPairN in newTable!!.inherits.orEmpty()) {
+            for (inheritPairN in newTable.inherits.orEmpty()) {
                 if (schemaName == inheritPairN.l && tableName == inheritPairN.r) {
                     isFound = true
                     break
                 }
             }
             if (!isFound) {
-                var inheritTableName: String? = null
-                inheritTableName = if (newSchema?.name == schemaName) {
+                val inheritTableName: String = if (newSchema?.name == schemaName) {
                     PgDiffUtils.getQuotedName(tableName)
                 } else {
                     String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
@@ -448,22 +441,18 @@ object PgDiffTables {
      * an inherited table.
      *
      * @param writer           writer the output should be written to
-     * @param arguments        object containing arguments settings
      * @param oldTable         original table
      * @param newTable         new table
-     * @param searchPathHelper search path helper
      */
     private fun addInheritedColumnDefaults(
         writer: PrintWriter,
-        arguments: PgDiffOptions, oldTable: PgTable?,
-        newTable: PgTable?, searchPathHelper: SearchPathHelper
+        oldTable: PgTable?, newTable: PgTable?
     ) {
-        for (newColumn in newTable!!.inheritedColumns.orEmpty()) {
+        for (newColumn in newTable!!.inheritedColumns) {
             if (!oldTable!!.containsInheritedColumn(newColumn.inheritedColumn.name)) {
                 continue
             }
             val oldColumn = oldTable.getInheritedColumn(newColumn.inheritedColumn.name)
-            val newColumnName = PgDiffUtils.getQuotedName(newColumn.inheritedColumn.name)
             val oldDefault = oldColumn?.defaultValue.orEmpty()
             val newDefault = newColumn.defaultValue.orEmpty()
             if (oldDefault != newDefault) {
@@ -472,7 +461,7 @@ object PgDiffTables {
                 writer.println(PgDiffUtils.getQuotedName(newTable.name))
                 writer.print("\tALTER COLUMN ")
                 writer.print(PgDiffUtils.getQuotedName(newColumn.inheritedColumn.name))
-                if (newDefault.length == 0) {
+                if (newDefault.isEmpty()) {
                     writer.print(" DROP DEFAULT")
                 } else {
                     writer.print(" SET DEFAULT ")
@@ -539,7 +528,7 @@ object PgDiffTables {
                                 + " OWNER TO " + table.ownerTo + ";"
                     )
                 }
-                for (tablePrivilege in table.privileges.orEmpty()) {
+                for (tablePrivilege in table.privileges) {
                     writer.println(
                         "REVOKE ALL ON TABLE "
                                 + PgDiffUtils.getQuotedName(table.name)
@@ -632,7 +621,7 @@ object PgDiffTables {
         addModifyTableColumns(
             statements, arguments, oldTable, newTable, dropDefaultsColumns
         )
-        if (!statements.isEmpty()) {
+        if (statements.isNotEmpty()) {
             val quotedTableName = PgDiffUtils.getQuotedName(newTable.name)
             searchPathHelper.outputSearchPath(writer)
             writer.println()
@@ -641,7 +630,7 @@ object PgDiffTables {
                 writer.print(statements[i])
                 writer.println(if (i + 1 < statements.size) "," else ";")
             }
-            if (!dropDefaultsColumns.isEmpty()) {
+            if (dropDefaultsColumns.isNotEmpty()) {
                 writer.println()
                 writer.println("ALTER " + (if (newTable.isForeign) "FOREIGN " else "") + "TABLE " + quotedTableName)
                 for (i in dropDefaultsColumns.indices) {
@@ -662,8 +651,7 @@ object PgDiffTables {
 
     private fun alterPrivilegesColumns(
         writer: PrintWriter,
-        oldTable: PgTable?, newTable: PgTable,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTable?, newTable: PgTable
     ) {
         var emptyLinePrinted = false
         for (newColumn in newTable.columns) {
@@ -688,71 +676,69 @@ object PgDiffTables {
                     }
                 }
             }
-            if (newColumn != null) {
-                for (newColumnPrivilege in newColumn
-                    .privileges) {
-                    var oldColumnPrivilege: PgColumnPrivilege? = null
-                    if (oldColumn != null) {
-                        oldColumnPrivilege = oldColumn
-                            .getPrivilege(newColumnPrivilege.roleName)
+            for (newColumnPrivilege in newColumn
+                .privileges) {
+                var oldColumnPrivilege: PgColumnPrivilege? = null
+                if (oldColumn != null) {
+                    oldColumnPrivilege = oldColumn
+                        .getPrivilege(newColumnPrivilege.roleName)
+                }
+                if (!newColumnPrivilege.isSimilar(oldColumnPrivilege)) {
+                    if (!emptyLinePrinted) {
+                        emptyLinePrinted = true
+                        writer.println()
                     }
-                    if (!newColumnPrivilege.isSimilar(oldColumnPrivilege)) {
-                        if (!emptyLinePrinted) {
-                            emptyLinePrinted = true
-                            writer.println()
-                        }
-                        writer.println(
-                            "REVOKE ALL ("
-                                    + PgDiffUtils.getQuotedName(newColumn.name)
-                                    + ") ON TABLE "
-                                    + PgDiffUtils.getQuotedName(newTable.name)
-                                    + " FROM " + newColumnPrivilege.roleName
-                                    + ";"
+                    writer.println(
+                        "REVOKE ALL ("
+                                + PgDiffUtils.getQuotedName(newColumn.name)
+                                + ") ON TABLE "
+                                + PgDiffUtils.getQuotedName(newTable.name)
+                                + " FROM " + newColumnPrivilege.roleName
+                                + ";"
+                    )
+                    if ("" != newColumnPrivilege.getPrivilegesSQL(
+                            true,
+                            PgDiffUtils.getQuotedName(newColumn.name)
                         )
-                        if ("" != newColumnPrivilege.getPrivilegesSQL(
+                    ) {
+                        writer.println(
+                            "GRANT "
+                                    + newColumnPrivilege.getPrivilegesSQL(
                                 true,
-                                PgDiffUtils.getQuotedName(newColumn.name)
-                            )
-                        ) {
-                            writer.println(
-                                "GRANT "
-                                        + newColumnPrivilege.getPrivilegesSQL(
-                                    true,
-                                    PgDiffUtils.getQuotedName(
-                                        newColumn
-                                            .name
-                                    )
-                                )
-                                        + " ON TABLE "
-                                        + PgDiffUtils.getQuotedName(
-                                    newTable
+                                PgDiffUtils.getQuotedName(
+                                    newColumn
                                         .name
-                                ) + " TO "
-                                        + newColumnPrivilege.roleName
-                                        + " WITH GRANT OPTION;"
-                            )
-                        }
-                        if ("" != newColumnPrivilege.getPrivilegesSQL(
-                                false,
-                                PgDiffUtils.getQuotedName(newColumn.name)
-                            )
-                        ) {
-                            writer.println(
-                                "GRANT "
-                                        + newColumnPrivilege.getPrivilegesSQL(
-                                    false, PgDiffUtils.getQuotedName(
-                                        newColumn
-                                            .name
-                                    )
                                 )
-                                        + " ON TABLE "
-                                        + PgDiffUtils.getQuotedName(
-                                    newTable
-                                        .name
-                                ) + " TO "
-                                        + newColumnPrivilege.roleName + ";"
                             )
-                        }
+                                    + " ON TABLE "
+                                    + PgDiffUtils.getQuotedName(
+                                newTable
+                                    .name
+                            ) + " TO "
+                                    + newColumnPrivilege.roleName
+                                    + " WITH GRANT OPTION;"
+                        )
+                    }
+                    if ("" != newColumnPrivilege.getPrivilegesSQL(
+                            false,
+                            PgDiffUtils.getQuotedName(newColumn.name)
+                        )
+                    ) {
+                        writer.println(
+                            "GRANT "
+                                    + newColumnPrivilege.getPrivilegesSQL(
+                                false, PgDiffUtils.getQuotedName(
+                                    newColumn
+                                        .name
+                                )
+                            )
+                                    + " ON TABLE "
+                                    + PgDiffUtils.getQuotedName(
+                                newTable
+                                    .name
+                            ) + " TO "
+                                    + newColumnPrivilege.roleName + ";"
+                        )
                     }
                 }
             }
@@ -797,7 +783,7 @@ object PgDiffTables {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
             val oldComment = oldColumn?.comment
             val newComment = newColumn.comment
-            if (newComment != null && (if (oldComment == null) newComment != null else oldComment != newComment)) {
+            if (newComment != null && (if (oldComment == null) true else oldComment != newComment)) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("COMMENT ON COLUMN ")
@@ -821,8 +807,7 @@ object PgDiffTables {
 
     private fun alterPrivileges(
         writer: PrintWriter,
-        oldTable: PgTable?, newTable: PgTable,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTable?, newTable: PgTable
     ) {
         var emptyLinePrinted = false
         for (oldTablePrivilege in oldTable!!.privileges) {
@@ -905,8 +890,7 @@ object PgDiffTables {
 
     private fun alterOwnerTo(
         writer: PrintWriter,
-        oldTable: PgTable?, newTable: PgTable,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTable?, newTable: PgTable
     ) {
         val oldOwnerTo = oldTable?.ownerTo
         val newOwnerTo = newTable.ownerTo

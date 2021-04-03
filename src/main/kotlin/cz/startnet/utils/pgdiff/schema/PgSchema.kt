@@ -93,7 +93,7 @@ class PgSchema(val name: String) {
             sbSQL.append("CREATE SCHEMA ")
             sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
-            authorization?.let{
+            authorization?.let {
                 sbSQL.append(" AUTHORIZATION ")
                 sbSQL.append(PgDiffUtils.getQuotedName(it))
             }

@@ -12,7 +12,7 @@ import java.util.*
  * Stores POLICY information.
  *
  */
-class PgPolicy(val name:String) {
+class PgPolicy(val name: String) {
     var tableName: String? = null
     var command: String? = null
     val roles: MutableList<String?> = ArrayList()

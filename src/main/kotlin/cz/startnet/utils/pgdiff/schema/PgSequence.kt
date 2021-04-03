@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.io.PrintWriter
 import java.util.*
 
 class PgSequence(name: String) : DBObject("SEQUENCE", name) {
@@ -24,18 +23,22 @@ class PgSequence(name: String) : DBObject("SEQUENCE", name) {
      * Value for MAXVALUE or null if no value is specified.
      */
     var maxValue: String? = null
+
     /**
      * Value for MINVALUE or null if no value is specified.
      */
     var minValue: String? = null
+
     /**
      * Value for START WITH or null if no value is specified.
      */
     var startWith: String? = null
+
     /**
      * True if CYCLE, false if NO CYCLE.
      */
     var isCycle = false
+
     /**
      * Column the sequence is owned by.
      */

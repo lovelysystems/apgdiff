@@ -14,9 +14,9 @@ import java.text.MessageFormat
  *
  * @author fordfrog
  */
-object CreateIndexParser:PatternBasedSubParser(
+object CreateIndexParser : PatternBasedSubParser(
     "^CREATE[\\s]+(?:UNIQUE[\\s]+)?INDEX[\\s]+.*$"
-    ) {
+) {
     /**
      * Parses CREATE INDEX statement.
      *

@@ -25,7 +25,6 @@ object PgDiffGrant {
         val oldGrants: List<String?>?
         oldGrants = oldSchema?.grants
         for (newGrant in newSchema?.grants.orEmpty()) {
-            val oldGrant: List<String>
             if (oldGrants != null && oldGrants.contains(newGrant)) {
                 continue
             }

@@ -6,7 +6,7 @@ private fun Parser.optionalDefinition(name: String): String? {
     if (expectOptional(name, "=")) {
         val result = parseIdentifier()
         expectOptional(",")
-        return result;
+        return result
     }
     return null
 }

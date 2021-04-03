@@ -57,7 +57,7 @@ object AlterSequenceParser : PatternBasedSubParser(
     fun parseAlter(sequence: PgSequence, parser: Parser, ctx: ParserContext) {
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("OWNER", "TO")) {
-                sequence.owner = parser.parseIdentifier();
+                sequence.owner = parser.parseIdentifier()
             } else if (parser.expectOptional("OWNED", "BY")) {
                 if (parser.expectOptional("NONE")) {
                     sequence.ownedBy = null

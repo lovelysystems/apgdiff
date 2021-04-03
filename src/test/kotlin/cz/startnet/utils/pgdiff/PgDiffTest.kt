@@ -42,6 +42,6 @@ class PgDiffTest {
     fun runDiff(testFiles: SQLDiffTestFiles) {
         val old = testFiles.old.readText()
         val new = testFiles.new.readText()
-        val diff = PgDiff.createDiff(old, new)
+        PgDiff.createDiff(old, new)
     }
 }

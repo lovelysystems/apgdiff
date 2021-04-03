@@ -9,7 +9,6 @@ import cz.startnet.utils.pgdiff.schema.PgPolicy
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgTable
 import java.io.PrintWriter
-import java.util.*
 
 object PgDiffPolicies {
     fun createPolicies(
@@ -65,7 +64,6 @@ object PgDiffPolicies {
                                 searchPathHelper.outputSearchPath(writer)
                                 alterPolicySQL(writer, newPolicy)
                             } else {
-                                val tempOldRoles: List<String?> = ArrayList(policy.roles)
                                 val equalRoles = newPolicy.roles.containsAll(policy.roles) &&
                                         policy.roles.containsAll(newPolicy.roles)
                                 if (!equalRoles) {

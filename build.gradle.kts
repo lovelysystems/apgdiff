@@ -1,7 +1,7 @@
 plugins {
     id("com.lovelysystems.gradle") version ("1.3.2")
     application
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.4.32"
 }
 
 repositories {

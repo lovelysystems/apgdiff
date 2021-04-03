@@ -248,7 +248,7 @@ object PgDiffSequences {
             }
             alterPrivileges(writer, oldSequence, newSequence, searchPathHelper)
 
-            if (oldSequence.owner != newSequence.owner){
+            if (oldSequence.owner != newSequence.owner) {
                 newSequence.ownerSQL(writer)
             }
         }

@@ -29,7 +29,7 @@ data class IdentityColumnDef(
     }
 }
 
-class GeneratedColumnDef() : GeneratedDef() {
+class GeneratedColumnDef : GeneratedDef() {
     override fun sql(writer: PrintWriter) {
         TODO("Not yet implemented")
     }

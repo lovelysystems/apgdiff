@@ -61,9 +61,9 @@ class VanillaDBContainer(imageName: String) :
 
 class DBTest {
 
-    val dbContainer = VanillaDBContainer("postgres:12.6").withFileSystemBind(
+    private val dbContainer = VanillaDBContainer("postgres:12.6").withFileSystemBind(
         testFileDir.absolutePath, "/testfiles"
-    )
+    )!!
 
     @BeforeAll
     fun setUp() {
@@ -85,7 +85,6 @@ class DBTest {
     @ArgumentsSource(SQLDiffFilesArgumentsProvider::class)
     fun migratedDBEqualsNew(testFiles: SQLDiffTestFiles) {
 
-        val name = testFiles.name
         val oldDB = "${testFiles.name}_old"
         val newDB = "${testFiles.name}_new"
 
