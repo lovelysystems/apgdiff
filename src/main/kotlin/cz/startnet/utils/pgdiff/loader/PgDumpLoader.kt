@@ -46,21 +46,11 @@ object PgDumpLoader {
      * @return database schema from dump file
      */
     fun loadDatabaseSchema(
-        inputStream: InputStream?,
-        charsetName: String?, outputIgnoredStatements: Boolean,
+        reader: BufferedReader,
+        outputIgnoredStatements: Boolean,
         ignoreSlonyTriggers: Boolean, ignoreSchemaCreation: Boolean
     ): PgDatabase {
         val database = PgDatabase()
-        val reader = try {
-            BufferedReader(
-                InputStreamReader(inputStream, charsetName)
-            )
-        } catch (ex: UnsupportedEncodingException) {
-            throw UnsupportedOperationException(
-                Resources.getString("UnsupportedEncoding") + ": "
-                        + charsetName, ex
-            )
-        }
         val ctx = ParserContext(
             database,
             outputIgnoredStatements,
@@ -113,51 +103,6 @@ object PgDumpLoader {
             statement = getWholeStatement(reader)
         }
         return database
-    }
-
-    /**
-     * Loads database schema from dump file.
-     *
-     * @param file                    name of file containing the dump
-     * @param charsetName             charset that should be used to read the
-     * file
-     * @param outputIgnoredStatements whether ignored statements should be
-     * included in the output
-     * @param ignoreSlonyTriggers     whether Slony triggers should be ignored
-     * @param ignoreSchemaCreation    whether Schema creation should be ignored
-     *
-     * @return database schema from dump file
-     */
-    fun loadDatabaseSchema(
-        file: String?,
-        charsetName: String?, outputIgnoredStatements: Boolean,
-        ignoreSlonyTriggers: Boolean, ignoreSchemaCreation: Boolean
-    ): PgDatabase {
-        if (file == "-") return loadDatabaseSchema(
-            System.`in`, charsetName,
-            outputIgnoredStatements, ignoreSlonyTriggers, ignoreSchemaCreation
-        )
-        var fis: FileInputStream? = null
-        return try {
-            fis = FileInputStream(file)
-            loadDatabaseSchema(
-                fis, charsetName,
-                outputIgnoredStatements, ignoreSlonyTriggers, ignoreSchemaCreation
-            )
-        } catch (ex: FileNotFoundException) {
-            throw FileException(
-                MessageFormat.format(
-                    Resources.getString("FileNotFound"), file
-                ), ex
-            )
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close()
-                } catch (ex: IOException) {
-                }
-            }
-        }
     }
 
     /**

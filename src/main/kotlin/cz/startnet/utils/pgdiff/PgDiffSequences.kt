@@ -134,8 +134,8 @@ object PgDiffSequences {
      */
     fun alterSequences(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldSchema: PgSchema?,
-        newSchema: PgSchema, searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema,
+        searchPathHelper: SearchPathHelper
     ) {
         if (oldSchema == null) {
             return

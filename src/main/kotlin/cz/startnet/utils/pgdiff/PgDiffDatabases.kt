@@ -5,7 +5,7 @@ import java.io.PrintWriter
 
 class PgDiffDatabases(
     private val writer: PrintWriter,
-    private val arguments: PgDiffArguments,
+    private val arguments: PgDiffOptions,
     private val oldDatabase: PgDatabase,
     private val newDatabase: PgDatabase
 ) {
@@ -209,7 +209,7 @@ class PgDiffDatabases(
                 writer, oldSchema, newSchema, searchPathHelper
             )
             PgDiffSequences.alterSequences(
-                writer, arguments, oldSchema, newSchema, searchPathHelper
+                writer, oldSchema, newSchema, searchPathHelper
             )
             PgDiffTypes.alterTypes(writer, arguments, oldSchema, newSchema, searchPathHelper)
             PgDiffTypes.createTypes(writer, oldSchema, newSchema, searchPathHelper)

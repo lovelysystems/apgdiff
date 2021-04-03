@@ -89,7 +89,7 @@ object PgDiffTables {
      */
     fun alterTables(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldSchema: PgSchema?,
+        arguments: PgDiffOptions, oldSchema: PgSchema?,
         newSchema: PgSchema?, searchPathHelper: SearchPathHelper
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -251,7 +251,7 @@ object PgDiffTables {
      */
     private fun addCreateTableColumns(
         statements: MutableList<String>,
-        arguments: PgDiffArguments, oldTable: PgTable?,
+        arguments: PgDiffOptions, oldTable: PgTable?,
         newTable: PgTable?, dropDefaultsColumns: MutableList<PgColumn>
     ) {
         for (column in newTable!!.columns) {
@@ -302,7 +302,7 @@ object PgDiffTables {
      */
     private fun addModifyTableColumns(
         statements: MutableList<String>,
-        arguments: PgDiffArguments, oldTable: PgTable?,
+        arguments: PgDiffOptions, oldTable: PgTable?,
         newTable: PgTable?, dropDefaultsColumns: MutableList<PgColumn>
     ) {
         for (newColumn in newTable!!.columns) {
@@ -455,7 +455,7 @@ object PgDiffTables {
      */
     private fun addInheritedColumnDefaults(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldTable: PgTable?,
+        arguments: PgDiffOptions, oldTable: PgTable?,
         newTable: PgTable?, searchPathHelper: SearchPathHelper
     ) {
         for (newColumn in newTable!!.inheritedColumns.orEmpty()) {
@@ -620,7 +620,7 @@ object PgDiffTables {
      */
     private fun updateTableColumns(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldTable: PgTable?,
+        arguments: PgDiffOptions, oldTable: PgTable?,
         newTable: PgTable, searchPathHelper: SearchPathHelper
     ) {
         val statements: MutableList<String> = ArrayList()

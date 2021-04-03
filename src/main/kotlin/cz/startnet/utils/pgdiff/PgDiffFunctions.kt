@@ -26,7 +26,7 @@ object PgDiffFunctions {
      */
     fun createFunctions(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldSchema: PgSchema?,
+        arguments: PgDiffOptions, oldSchema: PgSchema?,
         newSchema: PgSchema?, searchPathHelper: SearchPathHelper
     ) {
         // Add new functions and replace modified functions

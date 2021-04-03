@@ -47,11 +47,11 @@ class SQLDiffFilesArgumentsProvider : ArgumentsProvider {
 fun PgDiff.createDiff(oldDump: String, newDump: String): String {
     val diffInput = ByteArrayOutputStream()
     val writer = PrintWriter(diffInput)
-    val arguments = PgDiffArguments()
+    val arguments = PgDiffOptions()
     PgDiff.createDiff(
         writer, arguments,
-        oldDump.byteInputStream(),
-        newDump.byteInputStream()
+        oldDump.byteInputStream().bufferedReader(),
+        newDump.byteInputStream().bufferedReader()
     )
     writer.close()
     return diffInput.toString()

@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.github.ajalt.clikt:clikt:3.1.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.testcontainers:testcontainers:1.15.2")
@@ -16,7 +17,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("cz.startnet.utils.pgdiff.Main")
+    mainClass.set("cz.startnet.utils.pgdiff.CLIKt")
     applicationName = "apgdiff"
 }
 

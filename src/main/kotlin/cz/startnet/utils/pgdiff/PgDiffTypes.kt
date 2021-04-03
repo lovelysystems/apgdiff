@@ -23,7 +23,7 @@ object PgDiffTypes {
      */
     fun alterTypes(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldSchema: PgSchema?,
+        arguments: PgDiffOptions, oldSchema: PgSchema?,
         newSchema: PgSchema, searchPathHelper: SearchPathHelper
     ) {
         for (newType in newSchema.types) {
@@ -52,7 +52,7 @@ object PgDiffTypes {
      */
     private fun addCreateTypeColumns(
         statements: MutableList<String>,
-        arguments: PgDiffArguments, oldType: PgType?,
+        arguments: PgDiffOptions, oldType: PgType?,
         newType: PgType, dropDefaultsColumns: MutableList<PgColumn>
     ) {
         for (column in newType.columns) {
@@ -103,7 +103,7 @@ object PgDiffTypes {
      */
     private fun addModifyTypeColumns(
         statements: MutableList<String>,
-        arguments: PgDiffArguments, oldType: PgType?,
+        arguments: PgDiffOptions, oldType: PgType?,
         newType: PgType?, dropDefaultsColumns: MutableList<PgColumn>
     ) {
         for (newColumn in newType!!.columns) {
@@ -227,7 +227,7 @@ object PgDiffTypes {
      */
     private fun updateTypeColumns(
         writer: PrintWriter,
-        arguments: PgDiffArguments, oldType: PgType?,
+        arguments: PgDiffOptions, oldType: PgType?,
         newType: PgType, searchPathHelper: SearchPathHelper
     ) {
         val statements: MutableList<String> = ArrayList()
