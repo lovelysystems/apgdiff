@@ -8,6 +8,7 @@ object CommentParser : PatternBasedSubParser(
 ) {
 
     val subParsers = listOf(
+        "EXTENSION" to ::parseExtension,
         "TABLE" to ::parseTable,
         "TYPE" to ::parseType,
         "DOMAIN" to ::parseDomain,
@@ -33,6 +34,14 @@ object CommentParser : PatternBasedSubParser(
         } else {
             ctx.database.addIgnoredStatement(parser.string)
         }
+    }
+
+    private fun parseExtension(parser: Parser, ctx: ParserContext) {
+        val name = parser.parseIdentifier()
+        val o = ctx.database.getExtension(name)!!
+        parser.expect("IS")
+        o.comment = getComment(parser)
+        parser.expect(";")
     }
 
     private fun parseTable(parser: Parser, ctx: ParserContext) {

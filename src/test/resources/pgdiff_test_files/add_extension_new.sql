@@ -19,7 +19,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+COMMENT ON EXTENSION plpgsql IS 'plpgsql non standard comment';
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres

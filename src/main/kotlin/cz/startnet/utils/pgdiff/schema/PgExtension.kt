@@ -1,11 +1,14 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
+import java.io.PrintWriter
 
 class PgExtension(val name: String) {
 
     lateinit var schema: PgSchema
     var version: String? = null
+
+    var comment: String? = null
 
     /**
      * Previous version of the extension.
@@ -23,15 +26,13 @@ class PgExtension(val name: String) {
             sbSQL.append("CREATE EXTENSION ")
             sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
-            if (schema != null) {
-                sbSQL.append(" SCHEMA ")
-                sbSQL.append(schema.name)
-            }
-            if (version != null && !version!!.isEmpty()) {
+            sbSQL.append(" SCHEMA ")
+            sbSQL.append(schema.name)
+            if (version != null && version!!.isNotEmpty()) {
                 sbSQL.append(" VERSION ")
                 sbSQL.append(version)
             }
-            if (from != null && !from!!.isEmpty()) {
+            if (from != null && from!!.isNotEmpty()) {
                 sbSQL.append(" FROM ")
                 sbSQL.append(from)
             }
@@ -39,13 +40,18 @@ class PgExtension(val name: String) {
             return sbSQL.toString()
         }
 
-    override fun equals(`object`: Any?): Boolean {
+    fun commentSQL(writer: PrintWriter) {
+        writer.println(
+            "COMMENT ON EXTENSION ${PgDiffUtils.getQuotedName(name)} IS $comment;"
+        )
+    }
+
+    override fun equals(other: Any?): Boolean {
         var equals = false
-        if (this === `object`) {
+        if (this === other) {
             equals = true
-        } else if (`object` is PgExtension) {
-            val extension = `object`
-            equals = name == extension.name && from == extension.from && version == extension.version
+        } else if (other is PgExtension) {
+            equals = name == other.name && from == other.from && version == other.version
         }
         return equals
     }

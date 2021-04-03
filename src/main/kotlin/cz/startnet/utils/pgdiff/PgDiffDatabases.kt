@@ -34,6 +34,7 @@ class PgDiffDatabases(
         createNewSchemas()
         dropOldExtensions()
         createNewExtensions()
+        commentExtensions()
         updateSchemas()
         dropOldSchemas()
         if (arguments.isAddTransaction) {
@@ -70,7 +71,6 @@ class PgDiffDatabases(
         }
     }
 
-
     /**
      * Creates new schemas (not the objects inside the schemas).
      */
@@ -94,6 +94,14 @@ class PgDiffDatabases(
             if (oldDatabase.getExtension(newExtension.name) == null) {
                 writer.println()
                 writer.println(newExtension.creationSQL)
+            }
+        }
+    }
+
+    private fun commentExtensions() {
+        for (newExtension in newDatabase.extensions) {
+            if (newExtension.comment != oldDatabase.getExtension(newExtension.name)?.comment) {
+                newExtension.commentSQL(writer)
             }
         }
     }
