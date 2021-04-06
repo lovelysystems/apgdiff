@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- run diff on ignored statements, to ensure that the batch script is valid
 - added support for comments on extensions
 - added support sequence owner
 - added support for operators

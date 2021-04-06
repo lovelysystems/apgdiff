@@ -3,9 +3,7 @@ package cz.startnet.utils.pgdiff
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.PrintWriter
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
@@ -44,16 +42,10 @@ class SQLDiffFilesArgumentsProvider : ArgumentsProvider {
     }
 }
 
-fun PgDiff.createDiff(oldDump: String, newDump: String): String {
-    val diffInput = ByteArrayOutputStream()
-    val writer = PrintWriter(diffInput)
-    val arguments = PgDiffOptions()
-    PgDiff.createDiff(
-        writer, arguments,
+fun PgDiff.createDiff(oldDump: String, newDump: String): PgDiffResult {
+    return PgDiff.createDiff(
         oldDump.byteInputStream().bufferedReader(),
         newDump.byteInputStream().bufferedReader()
     )
-    writer.close()
-    return diffInput.toString()
 }
 

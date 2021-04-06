@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.github.java-diff-utils:java-diff-utils:4.5")
     implementation("com.github.ajalt.clikt:clikt:3.1.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation(kotlin("test-junit5"))

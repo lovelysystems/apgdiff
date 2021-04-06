@@ -1,7 +1,10 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.*
+import cz.startnet.utils.pgdiff.schema.PgColumnPrivilege
+import cz.startnet.utils.pgdiff.schema.PgFunction
+import cz.startnet.utils.pgdiff.schema.PgRelationPrivilege
+import cz.startnet.utils.pgdiff.schema.PgSequencePrivilege
 import java.text.MessageFormat
 import java.util.*
 
@@ -16,8 +19,6 @@ object GrantRevokeParser : PatternBasedSubParser(
 ) {
     override fun parse(parser: Parser, ctx: ParserContext) {
         val grant: Boolean
-        // Map<String, List<String>> privileges = new TreeMap<String,
-        // List<String>>();
         val privileges: MutableList<String?> = ArrayList()
         val privilegesColumns: MutableList<List<String>?> = ArrayList()
         val identifiers: MutableList<String> = ArrayList()
@@ -35,32 +36,27 @@ object GrantRevokeParser : PatternBasedSubParser(
             "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES",
             "TRIGGER", "USAGE"
         )
-        var columns: List<String>? = null
+        var columns: List<String>?
         if (privilege == null) {
             // unknown privilege so unsupported object privilege
             // object role_name is using a different syntax so will always pass
             // here
-            if (ctx.outputIgnoredStatements) {
-                ctx.database.addIgnoredStatement(parser.string)
-                return
-            } else {
-                return
-            }
+            ctx.database.addIgnoredStatement(parser.string)
+            return
         }
-        if (privilege != null && "ALL".equals(privilege, ignoreCase = true)) {
+        if ("ALL".equals(privilege, ignoreCase = true)) {
             parser.expectOptional("PRIVILEGES")
         }
-        columns = if (privilege != null && "ALL".equals(privilege, ignoreCase = true) || "SELECT".equals(
+        columns = if ("ALL".equals(privilege, ignoreCase = true) || "SELECT".equals(
                 privilege,
                 ignoreCase = true
-            )
-            || "INSERT".equals(privilege, ignoreCase = true)
-            || "UPDATE".equals(privilege, ignoreCase = true)
-            || "REFERENCES".equals(privilege, ignoreCase = true)
+            ) || "INSERT".equals(privilege, ignoreCase = true) || "UPDATE".equals(
+                privilege,
+                ignoreCase = true
+            ) || "REFERENCES".equals(privilege, ignoreCase = true)
         ) {
             parseColumns(
-                parser, ctx.database, parser.string,
-                ctx.outputIgnoredStatements
+                parser, parser.string
             )
         } else {
             null
@@ -83,8 +79,7 @@ object GrantRevokeParser : PatternBasedSubParser(
                     || "REFERENCES".equals(privilege, ignoreCase = true)
                 ) {
                     parseColumns(
-                        parser, ctx.database, parser.string,
-                        ctx.outputIgnoredStatements
+                        parser, parser.string
                     )
                 } else {
                     null
@@ -98,10 +93,8 @@ object GrantRevokeParser : PatternBasedSubParser(
         val separator = parser.expectOptional("ON")
         if (!separator) {
             // column object
-            if (ctx.outputIgnoredStatements) {
-                ctx.database.addIgnoredStatement(parser.string)
-                return
-            }
+            ctx.database.addIgnoredStatement(parser.string)
+            return
         }
 
         // TODO check 'ALL TABLES IN SCHEMA' may not work
@@ -120,8 +113,7 @@ object GrantRevokeParser : PatternBasedSubParser(
             || "ALL FUNCTIONS IN SCHEMA".equals(objectType, ignoreCase = true)
         ) {
             parseConsumeFunctionSignature(
-                parser, ctx.database, parser.string,
-                ctx.outputIgnoredStatements
+                parser, parser.string
             )
         }
         identifiers.add(identifier)
@@ -132,8 +124,7 @@ object GrantRevokeParser : PatternBasedSubParser(
                     .equals(objectType, ignoreCase = true)
             ) {
                 parseConsumeFunctionSignature(
-                    parser, ctx.database, parser.string,
-                    ctx.outputIgnoredStatements
+                    parser, parser.string
                 )
             }
             identifiers.add(identifier)
@@ -161,10 +152,8 @@ object GrantRevokeParser : PatternBasedSubParser(
         } else {
             revokeMode = parser.expectOptionalOneOf("RESTRICT", "CASCADE")
             if ("CASCADE".equals(revokeMode, ignoreCase = true)) {
-                if (ctx.outputIgnoredStatements) {
-                    ctx.database.addIgnoredStatement(parser.string)
-                    return
-                }
+                ctx.database.addIgnoredStatement(parser.string)
+                return
             }
         }
         if ("TABLE".equals(objectType, ignoreCase = true)) {
@@ -297,16 +286,13 @@ object GrantRevokeParser : PatternBasedSubParser(
                 }
             }
         } else {
-            if (ctx.outputIgnoredStatements) {
-                ctx.database.addIgnoredStatement(parser.string)
-            }
+            ctx.database.addIgnoredStatement(parser.string)
         }
     }
 
     private fun parseConsumeFunctionSignature(
         parser: Parser,
-        database: PgDatabase, statement: String,
-        outputIgnoredStatements: Boolean
+        statement: String
     ) {
         parser.expect("(")
         while (!parser.expectOptional(")")) {
@@ -350,8 +336,7 @@ object GrantRevokeParser : PatternBasedSubParser(
 
     private fun parseColumns(
         parser: Parser,
-        database: PgDatabase, statement: String,
-        outputIgnoredStatements: Boolean
+        statement: String
     ): List<String>? {
         val result: MutableList<String> = ArrayList()
         val present = parser.expectOptional("(")

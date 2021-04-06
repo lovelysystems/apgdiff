@@ -5,9 +5,33 @@
  */
 package cz.startnet.utils.pgdiff
 
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import cz.startnet.utils.pgdiff.loader.PgDumpLoader
 import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
+
+
+data class PgDiffResult(
+    val script: String,
+    val ignoredOld: List<String>,
+    val ignoredNew: List<String>
+) {
+    fun diffIgnored(): List<String> {
+        if (ignoredOld != ignoredNew) {
+            val d = DiffUtils.diff(ignoredOld, ignoredNew)
+            val unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff(
+                "old", "new", ignoredOld, d, 0
+            )
+            return unifiedDiff
+        } else {
+            return emptyList()
+        }
+    }
+
+}
+
 
 object PgDiff {
 
@@ -15,24 +39,32 @@ object PgDiff {
      * Creates diff on the two database schemas.
      */
     fun createDiff(
-        writer: PrintWriter,
-        arguments: PgDiffOptions,
         oldReader: BufferedReader,
-        newReader: BufferedReader
-    ) {
+        newReader: BufferedReader,
+        outputIgnoredStatements: Boolean = false,
+        options: PgDiffOptions = PgDiffOptions(),
+    ): PgDiffResult {
         val oldDatabase = PgDumpLoader.loadDatabaseSchema(
             oldReader,
-            arguments.isOutputIgnoredStatements,
-            arguments.isIgnoreSlonyTriggers,
-            arguments.isIgnoreSchemaCreation
+            options.isIgnoreSlonyTriggers,
+            options.isIgnoreSchemaCreation
         )
         val newDatabase = PgDumpLoader.loadDatabaseSchema(
             newReader,
-            arguments.isOutputIgnoredStatements,
-            arguments.isIgnoreSlonyTriggers,
-            arguments.isIgnoreSchemaCreation
+            options.isIgnoreSlonyTriggers,
+            options.isIgnoreSchemaCreation
         )
-        val diffDB = PgDiffDatabases(writer, arguments, oldDatabase, newDatabase)
-        diffDB()
+        val stream = ByteArrayOutputStream()
+        val writer = PrintWriter(stream)
+        val diffDBs = PgDiffDatabases(writer, options, oldDatabase, newDatabase, outputIgnoredStatements)
+        diffDBs()
+        writer.close()
+        return PgDiffResult(
+            stream.toString(options.outCharsetName),
+            ignoredOld = oldDatabase.ignoredStatements,
+            ignoredNew = newDatabase.ignoredStatements
+        )
+
     }
 }
+

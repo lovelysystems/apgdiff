@@ -85,16 +85,6 @@ ALTER TABLE ONLY table1 ALTER COLUMN id SET DEFAULT nextval('table1_id_seq'::reg
 
 
 --
--- TOC entry 2138 (class 0 OID 17707)
--- Dependencies: 182
--- Data for Name: table1; Type: TABLE DATA; Schema: public; Owner: dv
---
-
-COPY table1 (id, msg, date_create) FROM stdin;
-\.
-
-
---
 -- TOC entry 2150 (class 0 OID 0)
 -- Dependencies: 181
 -- Name: table1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: dv

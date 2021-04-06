@@ -1,13 +1,17 @@
 package cz.startnet.utils.pgdiff
 
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import cz.startnet.utils.pgdiff.schema.PgDatabase
 import java.io.PrintWriter
+
 
 class PgDiffDatabases(
     private val writer: PrintWriter,
     private val arguments: PgDiffOptions,
     private val oldDatabase: PgDatabase,
-    private val newDatabase: PgDatabase
+    private val newDatabase: PgDatabase,
+    private val outputIgnoredStatements: Boolean = false
 ) {
 
     /**
@@ -41,7 +45,7 @@ class PgDiffDatabases(
             writer.println()
             writer.println("COMMIT TRANSACTION;")
         }
-        if (arguments.isOutputIgnoredStatements) {
+        if (outputIgnoredStatements) {
             if (oldDatabase.ignoredStatements.isNotEmpty()) {
                 writer.println()
                 writer.print("/* ")

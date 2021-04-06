@@ -103,10 +103,9 @@ class DBTest {
         val firstDiff = PgDiff.createDiff(oldDump, newDump)
         val df = testFiles.diff
         // write the diff file
-        if (!df.exists() || df.readText() != firstDiff) {
-            df.writeText(firstDiff)
+        if (!df.exists() || df.readText() != firstDiff.script) {
+            df.writeText(firstDiff.script)
         }
-
 
         // apply diff to original
         dbContainer.runFile(oldDB, "/testfiles/${df.name}")
@@ -118,7 +117,7 @@ class DBTest {
             // could be still valid, because of column ordering etc.
             // try with to do a diff, if this is empty, it is ok
             val diff = PgDiff.createDiff(migratedDump, newDump)
-            if (diff.isNotBlank()) {
+            if (diff.script.isNotBlank()) {
                 // there is a diff  let the assertion raise
                 migratedDump shouldBe newDump
             }

@@ -6,18 +6,16 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
-import java.io.OutputStreamWriter
-import java.io.PrintWriter
 import java.nio.charset.Charset
 
 class CLI : CliktCommand(name = "apgdiff") {
     val inCharsetName by option(help = "Input file charset name").default("UTF-8")
     val outCharsetName by option(help = "Input file charset name").default("UTF-8")
-    val isAddDefaults by option(
+    val addDefaults by option(
         help = "Whether DEFAULT ... should be added in case new" +
                 " column has NOT NULL constraint. The default value is dropped later."
     ).flag(default = false)
-    val isOutputIgnoredStatements by option(
+    val outputIgnoredStatements by option(
         help = "Whether to output information about ignored statements."
     ).flag(default = false)
 
@@ -27,14 +25,24 @@ class CLI : CliktCommand(name = "apgdiff") {
 
     override fun run() {
         val arguments = PgDiffOptions(
-            isOutputIgnoredStatements = isOutputIgnoredStatements,
-            isAddDefaults = isAddDefaults
+            isAddDefaults = addDefaults
         )
         val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
         val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))
-        val writer = PrintWriter(OutputStreamWriter(System.out, outCharsetName))
-        PgDiff.createDiff(writer, arguments, dumpOld, dumpNew)
-        writer.close()
+        val res = PgDiff.createDiff(
+            dumpOld, dumpNew,
+            outputIgnoredStatements = outputIgnoredStatements,
+            options = arguments
+        )
+
+        System.out.writer(Charset.forName(outCharsetName)).use {
+            it.write(res.script)
+        }
+        val diff = res.diffIgnored()
+        if (diff.isNotEmpty()) {
+            System.err.println("CAUTION ignored statements differ:")
+            diff.forEach(System.err::println)
+        }
     }
 
 }

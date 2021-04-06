@@ -19,10 +19,6 @@ data class PgDiffOptions(
      */
     val isIgnoreFunctionWhitespace: Boolean = false,
     /**
-     * Whether to output information about ignored statements.
-     */
-    val isOutputIgnoredStatements: Boolean = false,
-    /**
      * Whether Slony triggers should be ignored.
      */
     val isIgnoreSlonyTriggers: Boolean = false,

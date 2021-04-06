@@ -51,13 +51,6 @@ CREATE TABLE testtable (
 
 ALTER TABLE "ABC".testtable OWNER TO postgres;
 
---
--- Data for Name: testtable; Type: TABLE DATA; Schema: ABC; Owner: postgres
---
-
-COPY testtable (field1, field2, field3, field4) FROM stdin;
-\.
-
 
 --
 -- Name: testindex; Type: INDEX; Schema: ABC; Owner: postgres; Tablespace:

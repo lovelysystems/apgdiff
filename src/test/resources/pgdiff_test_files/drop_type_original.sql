@@ -61,9 +61,6 @@ CREATE TYPE descr_type AS (
 
 ALTER TYPE descr_type OWNER TO dv;
 
-SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- TOC entry 182 (class 1259 OID 16390)

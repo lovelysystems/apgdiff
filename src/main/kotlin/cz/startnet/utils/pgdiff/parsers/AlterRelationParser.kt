@@ -68,7 +68,7 @@ object AlterRelationParser : PatternBasedSubParser(
         }
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("ALTER")) {
-                parseAlterColumn(parser, rel, ctx.outputIgnoredStatements, ctx.database)
+                parseAlterColumn(parser, rel, ctx.database)
             } else if (parser.expectOptional("CLUSTER", "ON")) {
                 rel.clusterIndexName = ParserUtils.getObjectName(parser.parseIdentifier())
             } else if (parser.expectOptional("OWNER", "TO")) {
@@ -99,11 +99,11 @@ object AlterRelationParser : PatternBasedSubParser(
                 table.setRLSForced(false)
             } else if (table != null && parser.expectOptional("ENABLE")) {
                 parseEnable(
-                    parser, ctx.outputIgnoredStatements, relName, ctx.database
+                    parser, relName, ctx.database
                 )
             } else if (table != null && parser.expectOptional("DISABLE")) {
                 parseDisable(
-                    parser, ctx.outputIgnoredStatements, relName, ctx.database
+                    parser, relName, ctx.database
                 )
             } else {
                 parser.throwUnsupportedCommand()
@@ -120,7 +120,6 @@ object AlterRelationParser : PatternBasedSubParser(
      * Parses ENABLE statements.
      *
      * @param parser                  parser
-     * @param outputIgnoredStatements whether ignored statements should be
      * output in the diff
      * @param tableName               table name as it was specified in the
      * statement
@@ -128,53 +127,36 @@ object AlterRelationParser : PatternBasedSubParser(
      */
     private fun parseEnable(
         parser: Parser,
-        outputIgnoredStatements: Boolean, tableName: String?,
-        database: PgDatabase
+        tableName: String?, database: PgDatabase
     ) {
         if (parser.expectOptional("REPLICA")) {
             if (parser.expectOptional("TRIGGER")) {
-                if (outputIgnoredStatements) {
-                    database.addIgnoredStatement(
-                        "ALTER TABLE " + tableName
-                                + " ENABLE REPLICA TRIGGER "
-                                + parser.parseIdentifier() + ';'
-                    )
-                } else {
-                    parser.parseIdentifier()
-                }
+                database.addIgnoredStatement(
+                    "ALTER TABLE " + tableName
+                            + " ENABLE REPLICA TRIGGER "
+                            + parser.parseIdentifier() + ';'
+                )
             } else if (parser.expectOptional("RULE")) {
-                if (outputIgnoredStatements) {
-                    database.addIgnoredStatement(
-                        "ALTER TABLE " + tableName
-                                + " ENABLE REPLICA RULE "
-                                + parser.parseIdentifier() + ';'
-                    )
-                } else {
-                    parser.parseIdentifier()
-                }
+                database.addIgnoredStatement(
+                    "ALTER TABLE " + tableName
+                            + " ENABLE REPLICA RULE "
+                            + parser.parseIdentifier() + ';'
+                )
             } else {
                 parser.throwUnsupportedCommand()
             }
         } else if (parser.expectOptional("ALWAYS")) {
             if (parser.expectOptional("TRIGGER")) {
-                if (outputIgnoredStatements) {
-                    database.addIgnoredStatement(
-                        "ALTER TABLE " + tableName
-                                + " ENABLE ALWAYS TRIGGER "
-                                + parser.parseIdentifier() + ';'
-                    )
-                } else {
-                    parser.parseIdentifier()
-                }
+                database.addIgnoredStatement(
+                    "ALTER TABLE " + tableName
+                            + " ENABLE ALWAYS TRIGGER "
+                            + parser.parseIdentifier() + ';'
+                )
             } else if (parser.expectOptional("RULE")) {
-                if (outputIgnoredStatements) {
-                    database.addIgnoredStatement(
-                        "ALTER TABLE " + tableName
-                                + " ENABLE RULE " + parser.parseIdentifier() + ';'
-                    )
-                } else {
-                    parser.parseIdentifier()
-                }
+                database.addIgnoredStatement(
+                    "ALTER TABLE " + tableName
+                            + " ENABLE RULE " + parser.parseIdentifier() + ';'
+                )
             } else {
                 parser.throwUnsupportedCommand()
             }
@@ -185,35 +167,23 @@ object AlterRelationParser : PatternBasedSubParser(
      * Parses DISABLE statements.
      *
      * @param parser                  parser
-     * @param outputIgnoredStatements whether ignored statements should be
-     * output in the diff
-     * @param tableName               table name as it was specified in the
-     * statement
+     * @param tableName               table name as it was specified in the statement
      * @param database                database information
      */
     private fun parseDisable(
         parser: Parser,
-        outputIgnoredStatements: Boolean, tableName: String?,
-        database: PgDatabase
+        tableName: String?, database: PgDatabase
     ) {
         if (parser.expectOptional("TRIGGER")) {
-            if (outputIgnoredStatements) {
-                database.addIgnoredStatement(
-                    "ALTER TABLE " + tableName
-                            + " DISABLE TRIGGER " + parser.parseIdentifier() + ';'
-                )
-            } else {
-                parser.parseIdentifier()
-            }
+            database.addIgnoredStatement(
+                "ALTER TABLE " + tableName
+                        + " DISABLE TRIGGER " + parser.parseIdentifier() + ';'
+            )
         } else if (parser.expectOptional("RULE")) {
-            if (outputIgnoredStatements) {
-                database.addIgnoredStatement(
-                    "ALTER TABLE " + tableName
-                            + " DISABLE RULE " + parser.parseIdentifier() + ';'
-                )
-            } else {
-                parser.parseIdentifier()
-            }
+            database.addIgnoredStatement(
+                "ALTER TABLE " + tableName
+                        + " DISABLE RULE " + parser.parseIdentifier() + ';'
+            )
         } else {
             parser.throwUnsupportedCommand()
         }
@@ -251,13 +221,12 @@ object AlterRelationParser : PatternBasedSubParser(
     private fun parseAlterColumn(
         parser: Parser,
         rel: PgRelation,
-        outputIgnoredStatements: Boolean,
         database: PgDatabase
     ) {
         parser.expectOptional("COLUMN")
         val columnName = ParserUtils.getObjectName(parser.parseIdentifier())
         val alterColumnParser =
-            AlterColumnParser(columnName, parser, rel, ParserContext(database, outputIgnoredStatements))
+            AlterColumnParser(columnName, parser, rel, ParserContext(database))
         alterColumnParser.parse()
     }
 

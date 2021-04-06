@@ -35,11 +35,7 @@ object PgDumpLoader {
     /**
      * Loads database schema from dump file.
      *
-     * @param inputStream             input stream that should be read
-     * @param charsetName             charset that should be used to read the
-     * file
-     * @param outputIgnoredStatements whether ignored statements should be
-     * included in the output
+     * @param reader                  buffered reader that should be read
      * @param ignoreSlonyTriggers     whether Slony triggers should be ignored
      * @param ignoreSchemaCreation    whether schema creation should be ignored
      *
@@ -47,13 +43,12 @@ object PgDumpLoader {
      */
     fun loadDatabaseSchema(
         reader: BufferedReader,
-        outputIgnoredStatements: Boolean,
-        ignoreSlonyTriggers: Boolean, ignoreSchemaCreation: Boolean
+        ignoreSlonyTriggers: Boolean,
+        ignoreSchemaCreation: Boolean
     ): PgDatabase {
         val database = PgDatabase()
         val ctx = ParserContext(
             database,
-            outputIgnoredStatements,
             ignoreSchemaCreation,
             ignoreSlonyTriggers
         )
@@ -97,7 +92,7 @@ object PgDumpLoader {
             val matchedSubParser = subParsers.firstOrNull {
                 it(parser, ctx)
             }
-            if (matchedSubParser == null && outputIgnoredStatements) {
+            if (matchedSubParser == null) {
                 database.addIgnoredStatement(statement)
             }
             statement = getWholeStatement(reader)

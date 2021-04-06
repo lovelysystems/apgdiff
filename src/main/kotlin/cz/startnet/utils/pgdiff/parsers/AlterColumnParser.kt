@@ -9,7 +9,6 @@ import java.text.MessageFormat
 
 data class ParserContext(
     val database: PgDatabase,
-    val outputIgnoredStatements: Boolean = false,
     val ignoreSchemaCreation: Boolean = false,
     val ignoreSlonyTriggers: Boolean = false,
 )
