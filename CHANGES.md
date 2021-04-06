@@ -2,6 +2,9 @@
 
 ## unreleased
 
+- added support for comments on extensions
+- added support sequence owner
+- added support for operators
 - added support for domains
 - added support for `COMMENT ON TYPE ...`
 - added support for `ALTER TYPE ... OWNER TO ...`
