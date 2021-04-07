@@ -1,11 +1,17 @@
 plugins {
     id("com.lovelysystems.gradle") version ("1.3.2")
     application
+    jacoco
     kotlin("jvm") version "1.4.32"
 }
 
 repositories {
     mavenCentral()
+}
+
+jacoco {
+    toolVersion = "0.8.6"
+    reportsDirectory.set(buildDir.resolve("coverage"))
 }
 
 dependencies {
@@ -30,6 +36,19 @@ lovely {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+    reports {
+        xml.isEnabled = false
+        csv.isEnabled = false
+        html.destination = file(buildDir.resolve("coverage/html"))
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestReport)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
