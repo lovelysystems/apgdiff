@@ -2,11 +2,9 @@ package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgColumnPrivilege
-import cz.startnet.utils.pgdiff.schema.PgFunction
 import cz.startnet.utils.pgdiff.schema.PgRelationPrivilege
 import cz.startnet.utils.pgdiff.schema.PgSequencePrivilege
 import java.text.MessageFormat
-import java.util.*
 
 /**
  * Parses GRANT statements.
@@ -294,44 +292,7 @@ object GrantRevokeParser : PatternBasedSubParser(
         parser: Parser,
         statement: String
     ) {
-        parser.expect("(")
-        while (!parser.expectOptional(")")) {
-            val mode: String?
-            mode = if (parser.expectOptional("IN")) {
-                "IN"
-            } else if (parser.expectOptional("OUT")) {
-                "OUT"
-            } else if (parser.expectOptional("INOUT")) {
-                "INOUT"
-            } else if (parser.expectOptional("VARIADIC")) {
-                "VARIADIC"
-            } else {
-                null
-            }
-            val position = parser.position
-            var argumentName: String? = null
-            var dataType = parser.parseDataType()
-            val position2 = parser.position
-            if (!parser.expectOptional(")") && !parser.expectOptional(",")) {
-                parser.position = position
-                argumentName = ParserUtils.getObjectName(
-                    parser
-                        .parseIdentifier()
-                )
-                dataType = parser.parseDataType()
-            } else {
-                parser.position = position2
-            }
-            val argument = PgFunction.Argument()
-            argument.dataType = dataType
-            argument.mode = mode
-            argument.name = argumentName
-            if (parser.expectOptional(")")) {
-                break
-            } else {
-                parser.expect(",")
-            }
-        }
+        parser.parseFunctionArguments()
     }
 
     private fun parseColumns(

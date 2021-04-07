@@ -2,30 +2,42 @@ package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgFunction
+import cz.startnet.utils.pgdiff.schema.PgFunctionArgument
 import java.text.MessageFormat
 
 
 /**
  * Parses a function signature and returns a PGFunction
+ * name ( [ [ argmode ] [ argname ] argtype [ { DEFAULT | = } default_expr ] [, ...] ] )
  */
 fun Parser.parseFunctionSignature(ctx: ParserContext): PgFunction {
     val functionName = parseIdentifier()
     val schemaName = ctx.database.getSchemaName(functionName)
     val objectName = ParserUtils.getObjectName(functionName)
     val func = PgFunction(objectName, schemaName)
+    parseFunctionArguments(func::addArgument)
+    return func
+}
+
+fun Parser.parseFunctionArguments(receiver: (PgFunctionArgument) -> Unit = {}) {
     expect("(")
     while (!expectOptional(")")) {
-        val mode: String?
-        mode = if (expectOptional("IN")) {
-            "IN"
-        } else if (expectOptional("OUT")) {
-            "OUT"
-        } else if (expectOptional("INOUT")) {
-            "INOUT"
-        } else if (expectOptional("VARIADIC")) {
-            "VARIADIC"
-        } else {
-            null
+        val mode: String = when {
+            expectOptional("IN") -> {
+                "IN"
+            }
+            expectOptional("OUT") -> {
+                "OUT"
+            }
+            expectOptional("INOUT") -> {
+                "INOUT"
+            }
+            expectOptional("VARIADIC") -> {
+                "VARIADIC"
+            }
+            else -> {
+                "IN"
+            }
         }
         val posPreType = this.position
         var argumentName: String? = null
@@ -38,18 +50,21 @@ fun Parser.parseFunctionSignature(ctx: ParserContext): PgFunction {
         } else {
             this.position = posPostType
         }
-        val argument = PgFunction.Argument()
-        argument.dataType = dataType
-        argument.mode = mode
-        argument.name = argumentName
-        func.addArgument(argument)
+        val defaultExpression = if (expectOptional("DEFAULT")) {
+            this.expression
+        } else {
+            null
+        }
+        val argument = PgFunctionArgument(mode, argumentName, dataType, defaultExpression)
+        receiver(argument)
+
+
         if (expectOptional(")")) {
             break
         } else {
             expect(",")
         }
     }
-    return func
 }
 
 

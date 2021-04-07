@@ -3,12 +3,13 @@ package cz.startnet.utils.pgdiff.schema
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.util.*
 
+
 class PgFunction(val name: String, val schema: String) {
 
     /**
      * List of arguments.
      */
-    val arguments: MutableList<Argument> = ArrayList()
+    val arguments: MutableList<PgFunctionArgument> = ArrayList()
 
     /**
      * Whole definition of the function from RETURNS keyword.
@@ -36,7 +37,7 @@ class PgFunction(val name: String, val schema: String) {
             if (addComma) {
                 sbSQL.append(", ")
             }
-            sbSQL.append(argument.getDeclaration(true))
+            sbSQL.append(argument.getDeclaration())
             addComma = true
         }
         sbSQL.append(") ")
@@ -61,7 +62,7 @@ class PgFunction(val name: String, val schema: String) {
 
     val signatureSQL: String
         get() {
-            val args = arguments.map { it.dataType }.joinToString(", ")
+            val args = arguments.joinToString(", ") { it.dataType }
             return "${PgDiffUtils.getQuotedName(name)}($args)"
         }
 
@@ -85,7 +86,7 @@ class PgFunction(val name: String, val schema: String) {
      *
      * @param argument argument
      */
-    fun addArgument(argument: Argument) {
+    fun addArgument(argument: PgFunctionArgument) {
         arguments.add(argument)
     }
 
@@ -108,7 +109,7 @@ class PgFunction(val name: String, val schema: String) {
                 if (addComma) {
                     sbString.append(',')
                 }
-                sbString.append(argument.dataType!!.toLowerCase(Locale.ENGLISH))
+                sbString.append(argument.dataType.toLowerCase(Locale.ENGLISH))
                 addComma = true
             }
             sbString.append(')')
@@ -129,7 +130,7 @@ class PgFunction(val name: String, val schema: String) {
      * same class but they equal just in whitespace in [.body], they are
      * considered being equal.
      *
-     * @param object                   object to be compared
+     * @param `object`                   object to be compared
      * @param ignoreFunctionWhitespace whether multiple whitespaces in function
      * [.body] should be ignored
      *
@@ -137,37 +138,33 @@ class PgFunction(val name: String, val schema: String) {
      * the same when compared ignoring whitespace, otherwise returns
      * false
      */
-    fun equals(
-        `object`: Any,
-        ignoreFunctionWhitespace: Boolean
-    ): Boolean {
+    fun equals(other: Any, ignoreFunctionWhitespace: Boolean): Boolean {
         var equals = false
-        if (this === `object`) {
+        if (this === other) {
             equals = true
-        } else if (`object` is PgFunction) {
-            val function = `object`
-            if (name != function.name) {
+        } else if (other is PgFunction) {
+            if (name != other.name) {
                 return false
             }
             val thisBody: String?
             val thatBody: String?
             if (ignoreFunctionWhitespace) {
                 thisBody = body!!.replace("\\s+".toRegex(), " ")
-                thatBody = function.body!!.replace("\\s+".toRegex(), " ")
+                thatBody = other.body!!.replace("\\s+".toRegex(), " ")
             } else {
                 thisBody = body
-                thatBody = function.body
+                thatBody = other.body
             }
             if (thisBody == null && thatBody != null
                 || thisBody != null && thisBody != thatBody
             ) {
                 return false
             }
-            if (arguments.size != function.arguments.size) {
+            if (arguments.size != other.arguments.size) {
                 return false
             } else {
                 for (i in arguments.indices) {
-                    if (arguments[i] != function.arguments[i]) {
+                    if (arguments[i] != other.arguments[i]) {
                         return false
                     }
                 }
@@ -184,95 +181,9 @@ class PgFunction(val name: String, val schema: String) {
         sbString.append(name)
         for (argument in arguments) {
             sbString.append('|')
-            sbString.append(argument.getDeclaration(true))
+            sbString.append(argument.getDeclaration())
         }
         return sbString.toString().hashCode()
     }
 
-    /**
-     * Function argument information.
-     */
-    class Argument {
-        /**
-         * Argument mode.
-         */
-        var mode: String? = "IN"
-            set(value) {
-                field = if (value.isNullOrEmpty()) "IN" else value
-            }
-
-        /**
-         * Argument name.
-         */
-        var name: String? = null
-
-        /**
-         * Argument data type.
-         */
-        var dataType: String? = null
-
-        /**
-         * Argument default expression.
-         */
-        var defaultExpression: String? = null
-
-        /**
-         * Creates argument declaration.
-         *
-         * @param includeDefaultValue whether to include default value
-         *
-         * @return argument declaration
-         */
-        fun getDeclaration(includeDefaultValue: Boolean): String {
-            val sbString = StringBuilder(50)
-            if (mode != null && !"IN".equals(mode, ignoreCase = true)) {
-                sbString.append(mode)
-                sbString.append(' ')
-            }
-            name?.takeIf { it.isNotEmpty() }?.let {
-                sbString.append(cz.startnet.utils.pgdiff.PgDiffUtils.getQuotedName(it))
-                sbString.append(' ')
-            }
-
-            sbString.append(dataType)
-            if (includeDefaultValue && !defaultExpression.isNullOrEmpty()) {
-                sbString.append(" = ")
-                sbString.append(defaultExpression)
-            }
-            return sbString.toString()
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (other !is Argument) {
-                return false
-            } else if (this === other) {
-                return true
-            }
-            val argument = other
-            return ((if (dataType == null) argument.dataType == null else dataType.equals(
-                argument.dataType,
-                ignoreCase = true
-            ))
-                    && (if (defaultExpression == null) argument.defaultExpression == null else defaultExpression == defaultExpression)
-                    && (if (mode == null) argument.mode == null else mode.equals(
-                argument.mode,
-                ignoreCase = true
-            ))
-                    && if (name == null) argument.name == null else name == argument.name)
-        }
-
-        override fun hashCode(): Int {
-            val sbString = StringBuilder(50)
-            sbString.append(
-                if (mode == null) null else mode!!.toUpperCase(Locale.ENGLISH)
-            )
-            sbString.append('|')
-            sbString.append(name)
-            sbString.append('|')
-            sbString.append(if (dataType == null) null else dataType!!.toUpperCase(Locale.ENGLISH))
-            sbString.append('|')
-            sbString.append(defaultExpression)
-            return sbString.toString().hashCode()
-        }
-    }
 }

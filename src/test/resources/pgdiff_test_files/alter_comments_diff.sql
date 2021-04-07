@@ -11,7 +11,7 @@ COMMENT ON VIEW test_view IS 'test view 2';
 
 COMMENT ON COLUMN test_view.id IS 'view id col 2';
 
-COMMENT ON FUNCTION test_fnc(arg character varying) IS 'test function 2';
+COMMENT ON FUNCTION test_fnc(character varying) IS 'test function 2';
 
 COMMENT ON CONSTRAINT text_check ON test IS 'text check 2';
 

@@ -11,7 +11,7 @@ COMMENT ON VIEW test_view IS NULL;
 
 COMMENT ON COLUMN test_view.id IS NULL;
 
-COMMENT ON FUNCTION test_fnc(arg character varying) IS NULL;
+COMMENT ON FUNCTION test_fnc(character varying) IS NULL;
 
 COMMENT ON CONSTRAINT text_check ON test IS NULL;
 

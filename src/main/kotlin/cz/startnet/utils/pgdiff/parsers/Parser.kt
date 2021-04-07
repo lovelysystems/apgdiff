@@ -20,21 +20,7 @@ fun interface SubParser {
  * @author fordfrog
  */
 class Parser(val string: String) {
-    /**
-     * Returns parsed string.
-     *
-     * @return parsed string
-     */
-    /**
-     * Returns current position in the string.
-     *
-     * @return current position in the string
-     */
-    /**
-     * Changes current position in the string.
-     *
-     * @param position new position
-     */
+
     /**
      * Current position.
      */
@@ -333,7 +319,7 @@ class Parser(val string: String) {
      * @todo Support for dollar quoted strings is missing here.
      */
     private val expressionEnd: Int
-        private get() {
+        get() {
             var bracesCount = 0
             var singleQuoteOn = false
             var charPos = position
@@ -414,7 +400,7 @@ class Parser(val string: String) {
      *
      * @return data type string
      */
-    fun parseDataType(): String? {
+    fun parseDataType(): String {
         var endPos = position
         while (endPos < string.length && !Character.isWhitespace(string[endPos])
             && string[endPos] != '(' && string[endPos] != ')' && string[endPos] != ','
@@ -471,11 +457,6 @@ class Parser(val string: String) {
                 || position + 1 == string.length
                 && string[position] == ';')
 
-    /**
-     * Creates new instance of Parser.
-     *
-     * @param string [.string]
-     */
     init {
         skipWhitespace()
     }

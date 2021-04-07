@@ -4,6 +4,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeBlank
 import io.kotest.matchers.string.shouldBeEmpty
+import io.kotest.matchers.string.shouldContain
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
@@ -65,5 +66,25 @@ class PgDiffTest {
             -CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname 'foodb');
             +CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname 'bardb');
             """.trimIndent()
+    }
+
+    @Test
+    fun testFunctionWithDefault() {
+        val old = """CREATE FUNCTION public.fname(name text, drop_before boolean DEFAULT false) RETURNS boolean
+                    LANGUAGE sql
+                    AS ${'$'}${'$'}
+                    select t;
+                    end;
+                    ${'$'}${'$'};
+            """.trimIndent()
+        val new = """CREATE FUNCTION public.fname(name text, drop_before boolean DEFAULT true) RETURNS boolean
+                    LANGUAGE sql
+                    AS ${'$'}${'$'}
+                    select t;
+                    end;
+                    ${'$'}${'$'};
+            """.trimIndent()
+        val diff = PgDiff.createDiff(old, new)
+        diff.script shouldContain ", drop_before boolean DEFAULT true)"
     }
 }
