@@ -86,9 +86,9 @@ object PgDiffTables {
     fun alterTables(
         writer: PrintWriter,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
-        newSchema: PgSchema?, searchPathHelper: SearchPathHelper
+        newSchema: PgSchema, searchPathHelper: SearchPathHelper
     ) {
-        for (newTable in newSchema?.tables.orEmpty()) {
+        for (newTable in newSchema.tables) {
             if (oldSchema == null
                 || !oldSchema.containsTable(newTable.name)
             ) {
@@ -377,12 +377,12 @@ object PgDiffTables {
         newSchema: PgSchema?,
         searchPathHelper: SearchPathHelper
     ) {
-        for (inheritPairN in newTable!!.inherits.orEmpty()) {
-            val schemaName = inheritPairN.l
-            val tableName = inheritPairN.r
+        for (inheritPairN in newTable!!.inherits) {
+            val schemaName = inheritPairN.first
+            val tableName = inheritPairN.second
             var isFound = false
-            for (inheritPairO in oldTable!!.inherits.orEmpty()) {
-                if (schemaName == inheritPairO.l && tableName == inheritPairO.r) {
+            for (inheritPairO in oldTable!!.inherits) {
+                if (schemaName == inheritPairO.first && tableName == inheritPairO.second) {
                     isFound = true
                     break
                 }
@@ -405,12 +405,12 @@ object PgDiffTables {
                 )
             }
         }
-        for (inheritPairO in oldTable!!.inherits.orEmpty()) {
-            val schemaName = inheritPairO.l
-            val tableName = inheritPairO.r
+        for (inheritPairO in oldTable!!.inherits) {
+            val schemaName = inheritPairO.first
+            val tableName = inheritPairO.second
             var isFound = false
-            for (inheritPairN in newTable.inherits.orEmpty()) {
-                if (schemaName == inheritPairN.l && tableName == inheritPairN.r) {
+            for (inheritPairN in newTable.inherits) {
+                if (schemaName == inheritPairN.first && tableName == inheritPairN.second) {
                     isFound = true
                     break
                 }
