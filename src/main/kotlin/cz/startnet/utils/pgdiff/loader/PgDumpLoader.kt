@@ -53,6 +53,7 @@ object PgDumpLoader {
             ignoreSlonyTriggers
         )
         val subParsers = listOf<SubParser>(
+            IgnoredStatementParser("^(CREATE|ALTER)[\\s]+OPERATOR[\\s]+(FAMILY|CLASS)[\\s]+.*$"),
             CreateSchemaParser,
             CreateDomainParser,
             CreateOperatorParser,

@@ -34,9 +34,8 @@ class PgDiffTest {
     @ArgumentsSource(SQLDiffFilesArgumentsProvider::class)
     fun runDiffSameNew(testFiles: SQLDiffTestFiles) {
         val dump = testFiles.new.readText()
-        val diff = PgDiff.createDiff(dump, dump)
-        diff.script.shouldBeBlank()
-        diff.diffIgnored().shouldBeEmpty()
+        val diff = PgDiff.createDiff(dump)
+        diff.shouldHaveNoDiff()
     }
 
     /**
@@ -87,4 +86,16 @@ class PgDiffTest {
         val diff = PgDiff.createDiff(old, new)
         diff.script shouldContain ", drop_before boolean DEFAULT true)"
     }
+
+    @Test
+    fun testOperatorClassAndFamilyAreIgnored() {
+        val dump = """
+            CREATE OPERATOR FAMILY internal.point_ops USING btree;
+            ALTER OPERATOR FAMILY internal.point_ops USING btree OWNER TO postgres;
+        """.trimIndent()
+        val diff = PgDiff.createDiff(dump)
+        diff.shouldHaveNoDiff()
+        diff.ignoredNew.size shouldBe 2
+    }
+
 }
