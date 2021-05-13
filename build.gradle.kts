@@ -9,6 +9,8 @@ repositories {
     mavenCentral()
 }
 
+group = "com.lovelysystems"
+
 jacoco {
     toolVersion = "0.8.6"
     reportsDirectory.set(buildDir.resolve("coverage"))
