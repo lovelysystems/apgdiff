@@ -23,7 +23,7 @@ jobs:
           java-version: 11
       - uses: eskatos/gradle-command-action@v1
         with:
-          arguments: dist
+          arguments: fatJar
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
       - name: Archive fatJar
