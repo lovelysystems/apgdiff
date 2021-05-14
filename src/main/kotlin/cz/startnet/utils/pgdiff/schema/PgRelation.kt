@@ -13,11 +13,12 @@ import java.util.*
  *
  * @author Marti Raudsepp
  */
-abstract class PgRelation {
+abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>>(name: String, objectType: String) :
+    PgRel(name, objectType) {
     /**
      * List of columns defined on the relation.
      */
-    val columns: MutableList<PgColumn> = ArrayList()
+    val columns: MutableList<COL> = ArrayList()
 
     /**
      * List of indexes defined on the relation.
@@ -48,20 +49,6 @@ abstract class PgRelation {
      */
     var clusterIndexName: String? = null
     /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Setter for [.name].
-     *
-     * @param name [.name]
-     */
-    /**
-     * Name of the relation.
-     */
-    var name: String? = null
-    /**
      * Getter for [.tablespace].
      *
      * @return [.tablespace]
@@ -75,40 +62,11 @@ abstract class PgRelation {
      * Tablespace value.
      */
     open var tablespace: String? = null
-    /**
-     * Getter for [.comment].
-     *
-     * @return [.comment]
-     */
-    /**
-     * Setter for [.comment].
-     *
-     * @param comment [.comment]
-     */
-    /**
-     * Comment.
-     */
-    var comment: String? = null
 
     /**
      * List of privileges defined on the table.
      */
     val privileges: MutableList<PgRelationPrivilege> = ArrayList()
-    /**
-     * Getter for [.ownerTo].
-     *
-     * @return [.ownerTo]
-     */
-    /**
-     * Setter for [.ownerTo].
-     *
-     * @param ownerTo
-     * [.ownerTo]
-     */
-    /**
-     * Column the table is owner to.
-     */
-    var ownerTo: String? = null
 
     /**
      * Finds column according to specified column `name`.
@@ -117,7 +75,7 @@ abstract class PgRelation {
      *
      * @return found column or null if no such column has been found
      */
-    open fun getColumn(name: String): PgColumn? {
+    open fun getColumn(name: String): COL? {
         for (column in columns) {
             if (column.name == name) {
                 return column
@@ -125,15 +83,6 @@ abstract class PgRelation {
         }
         return null
     }
-
-//    /**
-//     * Getter for [.columns]. The list cannot be modified.
-//     *
-//     * @return [.columns]
-//     */
-//    fun getColumns(): List<PgColumn> {
-//        return Collections.unmodifiableList(columns)
-//    }
 
     /**
      * Generates SQL code for declaring relation and column comments
@@ -234,7 +183,7 @@ abstract class PgRelation {
      *
      * @param column column
      */
-    open fun addColumn(column: PgColumn) {
+    open fun addColumn(column: COL) {
         columns.add(column)
     }
 
@@ -270,16 +219,7 @@ abstract class PgRelation {
      *
      * @return relation kind
      */
-    abstract val relationKind: String
-
-    /**
-     * Creates and returns SQL statement for dropping the relation.
-     *
-     * @return created SQL statement
-     */
-    open val dropSQL: String
-        get() = "DROP " + relationKind + " " + PgDiffUtils.dropIfExists +
-                PgDiffUtils.getQuotedName(name) + ";"
+    open val relationKind: String = objectType
 
     /**
      * Returns true if table contains given column `name`, otherwise

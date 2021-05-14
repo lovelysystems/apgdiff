@@ -1,8 +1,5 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
-import java.text.MessageFormat
-
 object CommentParser : PatternBasedSubParser(
     "^COMMENT[\\s]+ON[\\s]+.*$"
 ) {
@@ -154,18 +151,14 @@ object CommentParser : PatternBasedSubParser(
         val objectName = ParserUtils.getObjectName(columnName)
         val relName = ParserUtils.getSecondObjectName(columnName)
         val schemaName = ParserUtils.getThirdObjectName(columnName)
-        val schema = ctx.database.getSchema(schemaName)
-        val rel = schema!!.getRelation(relName)
-        val column = rel!!.getColumn(objectName)
-            ?: throw ParserException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindColumnInTable"),
-                    columnName, rel.name
-                )
-            )
+        val schema = ctx.database.getSchema(schemaName) ?: error("schema $schemaName not found")
+        val rel = schema.getRelation(relName) ?: error("relation $relName not found in $schemaName")
         parser.expect("IS")
-        column.comment = getComment(parser)
+        (rel.getColumn(objectName) ?: rel.getInheritedColumn(objectName))?.also {
+            it.comment = getComment(parser)
+        } ?: error("column $objectName not found in relation $relName")
         parser.expect(";")
+
     }
 
     private fun parseFunction(parser: Parser, ctx: ParserContext) {

@@ -31,8 +31,7 @@ object PgDiffRules {
         searchPathHelper: SearchPathHelper
     ) {
         for (newRelation in newSchema?.rels.orEmpty()) {
-            val oldRelation: PgRelation?
-            oldRelation = oldSchema?.getRelation(newRelation.name)
+            val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Add new rules
             for (rule in getNewRules(oldRelation, newRelation)) {
@@ -57,8 +56,7 @@ object PgDiffRules {
         searchPathHelper: SearchPathHelper
     ) {
         for (newRelation in newSchema!!.rels) {
-            val oldRelation: PgRelation?
-            oldRelation = oldSchema?.getRelation(newRelation.name)
+            val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Drop rules that no more exist or are modified
             for (rule in dropRules(oldRelation, newRelation)) {
@@ -78,8 +76,8 @@ object PgDiffRules {
      * @return list of rules that should be dropped
      */
     private fun dropRules(
-        oldRelation: PgRelation?,
-        newRelation: PgRelation?
+        oldRelation: PgRelation<*, *>?,
+        newRelation: PgRelation<*, *>?
     ): List<PgRule> {
         val list: MutableList<PgRule> = ArrayList()
         if (newRelation != null && oldRelation != null) {
@@ -102,8 +100,8 @@ object PgDiffRules {
      * @return list of rules that should be added
      */
     private fun getNewRules(
-        oldRelation: PgRelation?,
-        newRelation: PgRelation?
+        oldRelation: PgRelation<*,*>?,
+        newRelation: PgRelation<*,*>?
     ): List<PgRule> {
         val list: MutableList<PgRule> = ArrayList()
         if (newRelation != null) {

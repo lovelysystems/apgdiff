@@ -1,17 +1,12 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.*
 
-class PgType(val name: String) {
-
-    var comment: String? = null
-    var owner: String? = null
+class PgType(name: String) : PgRelation<PgType, PgTypeColumn>(name, "TYPE") {
 
     /**
      * List of columns defined on the type
      */
-    val columns: MutableList<PgColumn> = ArrayList()
     private val enumValues: MutableList<String?> = ArrayList()
     var isEnum = false
 
@@ -22,7 +17,7 @@ class PgType(val name: String) {
      *
      * @return found column or null if no such column has been found
      */
-    fun getColumn(name: String?): PgColumn? {
+    fun getColumn(name: String?): PgTypeColumn? {
         for (column in columns) {
             if (column.name == name) {
                 return column
@@ -103,60 +98,14 @@ class PgType(val name: String) {
             return sbSQL.toString()
         }
 
-    val ownerSQL: String
-        get() = "ALTER TYPE ${PgDiffUtils.getQuotedName(name)} OWNER TO $owner;"
-
-    val commentSQL: String
-        get() = "COMMENT ON TYPE ${PgDiffUtils.getQuotedName(name)} IS $comment;"
-
-    /**
-     * Creates and returns SQL statement for dropping the table.
-     *
-     * @return created SQL statement
-     */
-    val dropSQL: String
-        get() = "DROP TYPE " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + ";"
-
-    /**
-     * Adds `column` to the list of columns.
-     *
-     * @param column column
-     */
-    fun addColumn(column: PgColumn) {
-        columns.add(column)
-    }
-
-    /**
-     * Returns true if table contains given column `name`, otherwise
-     * false.
-     *
-     * @param name name of the column
-     *
-     * @return true if table contains given column `name`, otherwise false
-     */
-    fun containsColumn(name: String?): Boolean {
-        for (column in columns) {
-            if (column.name == name) {
-                return true
-            }
-        }
-        return false
-    }
-
     /**
      * Returns list of columns that have statistics defined.
      *
      * @return list of columns that have statistics defined
      */
-    private val columnsWithStatistics: List<PgColumn>
+    private val columnsWithStatistics: Collection<PgTypeColumn>
         get() {
-            val list: MutableList<PgColumn> = ArrayList()
-            for (column in columns) {
-                if (column.statistics != null) {
-                    list.add(column)
-                }
-            }
-            return list
+            return columns.filter { it.statistics != null }
         }
 
     fun addEnumValue(value: String?) {

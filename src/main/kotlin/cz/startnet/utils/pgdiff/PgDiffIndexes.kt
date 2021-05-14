@@ -8,6 +8,7 @@ package cz.startnet.utils.pgdiff
 import cz.startnet.utils.pgdiff.schema.PgIndex
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgTable
+import cz.startnet.utils.pgdiff.schema.PgTableBase
 import java.io.PrintWriter
 import java.util.*
 
@@ -67,8 +68,7 @@ object PgDiffIndexes {
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTableName)
+            val oldTable = oldSchema?.getTable(newTableName)
 
             // Drop indexes that do not exist in new schema or are modified
             for (index in getDropIndexes(oldTable, newTable)) {
@@ -91,8 +91,8 @@ object PgDiffIndexes {
      * to drop because they are already removed.
      */
     private fun getDropIndexes(
-        oldTable: PgTable?,
-        newTable: PgTable?
+        oldTable: PgTableBase?,
+        newTable: PgTableBase?
     ): List<PgIndex> {
         val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null && oldTable != null) {
@@ -116,8 +116,8 @@ object PgDiffIndexes {
      * @return list of indexes that should be added
      */
     private fun getNewIndexes(
-        oldTable: PgTable?,
-        newTable: PgTable?
+        oldTable: PgTableBase?,
+        newTable: PgTableBase?
     ): List<PgIndex> {
         val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null) {

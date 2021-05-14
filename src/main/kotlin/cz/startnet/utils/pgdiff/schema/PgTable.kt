@@ -1,18 +1,13 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 
-/**
- * Stores table information.
- *
- * @author fordfrog
- */
-class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelation() {
+sealed class PgTableBase(
+    name: String,
+    objectType: String,
+    private val database: PgDatabase,
+    private val schema: PgSchema
+) : PgRelation<PgTableBase, PgColumn>(name, objectType) {
     /**
      * List of inheritedColumns defined on the table.
      */
@@ -39,11 +34,6 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
     var isUnlogged = false
 
     /**
-     * Is this a FOREIGN table?
-     */
-    var isForeign = false
-
-    /**
      * Does this table have RLS enabled?
      */
     private var rlsEnabled: Boolean? = null
@@ -59,16 +49,6 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
      * RLS Policies
      */
     val policies: MutableList<PgPolicy> = ArrayList()
-
-    /**
-     * PgDatabase
-     */
-    private val database: PgDatabase
-
-    /**
-     * PgSchema
-     */
-    private val schema: PgSchema
 
     /**
      * Finds constraint according to specified constraint `name`.
@@ -107,10 +87,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         if (isUnlogged) {
             sbSQL.append("UNLOGGED ")
         }
-        if (isForeign) {
-            sbSQL.append("FOREIGN ")
-        }
-        sbSQL.append("TABLE ")
+        sbSQL.append("$objectType ")
         sbSQL.append(PgDiffUtils.createIfNotExists)
         sbSQL.append(PgDiffUtils.getQuotedName(name))
         sbSQL.append(" (")
@@ -155,7 +132,7 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         if (with != null && !with!!.isEmpty()) {
             TODO("with clause in table creation not supported")
         }
-        if (isForeign) {
+        if (this is PgForeignTable) {
             sbSQL.append("SERVER ")
             sbSQL.append(foreignServer)
         }
@@ -214,11 +191,11 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         inherits.add(Pair(schemaName, tableName))
         val inheritedTable = database.getSchema(schemaName)!!.getTable(tableName)
         for (column in inheritedTable!!.columns) {
-            val inheritedColumn = PgInheritedColumn(column)
+            val inheritedColumn = PgInheritedColumn(this, column)
             inheritedColumns.add(inheritedColumn)
         }
         for (column in inheritedTable.inheritedColumns) {
-            val inheritedColumn = PgInheritedColumn(column.inheritedColumn)
+            val inheritedColumn = PgInheritedColumn(this, column.inheritedColumn)
             inheritedColumns.add(inheritedColumn)
         }
     }
@@ -323,13 +300,6 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
             return list
         }
 
-    /**
-     * Foreign Tables
-     */
-    override val dropSQL: String
-        get() = "DROP " + (if (isForeign) "FOREIGN " else "") + relationKind + " " + PgDiffUtils.dropIfExists +
-                PgDiffUtils.getQuotedName(name) + ";"
-
     fun hasRLSEnabled(): Boolean? {
         return rlsEnabled
     }
@@ -359,9 +329,8 @@ class PgTable(name: String?, database: PgDatabase, schema: PgSchema) : PgRelatio
         return null
     }
 
-    init {
-        this.name = name
-        this.database = database
-        this.schema = schema
-    }
 }
+
+class PgTable(name: String, database: PgDatabase, schema: PgSchema) : PgTableBase(name, "TABLE", database, schema)
+class PgForeignTable(name: String, database: PgDatabase, schema: PgSchema) :
+    PgTableBase(name, "FOREIGN TABLE", database, schema)

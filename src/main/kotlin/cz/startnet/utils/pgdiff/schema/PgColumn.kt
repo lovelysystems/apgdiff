@@ -2,7 +2,6 @@ package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.io.PrintWriter
-import java.util.*
 import java.util.regex.Pattern
 
 
@@ -35,11 +34,14 @@ class GeneratedColumnDef : GeneratedDef() {
     }
 }
 
-
-class PgColumn(val name: String) {
-
-    var statistics: Int? = null
+sealed class PgColumnBase<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>>(
+    val relation: REL,
+    val name: String,
+    var comment: String? = null,
+    var nullValue: Boolean = true,
     var defaultValue: String? = null
+) {
+    var statistics: Int? = null
 
     /**
      * Type of the column. Always null for view columns.
@@ -47,15 +49,9 @@ class PgColumn(val name: String) {
     var type: String? = null
 
     /**
-     * Determines whether null value is allowed in the column.
-     */
-    var nullValue = true
-
-    /**
      * Contains information about column storage type.
      */
     var storage: String? = null
-    var comment: String? = null
 
     var generated: GeneratedDef? = null
 
@@ -74,7 +70,7 @@ class PgColumn(val name: String) {
      */
     fun getFullDefinition(addDefaults: Boolean): String {
         val sbDefinition = StringBuilder(100)
-        sbDefinition.append(PgDiffUtils.getQuotedName(name))
+        sbDefinition.append(quotedIdentifier())
         sbDefinition.append(' ')
         sbDefinition.append(type)
         if (defaultValue != null && !defaultValue!!.isEmpty()) {
@@ -106,6 +102,16 @@ class PgColumn(val name: String) {
         return null
     }
 
+    fun quotedIdentifier() = PgDiffUtils.getQuotedName(name)
+
+    fun commentSQL(writer: PrintWriter) {
+        val commentStr = comment ?: "NULL"
+        writer.println(
+            "COMMENT ON COLUMN ${relation.quotedIdentifier()}.${quotedIdentifier()} IS $commentStr;"
+        )
+    }
+
+
     /**
      * Parses definition of the column
      *
@@ -133,6 +139,15 @@ class PgColumn(val name: String) {
     }
 
 }
+
+class PgInheritedColumn(table: PgTableBase, val inheritedColumn: PgColumn) :
+    PgColumnBase<PgTableBase, PgColumn>(table, inheritedColumn.name)
+
+class PGViewColumn(view: PgViewBase, name: String) : PgColumnBase<PgViewBase, PGViewColumn>(view, name)
+
+class PgColumn(table: PgTableBase, name: String) : PgColumnBase<PgTableBase, PgColumn>(table, name)
+
+class PgTypeColumn(type: PgType, name: String) : PgColumnBase<PgType, PgTypeColumn>(type, name)
 
 /**
  * Pattern for parsing NULL arguments.

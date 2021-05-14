@@ -33,7 +33,7 @@ class PgSchema(val name: String) {
     /**
      * List of rels defined in the schema.
      */
-    val rels: MutableList<PgRelation> = ArrayList()
+    val rels: MutableList<PgRelation<*, *>> = ArrayList()
 
     /**
      * List of types defined in the schema.
@@ -60,10 +60,6 @@ class PgSchema(val name: String) {
      */
     private val primaryKeys: MutableList<PgConstraint> = ArrayList()
 
-    /**
-     * List of rules defined in the schema.
-     */
-    private val rules: List<PgRule> = ArrayList()
 
     /**
      * Schema authorization.
@@ -182,7 +178,7 @@ class PgSchema(val name: String) {
      *
      * @return found table or null if no such table has been found
      */
-    fun getRelation(name: String?): PgRelation? {
+    fun getRelation(name: String?): PgRelation<*, *>? {
         for (rel in rels) {
             if (rel.name == name) {
                 return rel
@@ -198,9 +194,8 @@ class PgSchema(val name: String) {
      *
      * @return found table or null if no such table has been found
      */
-    fun getTable(name: String?): PgTable? {
-        val rel = getRelation(name)
-        return if (rel == null || rel !is PgTable) null else rel
+    fun getTable(name: String): PgTableBase? {
+        return tables.firstOrNull { it.name == name }
     }
 
     /**
@@ -208,16 +203,8 @@ class PgSchema(val name: String) {
      *
      * @return list of tables
      */
-    val tables: List<PgTable>
-        get() {
-            val list: MutableList<PgTable> = ArrayList()
-            for (rel in rels) {
-                if (rel is PgTable) {
-                    list.add(rel)
-                }
-            }
-            return list
-        }
+    val tables: List<PgTableBase>
+        get() = rels.filterIsInstance<PgTableBase>()
 
     /**
      * Finds view according to specified view `name`.
@@ -226,9 +213,8 @@ class PgSchema(val name: String) {
      *
      * @return found view or null if no such view has been found
      */
-    fun getView(name: String?): PgView? {
-        val rel = getRelation(name)
-        return if (rel == null || rel !is PgView) null else rel
+    fun getView(name: String): PgViewBase? {
+        return views.firstOrNull { it.name == name }
     }
 
     /**
@@ -236,16 +222,8 @@ class PgSchema(val name: String) {
      *
      * @return list of views
      */
-    val views: List<PgView>
-        get() {
-            val list: MutableList<PgView> = ArrayList()
-            for (rel in rels) {
-                if (rel is PgView) {
-                    list.add(rel)
-                }
-            }
-            return list
-        }
+    val views: List<PgViewBase>
+        get() = rels.filterIsInstance<PgViewBase>()
 
     /**
      * Adds `index` to the list of indexes.
@@ -297,7 +275,7 @@ class PgSchema(val name: String) {
      *
      * @param rel relation
      */
-    fun addRelation(rel: PgRelation) {
+    fun addRelation(rel: PgRelation<*, *>) {
         rels.add(rel)
     }
 
@@ -324,30 +302,6 @@ class PgSchema(val name: String) {
             }
         }
         return null
-    }
-
-    /**
-     * Get a list of rules from [.rels].
-     *
-     * @return list of rules
-     */
-    fun getRules(): List<PgRule> {
-        val list: MutableList<PgRule> = ArrayList()
-        for (rel in rels) {
-            if (rel is PgRule) {
-                list.add(rel)
-            }
-        }
-        return list
-    }
-
-    fun containsRule(name: String): Boolean {
-        for (rule in rules) {
-            if (rule.name == name) {
-                return true
-            }
-        }
-        return false
     }
 
     fun containsType(name: String?): Boolean {
@@ -404,20 +358,8 @@ class PgSchema(val name: String) {
      * @return true if schema contains table with given `name`, otherwise
      * false.
      */
-    fun containsTable(name: String?): Boolean {
+    fun containsTable(name: String): Boolean {
         return getTable(name) != null
     }
 
-    /**
-     * Returns true if schema contains view with given `name`, otherwise
-     * false.
-     *
-     * @param name name of the view
-     *
-     * @return true if schema contains view with given `name`, otherwise
-     * false.
-     */
-    fun containsView(name: String?): Boolean {
-        return getView(name) != null
-    }
 }

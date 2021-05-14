@@ -5,7 +5,7 @@ ALTER SCHEMA testschema2 OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
-DROP TABLE testtable2;
+DROP TABLE IF EXISTS testtable2;
 
 DROP SEQUENCE IF EXISTS testtable2_id_seq;
 

@@ -7,9 +7,8 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgColumnPrivilege
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import cz.startnet.utils.pgdiff.schema.PgView
+import cz.startnet.utils.pgdiff.schema.PgViewBase
 import java.io.PrintWriter
-import java.util.*
 
 /**
  * Diffs views.
@@ -32,19 +31,13 @@ object PgDiffViews {
     ) {
         for (newView in newSchema.views) {
             val oldView = oldSchema?.getView(newView.name)
-            if (oldSchema == null || !oldSchema.containsView(newView.name)
-                || isViewModified(oldView, newView)
+            if (oldView == null || isViewModified(oldView, newView)
             ) {
                 searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(newView.creationSQL)
-                if (newView.ownerTo != null && oldView == null) {
-                    writer.println()
-                    writer.println(
-                        "ALTER ${newView.relationKind} "
-                                + PgDiffUtils.getQuotedName(newView.name)
-                                + " OWNER TO " + newView.ownerTo + ";"
-                    )
+                if (newView.owner != null && oldView == null) {
+                    newView.ownerSQL(writer)
                 }
                 for (viewPrivilege in newView.privileges) {
                     writer.println(
@@ -112,11 +105,11 @@ object PgDiffViews {
      * @return true if view has been modified, otherwise false
      */
     private fun isViewModified(
-        oldView: PgView?,
-        newView: PgView?
+        oldView: PgViewBase,
+        newView: PgViewBase
     ): Boolean {
-        if (oldView!!.query.trim { it <= ' ' } != newView!!.query.trim { it <= ' ' }) return true
-        if (oldView.isMaterialized != newView.isMaterialized) return true
+        if (oldView::class != newView::class) return true
+        if (oldView.query.trim { it <= ' ' } != newView.query.trim { it <= ' ' }) return true
         val oldViewColumnNames = oldView.declaredColumnNames
         val newViewColumnNames = newView.declaredColumnNames
         return if (oldViewColumnNames != null && newViewColumnNames != null) {
@@ -208,13 +201,8 @@ object PgDiffViews {
                     writer.println(" IS NULL;")
                 }
             }
-            if (oldView.ownerTo != null && newView.ownerTo != oldView.ownerTo) {
-                writer.println()
-                writer.println(
-                    "ALTER ${newView.relationKind} "
-                            + PgDiffUtils.getQuotedName(newView.name)
-                            + " OWNER TO " + newView.ownerTo + ";"
-                )
+            if (oldView.owner != null && newView.owner != oldView.owner) {
+                newView.ownerSQL(writer)
             }
             alterPrivileges(writer, oldView, newView, searchPathHelper)
             alterPrivilegesColumns(writer, oldView, newView, searchPathHelper)
@@ -231,7 +219,7 @@ object PgDiffViews {
      */
     private fun diffDefaultValues(
         writer: PrintWriter,
-        oldView: PgView?, newView: PgView,
+        oldView: PgViewBase?, newView: PgViewBase,
         searchPathHelper: SearchPathHelper
     ) {
 
@@ -286,7 +274,7 @@ object PgDiffViews {
 
     private fun alterPrivileges(
         writer: PrintWriter,
-        oldView: PgView?, newView: PgView,
+        oldView: PgViewBase?, newView: PgViewBase,
         searchPathHelper: SearchPathHelper
     ) {
         val emptyLinePrinted = false
@@ -369,7 +357,7 @@ object PgDiffViews {
 
     private fun alterPrivilegesColumns(
         writer: PrintWriter,
-        oldView: PgView?, newView: PgView,
+        oldView: PgViewBase?, newView: PgViewBase,
         searchPathHelper: SearchPathHelper
     ) {
         var emptyLinePrinted = false

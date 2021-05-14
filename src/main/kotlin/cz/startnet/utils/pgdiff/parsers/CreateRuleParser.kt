@@ -48,7 +48,6 @@ object CreateRuleParser : PatternBasedSubParser(
                     parser.string
                 )
             )
-        schema.addRelation(rule)
         schema.getRelation(rule.relationName)!!.addRule(rule)
     }
 }
