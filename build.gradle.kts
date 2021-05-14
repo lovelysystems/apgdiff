@@ -56,3 +56,21 @@ tasks.check {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+val fatJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("fat")
+    manifest {
+        attributes["Main-Class"] = application.mainClass
+    }
+    from(configurations.runtimeClasspath.get().map {
+        {
+            if (it.isDirectory) {
+                it
+            } else {
+                zipTree(it)
+            }
+        }
+    })
+    with(tasks["jar"] as CopySpec)
+}
+
