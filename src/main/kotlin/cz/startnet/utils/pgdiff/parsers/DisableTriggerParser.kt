@@ -14,8 +14,7 @@ object DisableTriggerParser : PatternBasedSubParser(
         val tableName = parser.parseIdentifier()
         parser.expect("DISABLE", "TRIGGER")
         val objectName = parser.parseIdentifier()
-        val trigger = PgTrigger()
-        trigger.name = objectName
+        val trigger = PgTrigger(objectName)
         trigger.relationName = ParserUtils.getObjectName(tableName)
         val schema = ctx.database.getSchema(
             ParserUtils.getSchemaName(tableName, ctx.database)

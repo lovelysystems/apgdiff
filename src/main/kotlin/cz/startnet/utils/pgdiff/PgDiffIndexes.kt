@@ -7,10 +7,8 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgIndex
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import cz.startnet.utils.pgdiff.schema.PgTable
 import cz.startnet.utils.pgdiff.schema.PgTableBase
 import java.io.PrintWriter
-import java.util.*
 
 /**
  * Diffs indexes.
@@ -97,9 +95,7 @@ object PgDiffIndexes {
         val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null && oldTable != null) {
             for (index in oldTable.indexes) {
-                if (!newTable.containsIndex(index.name)
-                    || newTable.getIndex(index.name) != index
-                ) {
+                if (newTable.getIndex(index.name) != index) {
                     list.add(index)
                 }
             }
@@ -127,9 +123,7 @@ object PgDiffIndexes {
                 }
             } else {
                 for (index in newTable.indexes) {
-                    if (!oldTable.containsIndex(index.name)
-                        || oldTable.getIndex(index.name) != index
-                    ) {
+                    if (oldTable.getIndex(index.name) != index) {
                         list.add(index)
                     }
                 }

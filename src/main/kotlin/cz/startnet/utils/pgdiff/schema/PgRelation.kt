@@ -1,20 +1,26 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.*
 
 /**
- * Base class for tables and views.
+ * base class for all relation types
  *
- * @author Marti Raudsepp
+ * existing relations as of PG 12.x are, however not all are implemented
+ * from https://www.postgresql.org/docs/12/catalog-pg-class.html
+ * r = ordinary table,
+ * i = index,
+ * S = sequence,
+ * t = TOAST table,
+ * v = view,
+ * m = materialized view,
+ * c = composite type,
+ * f = foreign table,
+ * p = partitioned table,
+ * I = partitioned index
  */
-abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>>(name: String, objectType: String) :
-    PgRel(name, objectType) {
+sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>>(name: String, objectType: String) :
+    DBObject(objectType, name) {
+
     /**
      * List of columns defined on the relation.
      */
@@ -34,34 +40,16 @@ abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
      * List of rules defined on the table/view.
      */
     val rules: MutableList<PgRule> = ArrayList()
-    /**
-     * Getter for [.clusterIndexName].
-     *
-     * @return [.clusterIndexName]
-     */
-    /**
-     * Setter for [.clusterIndexName].
-     *
-     * @param name [.clusterIndexName]
-     */
+
     /**
      * Name of the index on which the table/matview is clustered
      */
     var clusterIndexName: String? = null
-    /**
-     * Getter for [.tablespace].
-     *
-     * @return [.tablespace]
-     */
-    /**
-     * Setter for [.tablespace].
-     *
-     * @param tablespace [.tablespace]
-     */
+
     /**
      * Tablespace value.
      */
-    open var tablespace: String? = null
+    var tablespace: String? = null
 
     /**
      * List of privileges defined on the table.
@@ -76,12 +64,7 @@ abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
      * @return found column or null if no such column has been found
      */
     open fun getColumn(name: String): COL? {
-        for (column in columns) {
-            if (column.name == name) {
-                return column
-            }
-        }
-        return null
+        return columns.firstOrNull { it.name == name }
     }
 
     /**
@@ -127,12 +110,7 @@ abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
      * @return found index or null if no such index has been found
      */
     fun getIndex(name: String): PgIndex? {
-        for (index in indexes) {
-            if (index.name == name) {
-                return index
-            }
-        }
-        return null
+        return indexes.firstOrNull { it.name == name }
     }
 
     /**
@@ -142,41 +120,10 @@ abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
      *
      * @return found trigger or null if no such trigger has been found
      */
-    fun getTrigger(name: String?): PgTrigger? {
-        for (trigger in triggers) {
-            if (trigger.name == name) {
-                return trigger
-            }
-        }
-        return null
+    fun getTrigger(name: String): PgTrigger? {
+        return triggers.firstOrNull { name == name }
     }
 
-//    /**
-//     * Getter for [.indexes]. The list cannot be modified.
-//     *
-//     * @return [.indexes]
-//     */
-//    fun getIndexes(): List<PgIndex> {
-//        return Collections.unmodifiableList(indexes)
-//    }
-
-//    /**
-//     * Getter for [.triggers]. The list cannot be modified.
-//     *
-//     * @return [.triggers]
-//     */
-//    fun getTriggers(): List<PgTrigger> {
-//        return Collections.unmodifiableList(triggers)
-//    }
-
-//    /**
-//     * Getter for [.rules]. The list cannot be modified.
-//     *
-//     * @return [.rules]
-//     */
-//    fun getRules(): List<PgRule> {
-//        return Collections.unmodifiableList(rules)
-//    }
 
     /**
      * Adds `column` to the list of columns.
@@ -271,28 +218,14 @@ abstract class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
      * @return true if table/matview contains given index `name`, otherwise false
      */
     fun containsIndex(name: String): Boolean {
-        for (index in indexes) {
-            if (index.name == name) {
-                return true
-            }
-        }
-        return false
+        return getIndex(name) != null
     }
-
-//    fun getPrivileges(): List<PgRelationPrivilege> {
-//        return Collections.unmodifiableList(privileges)
-//    }
 
     fun addPrivilege(privilege: PgRelationPrivilege) {
         privileges.add(privilege)
     }
 
     fun getPrivilege(roleName: String?): PgRelationPrivilege? {
-        for (privilege in privileges) {
-            if (privilege.roleName == roleName) {
-                return privilege
-            }
-        }
-        return null
+        return privileges.firstOrNull { it.roleName == roleName }
     }
 }
