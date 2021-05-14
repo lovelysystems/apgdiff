@@ -21,7 +21,7 @@ jobs:
       - name: Build distribution
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: fatJar distTar
+          arguments: fatJar distTar distZip
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
       - uses: actions/upload-artifact@v2
@@ -29,4 +29,18 @@ jobs:
           name: fat-jar
           path: |
             build/libs/*-fat.jar
-            build/distributions/*.tar
+      - uses: actions/upload-artifact@v2
+        with:
+          name: distributions
+          path: |
+            build/distributions/*.*
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          fail_on_unmatched_files: true
+          files: |
+            build/libs/*-fat.jar
+            build/distributions/*.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
