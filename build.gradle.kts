@@ -30,12 +30,6 @@ application {
     applicationName = "apgdiff"
 }
 
-lovely {
-    gitProject()
-    dockerProject("lovelysystems/apgdiff")
-    dockerFiles.from(tasks["distTar"].outputs)
-}
-
 tasks.withType<Test> {
     useJUnitPlatform()
 }
@@ -72,5 +66,11 @@ val fatJar by tasks.creating(Jar::class) {
         }
     })
     with(tasks["jar"] as CopySpec)
+}
+
+lovely {
+    gitProject()
+    dockerProject("lovelysystems/apgdiff")
+    dockerFiles.from(tasks["fatJar"].outputs)
 }
 
