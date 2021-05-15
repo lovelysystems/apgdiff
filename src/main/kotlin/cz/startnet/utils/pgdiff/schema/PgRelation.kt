@@ -121,7 +121,7 @@ sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>
      * @return found trigger or null if no such trigger has been found
      */
     fun getTrigger(name: String): PgTrigger? {
-        return triggers.firstOrNull { name == name }
+        return triggers.firstOrNull { it.name == name }
     }
 
 
