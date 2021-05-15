@@ -31,8 +31,7 @@ object PgDiffTriggers {
         searchPathHelper: SearchPathHelper
     ) {
         for (newRelation in newSchema!!.rels) {
-            val oldRelation: PgRelation?
-            oldRelation = oldSchema?.getRelation(newRelation.name)
+            val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Add new triggers
             for (trigger in getNewTriggers(oldRelation, newRelation)) {
@@ -57,8 +56,7 @@ object PgDiffTriggers {
         searchPathHelper: SearchPathHelper
     ) {
         for (newRelation in newSchema!!.rels) {
-            val oldRelation: PgRelation?
-            oldRelation = oldSchema?.getRelation(newRelation.name)
+            val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Drop triggers that no more exist or are modified
             for (trigger in getDropTriggers(oldRelation, newRelation)) {
@@ -78,8 +76,8 @@ object PgDiffTriggers {
      * @return list of triggers that should be dropped
      */
     private fun getDropTriggers(
-        oldRelation: PgRelation?,
-        newRelation: PgRelation
+        oldRelation: PgRelation<*,*>?,
+        newRelation: PgRelation<*,*>?
     ): List<PgTrigger> {
         val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null && oldRelation != null) {
@@ -102,8 +100,8 @@ object PgDiffTriggers {
      * @return list of triggers that should be added
      */
     private fun getNewTriggers(
-        oldRelation: PgRelation?,
-        newRelation: PgRelation?
+        oldRelation: PgRelation<*,*>?,
+        newRelation: PgRelation<*,*>?
     ): List<PgTrigger> {
         val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null) {
@@ -189,8 +187,8 @@ object PgDiffTriggers {
      * @return list of triggers that should be added
      */
     private fun getEnablerOrDisableTriggers(
-        oldRelation: PgRelation?,
-        newRelation: PgRelation
+        oldRelation: PgRelation<*,*>?,
+        newRelation: PgRelation<*,*>?
     ): List<PgTrigger> {
         val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null) {
@@ -220,8 +218,7 @@ object PgDiffTriggers {
         searchPathHelper: SearchPathHelper
     ) {
         for (newRelation in newSchema!!.rels) {
-            val oldRelation: PgRelation?
-            oldRelation = oldSchema?.getRelation(newRelation.name)
+            val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Add new triggers
             for (trigger in getEnablerOrDisableTriggers(oldRelation, newRelation)) {

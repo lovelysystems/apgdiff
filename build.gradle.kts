@@ -2,7 +2,7 @@ plugins {
     id("com.lovelysystems.gradle") version ("1.3.2")
     application
     jacoco
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.0"
 }
 
 repositories {
@@ -56,6 +56,7 @@ val fatJar by tasks.creating(Jar::class) {
     manifest {
         attributes["Main-Class"] = application.mainClass
     }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map {
         {
             if (it.isDirectory) {

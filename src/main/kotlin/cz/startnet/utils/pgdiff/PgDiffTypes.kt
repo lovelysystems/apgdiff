@@ -1,9 +1,6 @@
 package cz.startnet.utils.pgdiff
 
-import cz.startnet.utils.pgdiff.schema.PgColumn
-import cz.startnet.utils.pgdiff.schema.PgColumnUtils
-import cz.startnet.utils.pgdiff.schema.PgSchema
-import cz.startnet.utils.pgdiff.schema.PgType
+import cz.startnet.utils.pgdiff.schema.*
 import java.io.PrintWriter
 import java.text.MessageFormat
 import java.util.*
@@ -53,7 +50,7 @@ object PgDiffTypes {
     private fun addCreateTypeColumns(
         statements: MutableList<String>,
         arguments: PgDiffOptions, oldType: PgType?,
-        newType: PgType, dropDefaultsColumns: MutableList<PgColumn>
+        newType: PgType, dropDefaultsColumns: MutableList<PgTypeColumn>
     ) {
         for (column in newType.columns) {
             if (!oldType!!.containsColumn(column.name)) {
@@ -104,7 +101,7 @@ object PgDiffTypes {
     private fun addModifyTypeColumns(
         statements: MutableList<String>,
         arguments: PgDiffOptions, oldType: PgType?,
-        newType: PgType?, dropDefaultsColumns: MutableList<PgColumn>
+        newType: PgType?, dropDefaultsColumns: MutableList<PgTypeColumn>
     ) {
         for (newColumn in newType!!.columns) {
             if (!oldType!!.containsColumn(newColumn.name)) {
@@ -231,7 +228,7 @@ object PgDiffTypes {
         newType: PgType, searchPathHelper: SearchPathHelper
     ) {
         val statements: MutableList<String> = ArrayList()
-        val dropDefaultsColumns: MutableList<PgColumn> = ArrayList()
+        val dropDefaultsColumns: MutableList<PgTypeColumn> = ArrayList()
         addDropTypeColumns(statements, oldType, newType)
         addCreateTypeColumns(
             statements, arguments, oldType, newType, dropDefaultsColumns

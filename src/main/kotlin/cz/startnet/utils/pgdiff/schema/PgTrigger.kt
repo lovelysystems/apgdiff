@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import cz.startnet.utils.pgdiff.schema.PgTrigger.EventTimeQualification
 import java.util.*
 
 /**
@@ -14,7 +13,7 @@ import java.util.*
  *
  * @author fordfrog
  */
-class PgTrigger {
+class PgTrigger(val name: String) {
     /**
      * Enumeration of when, with respect to event, a trigger should fire.
      * e.g. BEFORE, AFTER or INSTEAD OF an event.
@@ -37,130 +36,44 @@ class PgTrigger {
             }
         }
     }
-    /**
-     * Getter for [.function].
-     *
-     * @return [.function]
-     */
-    /**
-     * Setter for [.function].
-     *
-     * @param function [.function]
-     */
+
     /**
      * Function name and arguments that should be fired on the trigger.
      */
     var function: String? = null
-    /**
-     * Getter for [.name].
-     *
-     * @return [.name]
-     */
-    /**
-     * Setter for [.name].
-     *
-     * @param name [.name]
-     */
-    /**
-     * Name of the trigger.
-     */
-    var name: String? = null
-    /**
-     * Getter for [.relationName].
-     *
-     * @return [.relationName]
-     */
-    /**
-     * Setter for [.relationName].
-     *
-     * @param relationName [.relationName]
-     */
+
     /**
      * Name of the relation the trigger is defined on.
      */
     var relationName: String? = null
-    /**
-     * Getter for [.eventTimeQualification].
-     *
-     * @return [.eventTimeQualification]
-     */
-    /**
-     * Setter for [.eventTimeQualification].
-     *
-     * @param eventTimeQualification [.eventTimeQualification]
-     */
+
     /**
      * Whether the trigger should be fired BEFORE, AFTER or INSTEAD OF an event.
      * Default is before.
      */
     var eventTimeQualification = EventTimeQualification.before
-    /**
-     * Getter for [.forEachRow].
-     *
-     * @return [.forEachRow]
-     */
-    /**
-     * Setter for [.forEachRow].
-     *
-     * @param forEachRow [.forEachRow]
-     */
+
     /**
      * Whether the trigger should be fired FOR EACH ROW or FOR EACH STATEMENT.
      * Default is FOR EACH STATEMENT.
      */
     var isForEachRow = false
-    /**
-     * Getter for [.onDelete].
-     *
-     * @return [.onDelete]
-     */
-    /**
-     * Setter for [.onDelete].
-     *
-     * @param onDelete [.onDelete]
-     */
+
     /**
      * Whether the trigger should be fired on DELETE.
      */
     var isOnDelete = false
-    /**
-     * Getter for [.onInsert].
-     *
-     * @return [.onInsert]
-     */
-    /**
-     * Setter for [.onInsert].
-     *
-     * @param onInsert [.onInsert]
-     */
+
     /**
      * Whether the trigger should be fired on INSERT.
      */
     var isOnInsert = false
-    /**
-     * Getter for [.onUpdate].
-     *
-     * @return [.onUpdate]
-     */
-    /**
-     * Setter for [.onUpdate].
-     *
-     * @param onUpdate [.onUpdate]
-     */
+
     /**
      * Whether the trigger should be fired on UPDATE.
      */
     var isOnUpdate = false
-    /**
-     * Getter for [.onTruncate].
-     *
-     * @return [.onTruncate]
-     */
-    /**
-     * Setter for [.onTruncate].
-     *
-     * @param onTruncate [.onTruncate]
-     */
+
     /**
      * Whether the trigger should be fired on TRUNCATE.
      */
@@ -170,58 +83,22 @@ class PgTrigger {
      * Optional list of columns for UPDATE event.
      */
     private val updateColumns: MutableList<String> = ArrayList()
-    /**
-     * Getter for [.when].
-     *
-     * @return [.when]
-     */
-    /**
-     * Setter for [.when].
-     *
-     * @param when [.when]
-     */
+
     /**
      * WHEN condition.
      */
     var `when`: String? = null
-    /**
-     * Getter for [.comment].
-     *
-     * @return [.comment]
-     */
-    /**
-     * Setter for [.comment].
-     *
-     * @param comment [.comment]
-     */
+
     /**
      * Comment.
      */
     var comment: String? = null
-    /**
-     * Getter for [.referencing].
-     *
-     * @return [.referencing]
-     */
-    /**
-     * Setter for [.referencing].
-     *
-     * @param referencing [.referencing]
-     */
+
     /**
      * Referencing clause.
      */
     var referencing: String? = null
-    /**
-     * Getter for [.disable].
-     *
-     * @return [.disable]
-     */
-    /**
-     * Setter for [.disable].
-     *
-     * @param disable [.disable]
-     */
+
     /**
      * Disable.
      */
@@ -319,15 +196,6 @@ class PgTrigger {
     val dropSQL: String
         get() = ("DROP TRIGGER " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + " ON "
                 + PgDiffUtils.getQuotedName(relationName) + ";")
-
-//    /**
-//     * Getter for [.updateColumns].
-//     *
-//     * @return [.updateColumns]
-//     */
-//    fun getUpdateColumns(): List<String> {
-//        return Collections.unmodifiableList(updateColumns)
-//    }
 
     /**
      * Adds column name to the list of update columns.

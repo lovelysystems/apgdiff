@@ -7,9 +7,8 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgConstraint
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import cz.startnet.utils.pgdiff.schema.PgTable
+import cz.startnet.utils.pgdiff.schema.PgTableBase
 import java.io.PrintWriter
-import java.util.*
 
 /**
  * Diffs constraints.
@@ -34,8 +33,7 @@ object PgDiffConstraints {
         primaryKey: Boolean, searchPathHelper: SearchPathHelper
     ) {
         for (newTable in newSchema.tables) {
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTable.name)
+            val oldTable = oldSchema?.getTable(newTable.name)
 
             // Add new constraints
             for (constraint in getNewConstraints(oldTable, newTable, primaryKey)) {
@@ -63,8 +61,7 @@ object PgDiffConstraints {
         primaryKey: Boolean, searchPathHelper: SearchPathHelper
     ) {
         for (newTable in newSchema.tables) {
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTable.name)
+            val oldTable = oldSchema?.getTable(newTable.name)
 
             // Drop constraints that no more exist or are modified
             for (constraint in getDropConstraints(oldTable, newTable, primaryKey)) {
@@ -89,8 +86,8 @@ object PgDiffConstraints {
      * added to drop because they are already removed.
      */
     private fun getDropConstraints(
-        oldTable: PgTable?,
-        newTable: PgTable?, primaryKey: Boolean
+        oldTable: PgTableBase?,
+        newTable: PgTableBase?, primaryKey: Boolean
     ): List<PgConstraint> {
         val list: MutableList<PgConstraint> = ArrayList()
         if (newTable != null && oldTable != null) {
@@ -117,8 +114,8 @@ object PgDiffConstraints {
      * @return list of constraints that should be added
      */
     private fun getNewConstraints(
-        oldTable: PgTable?,
-        newTable: PgTable?, primaryKey: Boolean
+        oldTable: PgTableBase?,
+        newTable: PgTableBase?, primaryKey: Boolean
     ): List<PgConstraint> {
         val list: MutableList<PgConstraint> = ArrayList()
         if (newTable != null) {

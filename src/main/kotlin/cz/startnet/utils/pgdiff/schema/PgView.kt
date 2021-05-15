@@ -13,25 +13,11 @@ import java.util.*
  *
  * @author fordfrog
  */
-class PgView(name: String?) : PgRelation() {
+sealed class PgViewBase(name: String, objectType: String) : PgRelation<PgViewBase, PGViewColumn>(name, objectType) {
     /**
      * Were column names explicitly declared as part of the view?
      */
     private var declareColumnNames = false
-    /**
-     * Getter for [.materialized].
-     *
-     * @return [.materialized]
-     */
-    /**
-     * Setter for [.materialized].
-     *
-     * @param materialized [.materialized]
-     */
-    /**
-     * Is this a MATERIALIZED view?
-     */
-    var isMaterialized = false
     /**
      * Getter for [.query].
      *
@@ -114,17 +100,9 @@ class PgView(name: String?) : PgRelation() {
             if (columnNames == null || columnNames.isEmpty()) return
             declareColumnNames = true
             for (colName in columnNames) {
-                addColumn(PgColumn(colName))
+                addColumn(PGViewColumn(this, colName))
             }
         }
-
-    /**
-     * Returns relation kind for CREATE/ALTER/DROP commands.
-     *
-     * @return relation kind
-     */
-    override val relationKind: String
-        get() = if (isMaterialized) "MATERIALIZED VIEW" else "VIEW"/* Column default values */
 
     /**
      * Creates and returns SQL for creation of the view.
@@ -187,14 +165,14 @@ class PgView(name: String?) : PgRelation() {
      *
      * @return found column or null if no such column has been found
      */
-    override fun getColumn(name: String): PgColumn? {
+    override fun getColumn(name: String): PGViewColumn? {
         var col = super.getColumn(name)
         if (col == null && !declareColumnNames) {
             /*
              * In views, we don't always know columns beforehand; create a new
              * column if the view didn't declare col names.
              */
-            col = PgColumn(name)
+            col = PGViewColumn(this, name)
             addColumn(col)
         }
         return col
@@ -211,13 +189,8 @@ class PgView(name: String?) : PgRelation() {
     override fun containsColumn(name: String?): Boolean {
         return true
     }
-
-    /**
-     * Creates a new PgView object.
-     *
-     * @param name [.name]
-     */
-    init {
-        this.name = name
-    }
 }
+
+
+class PgView(name: String) : PgViewBase(name, "VIEW")
+class PgMaterializedView(name: String) : PgViewBase(name, "MATERIALIZED VIEW")

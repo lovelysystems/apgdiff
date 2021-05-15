@@ -15,8 +15,7 @@ object CreateTriggerParser : PatternBasedSubParser(
         parser.expect("CREATE", "TRIGGER")
         val triggerName = parser.parseIdentifier()
         val objectName = ParserUtils.getObjectName(triggerName)
-        val trigger = PgTrigger()
-        trigger.name = objectName
+        val trigger = PgTrigger(objectName)
         if (parser.expectOptional("BEFORE")) {
             trigger.eventTimeQualification = EventTimeQualification.before
         } else if (parser.expectOptional("AFTER")) {
@@ -108,8 +107,7 @@ object CreateTriggerParser : PatternBasedSubParser(
         val tableName = parser.parseIdentifier()
         parser.expect("DISABLE", "TRIGGER")
         val objectName = parser.parseIdentifier()
-        val trigger = PgTrigger()
-        trigger.name = objectName
+        val trigger = PgTrigger(objectName)
         trigger.relationName = ParserUtils.getObjectName(tableName)
         val schema = database.getSchema(
             ParserUtils.getSchemaName(tableName, database)

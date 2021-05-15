@@ -18,8 +18,7 @@ object PgDiffPolicies {
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTableName)
+            val oldTable = oldSchema?.getTable(newTableName)
             for (policy in newTable.policies) {
                 val oldPolicy = oldTable?.getPolicy(policy.name)
                 if (oldPolicy == null) {

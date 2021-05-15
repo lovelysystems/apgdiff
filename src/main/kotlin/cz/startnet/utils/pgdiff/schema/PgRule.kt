@@ -12,42 +12,15 @@ import cz.startnet.utils.pgdiff.PgDiffUtils
  *
  * @author jalissonmello
  */
-class PgRule(name: String) : PgRelation() {
-    /**
-     * Getter for [.query].
-     *
-     * @return [.query]
-     */
-    /**
-     * Setter for [.query].
-     *
-     * @param query [.query]
-     */
+class PgRule(name: String) : DBObject(name, "RULE") {
+
     var query: String? = null
-    /**
-     * Getter for [.relationName].
-     *
-     * @return [.relationName]
-     */
-    /**
-     * Setter for [.relationName].
-     *
-     * @param relationName [.relationName]
-     */
+
     /**
      * Name of the relation the rule is defined on.
      */
     var relationName: String? = null
-    /**
-     * Getter for [.event].
-     *
-     * @return [.event]
-     */
-    /**
-     * Setter for [.event].
-     *
-     * @param event [.event]
-     */
+
     /**
      * event of rule.
      */
@@ -62,7 +35,7 @@ class PgRule(name: String) : PgRelation() {
         get() {
             val sbSQL = StringBuilder(query!!.length * 2)
             sbSQL.append("CREATE ")
-            sbSQL.append(relationKind)
+            sbSQL.append(objectType)
             sbSQL.append(' ')
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             sbSQL.append(" AS")
@@ -75,39 +48,20 @@ class PgRule(name: String) : PgRelation() {
             sbSQL.append(" ")
             sbSQL.append(query)
             sbSQL.append(";")
-            sbSQL.append(commentDefinitionSQL)
+            sbSQL.append(commentSQL)
             return sbSQL.toString()
         }
-    override val relationKind: String
-        get() = "RULE"
 
-    /**
-     * Creates and returns SQL for dropping the rule.
-     *
-     * @return created SQL
-     */
-    override val dropSQL: String
-        get() = ("DROP RULE " + PgDiffUtils.dropIfExists + PgDiffUtils.getQuotedName(name) + " ON "
-                + PgDiffUtils.getQuotedName(relationName) + ";")
 
-    override fun equals(`object`: Any?): Boolean {
+    override fun equals(other: Any?): Boolean {
         var equals = false
-        if (this === `object`) {
+        if (this === other) {
             equals = true
-        } else if (`object` is PgRule) {
-            val rule = `object`
+        } else if (other is PgRule) {
+            val rule = other
             equals =
                 event === rule.event && relationName == rule.relationName && name == rule.name && query == rule.query
         }
         return equals
-    }
-
-    /**
-     * Creates a new PgView object.
-     *
-     * @param name [.name]
-     */
-    init {
-        this.name = name
     }
 }

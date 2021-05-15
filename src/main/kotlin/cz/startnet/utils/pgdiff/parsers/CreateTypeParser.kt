@@ -1,7 +1,7 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.schema.PgColumn
 import cz.startnet.utils.pgdiff.schema.PgType
+import cz.startnet.utils.pgdiff.schema.PgTypeColumn
 
 /**
  * Parses CREATE TABLE statements.
@@ -51,7 +51,8 @@ object CreateTypeParser : PatternBasedSubParser(
      * @param type type
      */
     private fun parseColumn(parser: Parser, type: PgType) {
-        val column = PgColumn(
+        val column = PgTypeColumn(
+            type,
             ParserUtils.getObjectName(parser.parseIdentifier())
         )
         type.addColumn(column)

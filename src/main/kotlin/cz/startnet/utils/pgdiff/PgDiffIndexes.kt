@@ -7,9 +7,8 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgIndex
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import cz.startnet.utils.pgdiff.schema.PgTable
+import cz.startnet.utils.pgdiff.schema.PgTableBase
 import java.io.PrintWriter
-import java.util.*
 
 /**
  * Diffs indexes.
@@ -67,8 +66,7 @@ object PgDiffIndexes {
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
-            val oldTable: PgTable?
-            oldTable = oldSchema?.getTable(newTableName)
+            val oldTable = oldSchema?.getTable(newTableName)
 
             // Drop indexes that do not exist in new schema or are modified
             for (index in getDropIndexes(oldTable, newTable)) {
@@ -91,15 +89,13 @@ object PgDiffIndexes {
      * to drop because they are already removed.
      */
     private fun getDropIndexes(
-        oldTable: PgTable?,
-        newTable: PgTable?
+        oldTable: PgTableBase?,
+        newTable: PgTableBase?
     ): List<PgIndex> {
         val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null && oldTable != null) {
             for (index in oldTable.indexes) {
-                if (!newTable.containsIndex(index.name)
-                    || newTable.getIndex(index.name) != index
-                ) {
+                if (newTable.getIndex(index.name) != index) {
                     list.add(index)
                 }
             }
@@ -116,8 +112,8 @@ object PgDiffIndexes {
      * @return list of indexes that should be added
      */
     private fun getNewIndexes(
-        oldTable: PgTable?,
-        newTable: PgTable?
+        oldTable: PgTableBase?,
+        newTable: PgTableBase?
     ): List<PgIndex> {
         val list: MutableList<PgIndex> = ArrayList()
         if (newTable != null) {
@@ -127,9 +123,7 @@ object PgDiffIndexes {
                 }
             } else {
                 for (index in newTable.indexes) {
-                    if (!oldTable.containsIndex(index.name)
-                        || oldTable.getIndex(index.name) != index
-                    ) {
+                    if (oldTable.getIndex(index.name) != index) {
                         list.add(index)
                     }
                 }

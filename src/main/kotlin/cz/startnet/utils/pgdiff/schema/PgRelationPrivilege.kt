@@ -10,18 +10,8 @@ package cz.startnet.utils.pgdiff.schema
  *
  * @author user
  */
-class PgRelationPrivilege
-/**
- * Creates a new PgTablePrivilege object.
- *
- * @param roleName
- * name of the role
- */(
-    /**
-     * @return the roleName
-     */
-    val roleName: String?
-) {
+class PgRelationPrivilege(val roleName: String?) {
+
     private var select = false
     private var insert = false
     private var update = false

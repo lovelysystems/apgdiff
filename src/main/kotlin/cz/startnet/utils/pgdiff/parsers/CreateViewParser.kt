@@ -1,9 +1,9 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
+import cz.startnet.utils.pgdiff.schema.PgMaterializedView
 import cz.startnet.utils.pgdiff.schema.PgView
 import java.text.MessageFormat
-import java.util.*
 
 /**
  * Parses CREATE VIEW statements.
@@ -40,8 +40,13 @@ object CreateViewParser : PatternBasedSubParser(
         }
         parser.expect("AS")
         val query = parser.rest!!
-        val view = PgView(ParserUtils.getObjectName(viewName))
-        view.isMaterialized = materialized
+
+        val view = if (materialized) {
+            PgMaterializedView(ParserUtils.getObjectName(viewName))
+        } else {
+            PgView(ParserUtils.getObjectName(viewName))
+        }
+
         view.isTemporary = temporary
         view.isRecursive = recursive
         view.with = with.toString()

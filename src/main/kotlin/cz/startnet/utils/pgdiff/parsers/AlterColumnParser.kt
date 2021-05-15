@@ -1,10 +1,7 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
-import cz.startnet.utils.pgdiff.schema.IdentityColumnDef
-import cz.startnet.utils.pgdiff.schema.PgColumn
-import cz.startnet.utils.pgdiff.schema.PgDatabase
-import cz.startnet.utils.pgdiff.schema.PgRelation
+import cz.startnet.utils.pgdiff.schema.*
 import java.text.MessageFormat
 
 data class ParserContext(
@@ -26,9 +23,9 @@ ALTER [ COLUMN ] column_name SET ( attribute_option = value [, ... ] )
 ALTER [ COLUMN ] column_name RESET ( attribute_option [, ... ] )
 ALTER [ COLUMN ] column_name SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
 */
-class AlterColumnParser(val columnName: String, val parser: Parser, val rel: PgRelation, val ctx: ParserContext) {
+class AlterColumnParser(val columnName: String, val parser: Parser, val rel: PgRelation<*,*>, val ctx: ParserContext) {
 
-    fun getColumnSafe(): PgColumn {
+    fun getColumnSafe(): PgColumnBase<*, *> {
         return rel.getColumn(columnName)
             ?: throw RuntimeException(
                 MessageFormat.format(

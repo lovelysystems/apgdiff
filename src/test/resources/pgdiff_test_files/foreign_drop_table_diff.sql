@@ -1,2 +1,2 @@
 
-DROP FOREIGN TABLE foreign_to_create;
+DROP FOREIGN TABLE IF EXISTS foreign_to_create;

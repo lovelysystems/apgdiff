@@ -4,5 +4,4 @@ CREATE MATERIALIZED VIEW testview AS
     testtable.name
    FROM public.testtable
   WITH NO DATA;
-
 ALTER MATERIALIZED VIEW testview OWNER TO postgres;

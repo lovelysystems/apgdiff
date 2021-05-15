@@ -32,9 +32,13 @@ CreateTableParser : PatternBasedSubParser(
                 )
             }
         }
-        val table = PgTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
+        val table = if (foreign) {
+            PgForeignTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
+        } else {
+            PgTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
+        }
+
         table.isUnlogged = unlogged
-        table.isForeign = foreign
         schema.addRelation(table)
         parser.expect("(")
         while (!parser.expectOptional(")")) {
@@ -76,16 +80,9 @@ CreateTableParser : PatternBasedSubParser(
         }
     }
 
-    /**
-     * Parses INHERITS.
-     *
-     * @param ctx.database ctx.database
-     * @param parser parser
-     * @param table  pg table
-     */
     private fun parseInherits(
         database: PgDatabase, parser: Parser,
-        table: PgTable
+        table: PgTableBase
     ) {
         parser.expect("(")
         while (!parser.expectOptional(")")) {
@@ -110,7 +107,7 @@ CreateTableParser : PatternBasedSubParser(
      */
     private fun parseConstraint(
         parser: Parser,
-        table: PgTable
+        table: PgTableBase
     ) {
         val constraint = PgConstraint(
             ParserUtils.getObjectName(parser.parseIdentifier())
@@ -126,8 +123,9 @@ CreateTableParser : PatternBasedSubParser(
      * @param parser parser
      * @param table  table
      */
-    private fun parseColumn(parser: Parser, table: PgTable) {
+    private fun parseColumn(parser: Parser, table: PgTableBase) {
         val column = PgColumn(
+            table,
             ParserUtils.getObjectName(parser.parseIdentifier())
         )
         table.addColumn(column)

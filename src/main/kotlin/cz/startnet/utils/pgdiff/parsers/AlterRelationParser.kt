@@ -72,7 +72,7 @@ object AlterRelationParser : PatternBasedSubParser(
             } else if (parser.expectOptional("CLUSTER", "ON")) {
                 rel.clusterIndexName = ParserUtils.getObjectName(parser.parseIdentifier())
             } else if (parser.expectOptional("OWNER", "TO")) {
-                rel.ownerTo = parser.parseIdentifier()
+                rel.owner = parser.parseIdentifier()
             } else if (table != null && parser.expectOptional("ADD")) {
                 if (parser.expectOptional("FOREIGN", "KEY")) {
                     parseAddForeignKey(parser, table)
@@ -220,7 +220,7 @@ object AlterRelationParser : PatternBasedSubParser(
      */
     private fun parseAlterColumn(
         parser: Parser,
-        rel: PgRelation,
+        rel: PgRelation<*,*>,
         database: PgDatabase
     ) {
         parser.expectOptional("COLUMN")
