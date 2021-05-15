@@ -56,6 +56,7 @@ val fatJar by tasks.creating(Jar::class) {
     manifest {
         attributes["Main-Class"] = application.mainClass
     }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map {
         {
             if (it.isDirectory) {
