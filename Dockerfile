@@ -14,6 +14,7 @@ RUN native-image \
     /tmp/apgdiff
 
 # the actual docker image using the native image with libc dependencies
-FROM gcr.io/distroless/cc-debian10
+# see https://console.cloud.google.com/gcr/images/distroless/GLOBAL/cc-debian10@sha256:c33fbcd3f924892f2177792bebc11f7a7e88ccbc247f0d0a01a812692259503a/details?tab=info
+FROM gcr.io/distroless/cc-debian10@sha256:c33fbcd3f924892f2177792bebc11f7a7e88ccbc247f0d0a01a812692259503a
 COPY --from=graalvm /tmp/apgdiff /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/apgdiff"]
