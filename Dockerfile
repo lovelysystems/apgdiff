@@ -15,5 +15,5 @@ RUN native-image \
 
 # the actual docker image using the native image with libc dependencies
 FROM gcr.io/distroless/cc-debian10
-COPY --chmod=755 --from=graalvm /tmp/apgdiff /usr/local/bin/
+COPY --from=graalvm /tmp/apgdiff /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/apgdiff"]
