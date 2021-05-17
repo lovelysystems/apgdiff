@@ -19,7 +19,7 @@ runtime only libc.
 
 ```shell script
 ./gradlew buildDockerImage
-docker run --rm lovelysystems/apgdiff:dev apgdiff --help
+docker run --rm lovelysystems/apgdiff:dev --help
 ```
 
 # Credits
