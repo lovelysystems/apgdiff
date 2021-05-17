@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/lovelysystems/apgdiff.svg?branch=master)](https://travis-ci.com/lovelysystems/apgdiff)
 
 Another PostgreSQL Diff Tool is free PostgreSQL diff tool that is useful for
-comparison/diffing of database schemas.
+comparison/diffing of database schemas dumped via `pg_dump`.
 
 ## Install and run locally
 
@@ -13,6 +13,9 @@ comparison/diffing of database schemas.
 ```
 
 ## Build and run Docker Image
+
+The executable in the docker image is built using [GraalVM](https://www.graalvm.org/) so there is no need for a JRE at
+runtime only libc.
 
 ```shell script
 ./gradlew buildDockerImage
