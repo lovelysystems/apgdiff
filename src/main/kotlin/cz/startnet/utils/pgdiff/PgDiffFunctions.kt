@@ -12,12 +12,11 @@ object PgDiffFunctions {
      * @param arguments        object containing arguments settings
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createFunctions(
         writer: PrintWriter,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
-        newSchema: PgSchema, searchPathHelper: SearchPathHelper
+        newSchema: PgSchema
     ) {
         // Add new functions and replace modified functions
         for (newFunction in newSchema.functions) {
@@ -27,7 +26,6 @@ object PgDiffFunctions {
                     oldFunction, arguments.isIgnoreFunctionWhitespace
                 )
             ) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 // drop the function if args differ since the signature cannot be changed via replace
                 val toDrop = (oldFunction != null && oldFunction.arguments != newFunction.arguments)
@@ -45,12 +43,10 @@ object PgDiffFunctions {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropFunctions(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         if (oldSchema == null) {
             return
@@ -59,7 +55,6 @@ object PgDiffFunctions {
         // Drop functions that exist no more
         for (oldFunction in oldSchema.functions) {
             if (!newSchema.containsFunction(oldFunction.signature)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(oldFunction.dropSQL)
             }
@@ -72,12 +67,10 @@ object PgDiffFunctions {
      * @param writer           writer
      * @param oldSchema        old schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterComments(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         if (oldSchema == null) {
             return
@@ -88,13 +81,13 @@ object PgDiffFunctions {
                 && newFunction.comment != null
                 || oldFunction.comment != null && newFunction.comment != null && oldFunction.comment != newFunction.comment
             ) {
-                searchPathHelper.outputSearchPath(writer)
+                
                 writer.println()
                 writer.println("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS ${newFunction.comment};")
             } else if (oldFunction.comment != null
                 && newFunction.comment == null
             ) {
-                searchPathHelper.outputSearchPath(writer)
+                
                 writer.println()
                 writer.println("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS NULL;")
             }

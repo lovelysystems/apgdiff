@@ -22,12 +22,10 @@ object PgDiffIndexes {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createIndexes(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
@@ -35,7 +33,6 @@ object PgDiffIndexes {
             // Add new indexes
             if (oldSchema == null) {
                 for (index in newTable.indexes) {
-                    searchPathHelper.outputSearchPath(writer)
                     writer.println()
                     writer.println(index.creationSQL)
                 }
@@ -43,7 +40,6 @@ object PgDiffIndexes {
                 for (index in getNewIndexes(
                     oldSchema.getTable(newTableName), newTable
                 )) {
-                    searchPathHelper.outputSearchPath(writer)
                     writer.println()
                     writer.println(index.creationSQL)
                 }
@@ -57,12 +53,10 @@ object PgDiffIndexes {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropIndexes(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
@@ -70,7 +64,6 @@ object PgDiffIndexes {
 
             // Drop indexes that do not exist in new schema or are modified
             for (index in getDropIndexes(oldTable, newTable)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(index.dropSQL)
             }
@@ -138,12 +131,10 @@ object PgDiffIndexes {
      * @param writer           writer
      * @param oldSchema        old schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterComments(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
@@ -154,7 +145,7 @@ object PgDiffIndexes {
                 && newIndex.comment != null
                 || oldIndex.comment != null && newIndex.comment != null && oldIndex.comment != newIndex.comment
             ) {
-                searchPathHelper.outputSearchPath(writer)
+                
                 writer.println()
                 writer.print("COMMENT ON INDEX ")
                 writer.print(
@@ -166,7 +157,7 @@ object PgDiffIndexes {
             } else if (oldIndex.comment != null
                 && newIndex.comment == null
             ) {
-                searchPathHelper.outputSearchPath(writer)
+                
                 writer.println()
                 writer.print("COMMENT ON INDEX ")
                 writer.print(

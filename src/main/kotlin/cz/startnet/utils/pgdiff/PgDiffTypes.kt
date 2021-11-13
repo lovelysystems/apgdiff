@@ -1,9 +1,11 @@
 package cz.startnet.utils.pgdiff
 
-import cz.startnet.utils.pgdiff.schema.*
+import cz.startnet.utils.pgdiff.schema.PgColumnUtils
+import cz.startnet.utils.pgdiff.schema.PgSchema
+import cz.startnet.utils.pgdiff.schema.PgType
+import cz.startnet.utils.pgdiff.schema.PgTypeColumn
 import java.io.PrintWriter
 import java.text.MessageFormat
-import java.util.*
 
 /**
  * Diffs types.
@@ -16,17 +18,16 @@ object PgDiffTypes {
      * @param arguments        object containing arguments settings
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterTypes(
         writer: PrintWriter,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
-        newSchema: PgSchema, searchPathHelper: SearchPathHelper
+        newSchema: PgSchema
     ) {
         for (newType in newSchema.types) {
             val oldType = oldSchema?.getType(newType.name) ?: continue
             updateTypeColumns(
-                writer, arguments, oldType, newType, searchPathHelper
+                writer, arguments, oldType, newType
             )
             if (newType.owner != oldType.owner) {
                 writer.println(newType.ownerSQL)
@@ -169,18 +170,15 @@ object PgDiffTypes {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createTypes(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (type in newSchema!!.types) {
             if (oldSchema == null
                 || !oldSchema.containsType(type.name)
             ) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(type.creationSQL)
             }
@@ -193,19 +191,16 @@ object PgDiffTypes {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropTypes(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
         }
         for (type in oldSchema.types) {
             if (!newSchema!!.containsType(type.name)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(type.dropSQL)
             }
@@ -220,12 +215,11 @@ object PgDiffTypes {
      * @param arguments        object containing arguments settings
      * @param oldType         original type
      * @param newType         new type
-     * @param searchPathHelper search path helper
      */
     private fun updateTypeColumns(
         writer: PrintWriter,
         arguments: PgDiffOptions, oldType: PgType?,
-        newType: PgType, searchPathHelper: SearchPathHelper
+        newType: PgType
     ) {
         val statements: MutableList<String> = ArrayList()
         val dropDefaultsColumns: MutableList<PgTypeColumn> = ArrayList()
@@ -238,7 +232,6 @@ object PgDiffTypes {
         )
         if (statements.isNotEmpty()) {
             val quotedTypeName = PgDiffUtils.getQuotedName(newType.name)
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.println("ALTER TYPE $quotedTypeName")
             for (i in statements.indices) {

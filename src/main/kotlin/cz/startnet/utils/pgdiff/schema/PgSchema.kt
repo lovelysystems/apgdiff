@@ -1,19 +1,13 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.util.*
 
-/**
- * Stores schema information.
- *
- * @author fordfrog
- */
 class PgSchema(val name: String) {
+
+    override fun toString(): String {
+        return "PgSchema($name)"
+    }
 
     /**
      * List of functions defined in the schema.

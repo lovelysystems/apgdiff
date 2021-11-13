@@ -21,19 +21,16 @@ object PgDiffSequences {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createSequences(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         // Add new sequences
         for (sequence in newSchema.sequences) {
             if (oldSchema != null && oldSchema.sequences.containsSame(sequence)) {
                 continue
             }
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.println(sequence.creationSQL)
             for (sequencePrivilege in sequence
@@ -76,12 +73,10 @@ object PgDiffSequences {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterCreatedSequences(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         // Alter created sequences
         for (sequence in newSchema!!.sequences) {
@@ -89,7 +84,7 @@ object PgDiffSequences {
                         || !oldSchema.containsSequence(sequence.name))
                 && !sequence.ownedBy.isNullOrEmpty()
             ) {
-                searchPathHelper.outputSearchPath(writer)
+
                 writer.println()
                 writer.println(sequence.ownedBySQL)
             }
@@ -102,12 +97,10 @@ object PgDiffSequences {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropSequences(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
@@ -116,7 +109,6 @@ object PgDiffSequences {
         // Drop sequences that do not exist in new schema
         for (sequence in oldSchema.sequences) {
             if (!newSchema!!.containsSequence(sequence.name)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 sequence.dropSQL(writer)
             }
@@ -127,15 +119,12 @@ object PgDiffSequences {
      * Outputs statement for modified sequences.
      *
      * @param writer           writer the output should be written to
-     * @param arguments        object containing arguments settings
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterSequences(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         if (oldSchema == null) {
             return
@@ -217,7 +206,6 @@ object PgDiffSequences {
                 sbSQL.append(newOwnedBy)
             }
             if (sbSQL.length > 0) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print(
                     "ALTER SEQUENCE "
@@ -230,7 +218,6 @@ object PgDiffSequences {
                 && newSequence.comment != null
                 || oldSequence.comment != null && newSequence.comment != null && oldSequence.comment != newSequence.comment
             ) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("COMMENT ON SEQUENCE ")
                 writer.print(PgDiffUtils.getQuotedName(newSequence.name))
@@ -240,13 +227,12 @@ object PgDiffSequences {
             } else if (oldSequence.comment != null
                 && newSequence.comment == null
             ) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("COMMENT ON SEQUENCE ")
                 writer.print(newSequence.name)
                 writer.println(" IS NULL;")
             }
-            alterPrivileges(writer, oldSequence, newSequence, searchPathHelper)
+            alterPrivileges(writer, oldSequence, newSequence)
 
             if (oldSequence.owner != newSequence.owner) {
                 newSequence.ownerSQL(writer)
@@ -256,8 +242,7 @@ object PgDiffSequences {
 
     private fun alterPrivileges(
         writer: PrintWriter,
-        oldSequence: PgSequence, newSequence: PgSequence?,
-        searchPathHelper: SearchPathHelper
+        oldSequence: PgSequence, newSequence: PgSequence?
     ) {
         val emptyLinePrinted = false
         for (oldSequencePrivilege in oldSequence
