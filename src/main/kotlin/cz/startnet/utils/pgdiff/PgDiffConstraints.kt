@@ -25,19 +25,17 @@ object PgDiffConstraints {
      * @param primaryKey       determines whether primary keys should be
      * processed or any other constraints should be
      * processed
-     * @param searchPathHelper search path helper
      */
     fun createConstraints(
         writer: PrintWriter,
         oldSchema: PgSchema?, newSchema: PgSchema,
-        primaryKey: Boolean, searchPathHelper: SearchPathHelper
+        primaryKey: Boolean
     ) {
         for (newTable in newSchema.tables) {
             val oldTable = oldSchema?.getTable(newTable.name)
 
             // Add new constraints
             for (constraint in getNewConstraints(oldTable, newTable, primaryKey)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(constraint.creationSQL)
             }
@@ -53,19 +51,17 @@ object PgDiffConstraints {
      * @param primaryKey       determines whether primary keys should be
      * processed or any other constraints should be
      * processed
-     * @param searchPathHelper search path helper
      */
     fun dropConstraints(
         writer: PrintWriter,
         oldSchema: PgSchema?, newSchema: PgSchema,
-        primaryKey: Boolean, searchPathHelper: SearchPathHelper
+        primaryKey: Boolean
     ) {
         for (newTable in newSchema.tables) {
             val oldTable = oldSchema?.getTable(newTable.name)
 
             // Drop constraints that no more exist or are modified
             for (constraint in getDropConstraints(oldTable, newTable, primaryKey)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(constraint.dropSQL)
             }
@@ -147,12 +143,10 @@ object PgDiffConstraints {
      * @param writer           writer
      * @param oldSchema        old schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterComments(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
@@ -165,7 +159,6 @@ object PgDiffConstraints {
                     && newConstraint.comment != null
                     || oldConstraint.comment != null && newConstraint.comment != null && oldConstraint.comment != newConstraint.comment
                 ) {
-                    searchPathHelper.outputSearchPath(writer)
                     writer.println()
                     writer.print("COMMENT ON ")
                     if (newConstraint.isPrimaryKeyConstraint) {
@@ -195,7 +188,6 @@ object PgDiffConstraints {
                 } else if (oldConstraint.comment != null
                     && newConstraint.comment == null
                 ) {
-                    searchPathHelper.outputSearchPath(writer)
                     writer.println()
                     writer.print("COMMENT ON ")
                     if (newConstraint.isPrimaryKeyConstraint) {

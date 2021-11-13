@@ -7,14 +7,12 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgPolicy
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import cz.startnet.utils.pgdiff.schema.PgTable
 import java.io.PrintWriter
 
 object PgDiffPolicies {
     fun createPolicies(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
@@ -22,7 +20,7 @@ object PgDiffPolicies {
             for (policy in newTable.policies) {
                 val oldPolicy = oldTable?.getPolicy(policy.name)
                 if (oldPolicy == null) {
-                    searchPathHelper.outputSearchPath(writer)
+
                     createPolicySQL(writer, policy)
                 }
             }
@@ -31,8 +29,7 @@ object PgDiffPolicies {
 
     fun alterPolicies(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
@@ -47,26 +44,26 @@ object PgDiffPolicies {
                             val newCommand = newPolicy.command
                             val oldCommand = policy.command
                             if (newCommand != null && oldCommand != null && newCommand != oldCommand) {
-                                searchPathHelper.outputSearchPath(writer)
+
                                 dropPolicySQL(writer, newPolicy)
                                 createPolicySQL(writer, newPolicy)
                             } else if (policy.using == null && newPolicy.using != null
                                 || policy.using != null && newPolicy.using == null
                                 || policy.using != null && newPolicy.using != null && policy.using != newPolicy.using
                             ) {
-                                searchPathHelper.outputSearchPath(writer)
+
                                 alterPolicySQL(writer, newPolicy)
                             } else if (policy.withCheck == null && newPolicy.withCheck != null
                                 || policy.withCheck != null && newPolicy.withCheck == null
                                 || policy.withCheck != null && newPolicy.withCheck != null && policy.withCheck != newPolicy.withCheck
                             ) {
-                                searchPathHelper.outputSearchPath(writer)
+
                                 alterPolicySQL(writer, newPolicy)
                             } else {
                                 val equalRoles = newPolicy.roles.containsAll(policy.roles) &&
                                         policy.roles.containsAll(newPolicy.roles)
                                 if (!equalRoles) {
-                                    searchPathHelper.outputSearchPath(writer)
+
                                     alterPolicySQL(writer, newPolicy)
                                 }
                             }
@@ -79,8 +76,7 @@ object PgDiffPolicies {
 
     fun dropPolicies(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val newTableName = newTable.name
@@ -89,7 +85,6 @@ object PgDiffPolicies {
                 if (oldTable != null) {
                     for (policy in oldTable.policies) {
                         if (newTable.getPolicy(policy.name) == null) {
-                            searchPathHelper.outputSearchPath(writer)
                             dropPolicySQL(writer, policy)
                         }
                     }

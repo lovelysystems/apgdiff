@@ -9,7 +9,6 @@ import cz.startnet.utils.pgdiff.schema.PgRelation
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgTrigger
 import java.io.PrintWriter
-import java.util.*
 
 /**
  * Diffs triggers.
@@ -23,19 +22,16 @@ object PgDiffTriggers {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createTriggers(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {
             val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Add new triggers
             for (trigger in getNewTriggers(oldRelation, newRelation)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(trigger.creationSQL)
             }
@@ -48,19 +44,16 @@ object PgDiffTriggers {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropTriggers(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {
             val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Drop triggers that no more exist or are modified
             for (trigger in getDropTriggers(oldRelation, newRelation)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(trigger.dropSQL)
             }
@@ -76,8 +69,8 @@ object PgDiffTriggers {
      * @return list of triggers that should be dropped
      */
     private fun getDropTriggers(
-        oldRelation: PgRelation<*,*>?,
-        newRelation: PgRelation<*,*>?
+        oldRelation: PgRelation<*, *>?,
+        newRelation: PgRelation<*, *>?
     ): List<PgTrigger> {
         val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null && oldRelation != null) {
@@ -100,8 +93,8 @@ object PgDiffTriggers {
      * @return list of triggers that should be added
      */
     private fun getNewTriggers(
-        oldRelation: PgRelation<*,*>?,
-        newRelation: PgRelation<*,*>?
+        oldRelation: PgRelation<*, *>?,
+        newRelation: PgRelation<*, *>?
     ): List<PgTrigger> {
         val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null) {
@@ -124,12 +117,10 @@ object PgDiffTriggers {
      * @param writer           writer
      * @param oldSchema        old schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterComments(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
@@ -142,7 +133,6 @@ object PgDiffTriggers {
                     && newTrigger.comment != null
                     || oldTrigger.comment != null && newTrigger.comment != null && oldTrigger.comment != newTrigger.comment
                 ) {
-                    searchPathHelper.outputSearchPath(writer)
                     writer.println()
                     writer.print("COMMENT ON TRIGGER ")
                     writer.print(
@@ -160,7 +150,7 @@ object PgDiffTriggers {
                 } else if (oldTrigger.comment != null
                     && newTrigger.comment == null
                 ) {
-                    searchPathHelper.outputSearchPath(writer)
+
                     writer.println()
                     writer.print("COMMENT ON TRIGGER ")
                     writer.print(
@@ -187,8 +177,8 @@ object PgDiffTriggers {
      * @return list of triggers that should be added
      */
     private fun getEnablerOrDisableTriggers(
-        oldRelation: PgRelation<*,*>?,
-        newRelation: PgRelation<*,*>?
+        oldRelation: PgRelation<*, *>?,
+        newRelation: PgRelation<*, *>?
     ): List<PgTrigger> {
         val list: MutableList<PgTrigger> = ArrayList()
         if (newRelation != null) {
@@ -210,19 +200,17 @@ object PgDiffTriggers {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun disableOrEnableTriggers(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {
             val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Add new triggers
             for (trigger in getEnablerOrDisableTriggers(oldRelation, newRelation)) {
-                searchPathHelper.outputSearchPath(writer)
+
                 writer.println()
                 writer.println(trigger.disableOrEnableSQL)
             }

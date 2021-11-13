@@ -7,8 +7,7 @@ import java.io.PrintWriter
 class PgDiffOperators(
     val newSchema: PgSchema,
     val oldSchema: PgSchema?,
-    val writer: PrintWriter,
-    val searchPathHelper: SearchPathHelper,
+    val writer: PrintWriter
 ) {
 
     operator fun invoke() {
@@ -31,7 +30,6 @@ class PgDiffOperators(
             )
 
             if (toDrop.isNotEmpty() || toCreate.isNotEmpty()) {
-                searchPathHelper.outputSearchPath(writer)
                 drop(toDrop)
                 create(toCreate)
             }

@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- fixed cross schema owner changes on tables and views
 - allow to set an output file for the diff
 
 ## 2021-11-13 / 0.0.1

@@ -23,19 +23,17 @@ object PgDiffRules {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createRules(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema?.rels.orEmpty()) {
             val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Add new rules
             for (rule in getNewRules(oldRelation, newRelation)) {
-                searchPathHelper.outputSearchPath(writer)
+                
                 writer.println()
                 writer.println(rule.creationSQL)
             }
@@ -48,19 +46,16 @@ object PgDiffRules {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropRules(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {
             val oldRelation = oldSchema?.getRelation(newRelation.name)
 
             // Drop rules that no more exist or are modified
             for (rule in dropRules(oldRelation, newRelation)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(rule.dropSQL)
             }

@@ -1,9 +1,9 @@
 package cz.startnet.utils.pgdiff
 
-import com.github.difflib.DiffUtils
-import com.github.difflib.UnifiedDiffUtils
 import cz.startnet.utils.pgdiff.schema.PgDatabase
+import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
+import java.nio.charset.Charset
 
 
 class PgDiffDatabases(
@@ -150,142 +150,151 @@ class PgDiffDatabases(
         val setSearchPath = (newDatabase.schemas.size > 1
                 || newDatabase.schemas[0].name != "public")
         for (newSchema in newDatabase.schemas) {
-            val searchPathHelper: SearchPathHelper = if (setSearchPath) {
-                SearchPathHelper(
-                    "SET search_path = "
-                            + PgDiffUtils.getQuotedName(newSchema.name, true)
-                            + ", pg_catalog;"
-                )
-            } else {
-                SearchPathHelper(null)
-            }
+            val diff = ByteArrayOutputStream()
+            val schemaWriter = PrintWriter(diff, false, Charset.forName(arguments.outCharsetName))
             val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema != null) {
                 if (oldSchema.comment == null
                     && newSchema.comment != null
                     || oldSchema.comment != null && newSchema.comment != null && oldSchema.comment != newSchema.comment
                 ) {
-                    writer.println()
-                    writer.print("COMMENT ON SCHEMA ")
-                    writer.print(
+                    schemaWriter.println()
+                    schemaWriter.print("COMMENT ON SCHEMA ")
+                    schemaWriter.print(
                         PgDiffUtils.getQuotedName(newSchema.name)
                     )
-                    writer.print(" IS ")
-                    writer.print(newSchema.comment)
-                    writer.println(';')
+                    schemaWriter.print(" IS ")
+                    schemaWriter.print(newSchema.comment)
+                    schemaWriter.println(';')
                 } else if (oldSchema.comment != null
                     && newSchema.comment == null
                 ) {
-                    writer.println()
-                    writer.print("COMMENT ON SCHEMA ")
-                    writer.print(
+                    schemaWriter.println()
+                    schemaWriter.print("COMMENT ON SCHEMA ")
+                    schemaWriter.print(
                         PgDiffUtils.getQuotedName(newSchema.name)
                     )
-                    writer.println(" IS NULL;")
+                    schemaWriter.println(" IS NULL;")
                 }
             }
             PgDiffTriggers.dropTriggers(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffRules.dropRules(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffFunctions.dropFunctions(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffViews.dropViews(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffConstraints.dropConstraints(
-                writer, oldSchema, newSchema, true, searchPathHelper
+                schemaWriter, oldSchema, newSchema, true
             )
             PgDiffConstraints.dropConstraints(
-                writer, oldSchema, newSchema, false, searchPathHelper
+                schemaWriter, oldSchema, newSchema, false
             )
             PgDiffIndexes.dropIndexes(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTables.dropClusters(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTables.dropTables(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffSequences.dropSequences(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffPolicies.dropPolicies(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffSequences.createSequences(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffSequences.alterSequences(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
-            PgDiffTypes.alterTypes(writer, arguments, oldSchema, newSchema, searchPathHelper)
-            PgDiffTypes.createTypes(writer, oldSchema, newSchema, searchPathHelper)
-            PgDiffTypes.dropTypes(writer, oldSchema, newSchema, searchPathHelper)
+            PgDiffTypes.alterTypes(schemaWriter, arguments, oldSchema, newSchema)
+            PgDiffTypes.createTypes(schemaWriter, oldSchema, newSchema)
+            PgDiffTypes.dropTypes(schemaWriter, oldSchema, newSchema)
 
-            PgDiffDomains(newSchema, oldSchema, writer, searchPathHelper)()
-            PgDiffOperators(newSchema, oldSchema, writer, searchPathHelper)()
+            PgDiffDomains(newSchema, oldSchema, schemaWriter)()
+            PgDiffOperators(newSchema, oldSchema, schemaWriter)()
 
-            PgDiffGrant.createGrants(writer, oldSchema, newSchema)
+            PgDiffGrant.createGrants(schemaWriter, oldSchema, newSchema)
             PgDiffTables.createTables(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTables.alterTables(
-                writer, arguments, oldSchema, newSchema, searchPathHelper
+                schemaWriter, arguments, oldSchema, newSchema
             )
             PgDiffSequences.alterCreatedSequences(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffFunctions.createFunctions(
-                writer, arguments, oldSchema, newSchema, searchPathHelper
+                schemaWriter, arguments, oldSchema, newSchema
             )
             PgDiffConstraints.createConstraints(
-                writer, oldSchema, newSchema, true, searchPathHelper
+                schemaWriter, oldSchema, newSchema, true
             )
             PgDiffConstraints.createConstraints(
-                writer, oldSchema, newSchema, false, searchPathHelper
+                schemaWriter, oldSchema, newSchema, false
             )
             PgDiffIndexes.createIndexes(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTables.createClusters(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTriggers.createTriggers(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTriggers.disableOrEnableTriggers(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffViews.createViews(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
-            PgDiffRules.createRules(writer, oldSchema, newSchema, searchPathHelper)
+            PgDiffRules.createRules(schemaWriter, oldSchema, newSchema)
             PgDiffViews.alterViews(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffPolicies.createPolicies(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffPolicies.alterPolicies(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffFunctions.alterComments(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffConstraints.alterComments(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffIndexes.alterComments(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
             PgDiffTriggers.alterComments(
-                writer, oldSchema, newSchema, searchPathHelper
+                schemaWriter, oldSchema, newSchema
             )
+
+            schemaWriter.flush()
+            val diffString = diff.toString(arguments.outCharsetName)
+            if (diffString.isNotEmpty()) {
+                val searchPathHelper: SearchPathHelper = if (setSearchPath) {
+                    SearchPathHelper(
+                        "SET search_path = "
+                                + PgDiffUtils.getQuotedName(newSchema.name, true)
+                                + ", pg_catalog;"
+                    )
+                } else {
+                    SearchPathHelper(null)
+                }
+                searchPathHelper.outputSearchPath(writer)
+                writer.write(diffString)
+            }
         }
     }
 }

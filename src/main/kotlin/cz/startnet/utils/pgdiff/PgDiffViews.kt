@@ -22,18 +22,16 @@ object PgDiffViews {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createViews(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         for (newView in newSchema.views) {
             val oldView = oldSchema?.getView(newView.name)
             if (oldView == null || isViewModified(oldView, newView)
             ) {
-                searchPathHelper.outputSearchPath(writer)
+
                 writer.println()
                 writer.println(newView.creationSQL)
                 if (newView.owner != null && oldView == null) {
@@ -75,12 +73,10 @@ object PgDiffViews {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropViews(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
@@ -88,7 +84,6 @@ object PgDiffViews {
         for (oldView in oldSchema.views) {
             val newView = newSchema!!.getView(oldView.name)
             if (newView == null || isViewModified(oldView, newView)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(oldView.dropSQL)
             }
@@ -126,24 +121,22 @@ object PgDiffViews {
      * @param writer           writer
      * @param oldSchema        old schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterViews(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
         }
         for (oldView in oldSchema.views) {
             val newView = newSchema!!.getView(oldView.name) ?: continue
-            diffDefaultValues(writer, oldView, newView, searchPathHelper)
+            diffDefaultValues(writer, oldView, newView)
             if (oldView.comment == null
                 && newView.comment != null
                 || oldView.comment != null && newView.comment != null && oldView.comment != newView.comment
             ) {
-                searchPathHelper.outputSearchPath(writer)
+
                 writer.println()
                 writer.print("COMMENT ON ${newView.relationKind} ")
                 writer.print(
@@ -155,7 +148,7 @@ object PgDiffViews {
             } else if (oldView.comment != null
                 && newView.comment == null
             ) {
-                searchPathHelper.outputSearchPath(writer)
+
                 writer.println()
                 writer.print("COMMENT ON ${newView.relationKind} ")
                 writer.print(PgDiffUtils.getQuotedName(newView.name))
@@ -180,7 +173,7 @@ object PgDiffViews {
                 if (oldComment == null && newComment != null
                     || oldComment != null && newComment != null && oldComment != newComment
                 ) {
-                    searchPathHelper.outputSearchPath(writer)
+
                     writer.println()
                     writer.print("COMMENT ON COLUMN ")
                     writer.print(PgDiffUtils.getQuotedName(newView.name))
@@ -192,7 +185,7 @@ object PgDiffViews {
                 } else if (oldComment != null
                     && newComment == null
                 ) {
-                    searchPathHelper.outputSearchPath(writer)
+
                     writer.println()
                     writer.print("COMMENT ON COLUMN ")
                     writer.print(PgDiffUtils.getQuotedName(newView.name))
@@ -202,10 +195,11 @@ object PgDiffViews {
                 }
             }
             if (oldView.owner != null && newView.owner != oldView.owner) {
+
                 newView.ownerSQL(writer)
             }
-            alterPrivileges(writer, oldView, newView, searchPathHelper)
-            alterPrivilegesColumns(writer, oldView, newView, searchPathHelper)
+            alterPrivileges(writer, oldView, newView)
+            alterPrivilegesColumns(writer, oldView, newView)
         }
     }
 
@@ -215,12 +209,10 @@ object PgDiffViews {
      * @param writer           writer
      * @param oldView          old view
      * @param newView          new view
-     * @param searchPathHelper search path helper
      */
     private fun diffDefaultValues(
         writer: PrintWriter,
-        oldView: PgViewBase?, newView: PgViewBase,
-        searchPathHelper: SearchPathHelper
+        oldView: PgViewBase?, newView: PgViewBase
     ) {
 
         // modify defaults that are in old view
@@ -229,7 +221,7 @@ object PgDiffViews {
             val newCol = newView.getColumn(oldCol.name)
             if (newCol != null && newCol.defaultValue != null) {
                 if (oldCol.defaultValue != newCol.defaultValue) {
-                    searchPathHelper.outputSearchPath(writer)
+
                     writer.println()
                     writer.print("ALTER TABLE ")
                     writer.print(
@@ -242,7 +234,7 @@ object PgDiffViews {
                     writer.println(';')
                 }
             } else {
-                searchPathHelper.outputSearchPath(writer)
+
                 writer.println()
                 writer.print("ALTER TABLE ")
                 writer.print(PgDiffUtils.getQuotedName(newView.name))
@@ -260,7 +252,7 @@ object PgDiffViews {
             ) {
                 continue
             }
-            searchPathHelper.outputSearchPath(writer)
+
             writer.println()
             writer.print("ALTER TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newView.name))
@@ -274,8 +266,7 @@ object PgDiffViews {
 
     private fun alterPrivileges(
         writer: PrintWriter,
-        oldView: PgViewBase?, newView: PgViewBase,
-        searchPathHelper: SearchPathHelper
+        oldView: PgViewBase?, newView: PgViewBase
     ) {
         val emptyLinePrinted = false
         for (oldViewPrivilege in oldView!!.privileges) {
@@ -357,8 +348,7 @@ object PgDiffViews {
 
     private fun alterPrivilegesColumns(
         writer: PrintWriter,
-        oldView: PgViewBase?, newView: PgViewBase,
-        searchPathHelper: SearchPathHelper
+        oldView: PgViewBase?, newView: PgViewBase
     ) {
         var emptyLinePrinted = false
         for (newColumn in newView.columns) {
@@ -384,71 +374,69 @@ object PgDiffViews {
                     }
                 }
             }
-            if (newColumn != null) {
-                for (newColumnPrivilege in newColumn
-                    .privileges) {
-                    var oldColumnPrivilege: PgColumnPrivilege? = null
-                    if (oldColumn != null) {
-                        oldColumnPrivilege = oldColumn
-                            .getPrivilege(newColumnPrivilege.roleName)
+            for (newColumnPrivilege in newColumn
+                .privileges) {
+                var oldColumnPrivilege: PgColumnPrivilege? = null
+                if (oldColumn != null) {
+                    oldColumnPrivilege = oldColumn
+                        .getPrivilege(newColumnPrivilege.roleName)
+                }
+                if (!newColumnPrivilege.isSimilar(oldColumnPrivilege)) {
+                    if (!emptyLinePrinted) {
+                        emptyLinePrinted = true
+                        writer.println()
                     }
-                    if (!newColumnPrivilege.isSimilar(oldColumnPrivilege)) {
-                        if (!emptyLinePrinted) {
-                            emptyLinePrinted = true
-                            writer.println()
-                        }
-                        writer.println(
-                            "REVOKE ALL ("
-                                    + PgDiffUtils.getQuotedName(newColumn.name)
-                                    + ") ON TABLE "
-                                    + PgDiffUtils.getQuotedName(newView.name)
-                                    + " FROM " + newColumnPrivilege.roleName
-                                    + ";"
+                    writer.println(
+                        "REVOKE ALL ("
+                                + PgDiffUtils.getQuotedName(newColumn.name)
+                                + ") ON TABLE "
+                                + PgDiffUtils.getQuotedName(newView.name)
+                                + " FROM " + newColumnPrivilege.roleName
+                                + ";"
+                    )
+                    if ("" != newColumnPrivilege.getPrivilegesSQL(
+                            true,
+                            PgDiffUtils.getQuotedName(newColumn.name)
                         )
-                        if ("" != newColumnPrivilege.getPrivilegesSQL(
+                    ) {
+                        writer.println(
+                            "GRANT "
+                                    + newColumnPrivilege.getPrivilegesSQL(
                                 true,
-                                PgDiffUtils.getQuotedName(newColumn.name)
-                            )
-                        ) {
-                            writer.println(
-                                "GRANT "
-                                        + newColumnPrivilege.getPrivilegesSQL(
-                                    true,
-                                    PgDiffUtils.getQuotedName(
-                                        newColumn
-                                            .name
-                                    )
-                                )
-                                        + " ON TABLE "
-                                        + PgDiffUtils.getQuotedName(
-                                    newView
+                                PgDiffUtils.getQuotedName(
+                                    newColumn
                                         .name
-                                ) + " TO "
-                                        + newColumnPrivilege.roleName
-                                        + " WITH GRANT OPTION;"
-                            )
-                        }
-                        if ("" != newColumnPrivilege.getPrivilegesSQL(
-                                false,
-                                PgDiffUtils.getQuotedName(newColumn.name)
-                            )
-                        ) {
-                            writer.println(
-                                "GRANT "
-                                        + newColumnPrivilege.getPrivilegesSQL(
-                                    false, PgDiffUtils.getQuotedName(
-                                        newColumn
-                                            .name
-                                    )
                                 )
-                                        + " ON TABLE "
-                                        + PgDiffUtils.getQuotedName(
-                                    newView
-                                        .name
-                                ) + " TO "
-                                        + newColumnPrivilege.roleName + ";"
                             )
-                        }
+                                    + " ON TABLE "
+                                    + PgDiffUtils.getQuotedName(
+                                newView
+                                    .name
+                            ) + " TO "
+                                    + newColumnPrivilege.roleName
+                                    + " WITH GRANT OPTION;"
+                        )
+                    }
+                    if ("" != newColumnPrivilege.getPrivilegesSQL(
+                            false,
+                            PgDiffUtils.getQuotedName(newColumn.name)
+                        )
+                    ) {
+                        writer.println(
+                            "GRANT "
+                                    + newColumnPrivilege.getPrivilegesSQL(
+                                false, PgDiffUtils.getQuotedName(
+                                    newColumn
+                                        .name
+                                )
+                            )
+                                    + " ON TABLE "
+                                    + PgDiffUtils.getQuotedName(
+                                newView
+                                    .name
+                            ) + " TO "
+                                    + newColumnPrivilege.roleName + ";"
+                        )
                     }
                 }
             }

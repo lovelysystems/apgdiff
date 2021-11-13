@@ -6,8 +6,7 @@ import java.io.PrintWriter
 class PgDiffDomains(
     val newSchema: PgSchema,
     val oldSchema: PgSchema?,
-    val writer: PrintWriter,
-    val searchPathHelper: SearchPathHelper,
+    val writer: PrintWriter
 ) {
 
     operator fun invoke() {
@@ -68,7 +67,6 @@ class PgDiffDomains(
         for (new in newSchema.domains) {
             val old = oldSchema?.domains?.get(new.name)
             if (old == null) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 new.creationSQL(writer)
             }
@@ -78,7 +76,6 @@ class PgDiffDomains(
     fun drop() {
         val toDrop = oldSchema?.domains?.filter { !newSchema.domains.containsSame(it) }
         if (!toDrop.isNullOrEmpty()) {
-            searchPathHelper.outputSearchPath(writer)
             toDrop.forEach {
                 writer.println()
                 it.dropSQL(writer)

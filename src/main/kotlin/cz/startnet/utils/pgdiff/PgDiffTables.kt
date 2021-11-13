@@ -21,22 +21,19 @@ object PgDiffTables {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropClusters(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val oldTable = oldSchema?.getTable(newTable.name)
             val oldCluster = oldTable?.clusterIndexName
             val newCluster = newTable.clusterIndexName
             if (oldCluster != null && newCluster == null && newTable.containsIndex(oldCluster)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("ALTER TABLE ")
-                writer.print(PgDiffUtils.getQuotedName(newTable.name!!))
+                writer.print(PgDiffUtils.getQuotedName(newTable.name))
                 writer.println(" SET WITHOUT CLUSTER;")
             }
         }
@@ -48,12 +45,10 @@ object PgDiffTables {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createClusters(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
             val oldTable = oldSchema?.getTable(newTable.name)
@@ -62,7 +57,6 @@ object PgDiffTables {
             if (oldCluster == null && newCluster != null
                 || oldCluster != null && newCluster != null && newCluster.compareTo(oldCluster) != 0
             ) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.print("ALTER TABLE ")
                 writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -80,12 +74,11 @@ object PgDiffTables {
      * @param arguments        object containing arguments settings
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun alterTables(
         writer: PrintWriter,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
-        newSchema: PgSchema, searchPathHelper: SearchPathHelper
+        newSchema: PgSchema
     ) {
         for (newTable in newSchema.tables) {
             if (oldSchema == null
@@ -95,19 +88,19 @@ object PgDiffTables {
             }
             val oldTable = oldSchema.getTable(newTable.name)
             updateTableColumns(
-                writer, arguments, oldTable, newTable, searchPathHelper
+                writer, arguments, oldTable, newTable
             )
-            checkInherits(writer, oldTable, newTable, newSchema, searchPathHelper)
+            checkInherits(writer, oldTable, newTable, newSchema)
             addInheritedColumnDefaults(writer, oldTable, newTable)
-            checkTablespace(writer, oldTable, newTable, searchPathHelper)
-            addAlterStatistics(writer, oldTable, newTable, searchPathHelper)
-            addAlterGenerated(writer, oldTable, newTable, searchPathHelper)
-            addAlterStorage(writer, oldTable, newTable, searchPathHelper)
-            alterComments(writer, oldTable, newTable, searchPathHelper)
+            checkTablespace(writer, oldTable, newTable)
+            addAlterStatistics(writer, oldTable, newTable)
+            addAlterGenerated(writer, oldTable, newTable)
+            addAlterStorage(writer, oldTable, newTable)
+            alterComments(writer, oldTable, newTable)
             alterOwnerTo(writer, oldTable, newTable)
             alterPrivileges(writer, oldTable, newTable)
             alterPrivilegesColumns(writer, oldTable, newTable)
-            alterRLS(writer, oldTable, newTable, searchPathHelper)
+            alterRLS(writer, oldTable, newTable)
 
         }
     }
@@ -118,12 +111,10 @@ object PgDiffTables {
      * @param writer           writer the output should be written to
      * @param oldTable         original table
      * @param newTable         new table
-     * @param searchPathHelper search path helper
      */
     private fun addAlterStatistics(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase?,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTableBase?, newTable: PgTableBase?
     ) {
         val stats: MutableMap<String?, Int> = HashMap()
         for (newColumn in newTable?.columns.orEmpty()) {
@@ -145,7 +136,6 @@ object PgDiffTables {
             }
         }
         for ((key, value) in stats) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ONLY ")
             writer.print(PgDiffUtils.getQuotedName(newTable!!.name))
@@ -162,8 +152,7 @@ object PgDiffTables {
      */
     private fun addAlterGenerated(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         for (newColumn in newTable.columns) {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
@@ -175,7 +164,6 @@ object PgDiffTables {
             if (newGenerated == null || newGenerated == oldGenerated) {
                 continue
             }
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -192,12 +180,10 @@ object PgDiffTables {
      * @param writer           writer the output should be written to
      * @param oldTable         original table
      * @param newTable         new table
-     * @param searchPathHelper search path helper
      */
     private fun addAlterStorage(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         for (newColumn in newTable.columns) {
             val oldColumn = oldTable!!.getColumn(newColumn.name)
@@ -206,7 +192,6 @@ object PgDiffTables {
                 || newColumn.storage.isNullOrEmpty()
             ) null else newColumn.storage
             if (newStorage == null && oldStorage != null) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(
                     MessageFormat.format(
@@ -221,7 +206,6 @@ object PgDiffTables {
             if (newStorage == null || newStorage.equals(oldStorage, ignoreCase = true)) {
                 continue
             }
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ONLY ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -366,14 +350,12 @@ object PgDiffTables {
      * @param oldTable         original table
      * @param newTable         new table
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     private fun checkInherits(
         writer: PrintWriter,
         oldTable: PgTableBase?,
         newTable: PgTableBase?,
-        newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        newSchema: PgSchema?
     ) {
         for (inheritPairN in newTable!!.inherits) {
             val schemaName = inheritPairN.first
@@ -391,7 +373,6 @@ object PgDiffTables {
                 } else {
                     String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
                 }
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(
                     "ALTER TABLE "
@@ -419,7 +400,6 @@ object PgDiffTables {
                 } else {
                     String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
                 }
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(
                     "ALTER TABLE "
@@ -476,12 +456,10 @@ object PgDiffTables {
      * @param writer           writer
      * @param oldTable         old table
      * @param newTable         new table
-     * @param searchPathHelper search path helper
      */
     private fun checkTablespace(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         if (oldTable?.tablespace == null && newTable.tablespace == null
             || oldTable?.tablespace != null
@@ -489,7 +467,6 @@ object PgDiffTables {
         ) {
             return
         }
-        searchPathHelper.outputSearchPath(writer)
         writer.println()
         writer.println(
             "ALTER TABLE "
@@ -504,18 +481,15 @@ object PgDiffTables {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun createTables(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         for (table in newSchema.tables) {
             if (oldSchema == null
                 || !oldSchema.containsTable(table.name)
             ) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(table.getCreationSQL(newSchema))
                 writer.println()
@@ -572,19 +546,16 @@ object PgDiffTables {
      * @param writer           writer the output should be written to
      * @param oldSchema        original schema
      * @param newSchema        new schema
-     * @param searchPathHelper search path helper
      */
     fun dropTables(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?,
-        searchPathHelper: SearchPathHelper
+        oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
             return
         }
         for (table in oldSchema.tables) {
             if (!newSchema!!.containsTable(table.name)) {
-                searchPathHelper.outputSearchPath(writer)
                 writer.println()
                 writer.println(table.dropSQL)
             }
@@ -599,12 +570,11 @@ object PgDiffTables {
      * @param arguments        object containing arguments settings
      * @param oldTable         original table
      * @param newTable         new table
-     * @param searchPathHelper search path helper
      */
     private fun updateTableColumns(
         writer: PrintWriter,
         arguments: PgDiffOptions, oldTable: PgTableBase?,
-        newTable: PgTableBase, searchPathHelper: SearchPathHelper
+        newTable: PgTableBase
     ) {
         val statements: MutableList<String> = ArrayList()
         val dropDefaultsColumns: MutableList<PgColumn> = ArrayList()
@@ -617,7 +587,6 @@ object PgDiffTables {
         )
         if (statements.isNotEmpty()) {
             val quotedTableName = PgDiffUtils.getQuotedName(newTable.name)
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.println("ALTER ${newTable.objectType} $quotedTableName")
             for (i in statements.indices) {
@@ -746,18 +715,15 @@ object PgDiffTables {
      * @param writer           writer
      * @param oldTable         old table
      * @param newTable         new table
-     * @param searchPathHelper search path helper
      */
     private fun alterComments(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         if (oldTable?.comment == null
             && newTable.comment != null
             || oldTable?.comment != null && newTable.comment != null && oldTable.comment != newTable.comment
         ) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("COMMENT ON TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -767,7 +733,6 @@ object PgDiffTables {
         } else if (oldTable?.comment != null
             && newTable.comment == null
         ) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("COMMENT ON TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -886,13 +851,11 @@ object PgDiffTables {
 
     private fun alterRLS(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase,
-        searchPathHelper: SearchPathHelper
+        oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         if ((oldTable!!.hasRLSEnabled() == null || oldTable.hasRLSEnabled() != null && !oldTable.hasRLSEnabled()!!)
             && newTable.hasRLSEnabled() != null && newTable.hasRLSEnabled()!!
         ) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -901,7 +864,6 @@ object PgDiffTables {
         if (oldTable.hasRLSEnabled() != null && oldTable.hasRLSEnabled()!!
             && (newTable.hasRLSEnabled() == null || newTable.hasRLSEnabled() != null && !newTable.hasRLSEnabled()!!)
         ) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -910,7 +872,6 @@ object PgDiffTables {
         if ((oldTable.hasRLSForced() == null || oldTable.hasRLSForced() != null && !oldTable.hasRLSForced()!!)
             && newTable.hasRLSForced() != null && newTable.hasRLSForced()!!
         ) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
@@ -919,7 +880,6 @@ object PgDiffTables {
         if (oldTable.hasRLSForced() != null && oldTable.hasRLSForced()!!
             && (newTable.hasRLSForced() == null || newTable.hasRLSForced() != null && !newTable.hasRLSForced()!!)
         ) {
-            searchPathHelper.outputSearchPath(writer)
             writer.println()
             writer.print("ALTER TABLE ")
             writer.print(PgDiffUtils.getQuotedName(newTable.name))
