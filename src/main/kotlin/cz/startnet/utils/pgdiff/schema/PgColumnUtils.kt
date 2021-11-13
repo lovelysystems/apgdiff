@@ -23,7 +23,7 @@ object PgColumnUtils {
      */
     fun getDefaultValue(type: String?): String? {
         val defaultValue: String?
-        val adjType = type!!.toLowerCase(Locale.ENGLISH)
+        val adjType = type!!.lowercase(Locale.ENGLISH)
         defaultValue =
             if ("smallint" == adjType || "integer" == adjType || "bigint" == adjType || adjType.startsWith("decimal")
                 || adjType.startsWith("numeric")

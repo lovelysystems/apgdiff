@@ -1,5 +1,5 @@
 # use the graalvm image to build the static executable
-FROM ghcr.io/graalvm/graalvm-ce:21.1.0 AS graalvm
+FROM ghcr.io/graalvm/graalvm-ce:java11-21.3.0 AS graalvm
 RUN gu install native-image
 
 COPY *-fat.jar /tmp/fat.jar

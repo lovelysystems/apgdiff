@@ -507,7 +507,7 @@ object PgDiffUtils {
         if (excludeKeywords) {
             return name
         }
-        val upperName = name.toUpperCase(Locale.ENGLISH)
+        val upperName = name.uppercase(Locale.ENGLISH)
         for (keyword in KEYWORDS) {
             if (keyword == upperName) {
                 return '"'.toString() + name + '"'

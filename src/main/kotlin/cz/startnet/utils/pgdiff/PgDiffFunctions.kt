@@ -81,13 +81,13 @@ object PgDiffFunctions {
                 && newFunction.comment != null
                 || oldFunction.comment != null && newFunction.comment != null && oldFunction.comment != newFunction.comment
             ) {
-                
+
                 writer.println()
                 writer.println("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS ${newFunction.comment};")
             } else if (oldFunction.comment != null
                 && newFunction.comment == null
             ) {
-                
+
                 writer.println()
                 writer.println("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS NULL;")
             }

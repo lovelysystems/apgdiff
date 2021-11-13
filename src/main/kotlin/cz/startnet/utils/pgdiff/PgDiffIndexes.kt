@@ -145,7 +145,7 @@ object PgDiffIndexes {
                 && newIndex.comment != null
                 || oldIndex.comment != null && newIndex.comment != null && oldIndex.comment != newIndex.comment
             ) {
-                
+
                 writer.println()
                 writer.print("COMMENT ON INDEX ")
                 writer.print(
@@ -157,7 +157,7 @@ object PgDiffIndexes {
             } else if (oldIndex.comment != null
                 && newIndex.comment == null
             ) {
-                
+
                 writer.println()
                 writer.print("COMMENT ON INDEX ")
                 writer.print(

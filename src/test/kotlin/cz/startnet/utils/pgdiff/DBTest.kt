@@ -4,13 +4,15 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.testcontainers.containers.Container
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import org.testcontainers.utility.DockerImageName
-
 
 class VanillaDBContainer(imageName: String) :
     GenericContainer<VanillaDBContainer>(DockerImageName.parse(imageName)) {
@@ -26,39 +28,45 @@ class VanillaDBContainer(imageName: String) :
         withNetwork(Network.newNetwork()).apply {
             setWaitStrategy(LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*"))
         }
+        withTmpFs(mapOf("/var/lib/postgresql/data" to "rw"))
+        withCommand("-c", "fsync=off")
         super.configure()
     }
 
-    fun createDB(dbName: String, setupFile: String) {
-        execInContainer("createdb", dbName).let {
+    private fun exec(vararg command: String): Container.ExecResult {
+        return execInContainer(*command).let {
             if (it.exitCode != 0) {
                 throw error(it.stderr)
             }
+            it
         }
+    }
+
+    fun createDB(dbName: String, setupFile: String) {
+        exec("createdb", dbName)
         runFile(dbName, setupFile)
     }
 
+    fun dropDB(dbName: String) {
+        exec("dropdb", dbName)
+    }
+
     fun runFile(dbName: String, fileName: String) {
-        execInContainer(
+        exec(
             "psql",
             "-v", "ON_ERROR_STOP=1",
             "-f", fileName, dbName
-        ).let {
-            if (it.exitCode != 0) {
-                throw error(it.stderr)
-            }
-        }
-
+        )
     }
 
     fun dumpDB(dbName: String): String {
-        return execInContainer("pg_dump", "-s", "-d", dbName).let {
-            it.exitCode shouldBe 0
+        return exec("pg_dump", "-s", "-d", dbName).let {
             it.stdout
         }
     }
 }
 
+@Execution(ExecutionMode.CONCURRENT)
 class DBTest {
 
     private val dbContainer = VanillaDBContainer("postgres:12.6").withFileSystemBind(
@@ -71,8 +79,10 @@ class DBTest {
         dbContainer.isRunning.shouldBeTrue()
         // load the original
         Thread.sleep(100) // TODO: get rid of this sleep
-        dbContainer.execInContainer("psql", "-c",
-            "create role dv; create role admin; create role anonymous; create role asi; create role webuser; create role manager")
+        dbContainer.execInContainer(
+            "psql", "-c",
+            "create role dv; create role admin; create role anonymous; create role asi; create role webuser; create role manager"
+        )
     }
 
     @AfterAll
@@ -97,9 +107,7 @@ class DBTest {
         // dump the new
         val newDump = dbContainer.dumpDB(newDB)
 
-
         // run diff on both dumps
-
         val firstDiff = PgDiff.createDiff(oldDump, newDump)
         val df = testFiles.diff
         // write the diff file
@@ -122,5 +130,7 @@ class DBTest {
                 migratedDump shouldBe newDump
             }
         }
+        dbContainer.dropDB(oldDB)
+        dbContainer.dropDB(newDB)
     }
 }
