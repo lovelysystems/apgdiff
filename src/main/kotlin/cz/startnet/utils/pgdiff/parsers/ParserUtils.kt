@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.schema.PgDatabase
-import java.util.*
 
 /**
  * Parser utilities.

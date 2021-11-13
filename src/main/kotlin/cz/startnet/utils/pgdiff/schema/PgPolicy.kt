@@ -5,8 +5,6 @@
  */
 package cz.startnet.utils.pgdiff.schema
 
-import java.util.*
-
 /**
  *
  * Stores POLICY information.

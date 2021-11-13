@@ -109,7 +109,7 @@ class PgFunction(val name: String, val schema: String) {
                 if (addComma) {
                     sbString.append(',')
                 }
-                sbString.append(argument.dataType.toLowerCase(Locale.ENGLISH))
+                sbString.append(argument.dataType.lowercase(Locale.ENGLISH))
                 addComma = true
             }
             sbString.append(')')

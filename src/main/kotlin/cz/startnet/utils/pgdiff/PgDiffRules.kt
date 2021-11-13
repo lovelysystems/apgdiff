@@ -9,7 +9,6 @@ import cz.startnet.utils.pgdiff.schema.PgRelation
 import cz.startnet.utils.pgdiff.schema.PgRule
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import java.io.PrintWriter
-import java.util.*
 
 /**
  * Diffs rules.
@@ -33,7 +32,7 @@ object PgDiffRules {
 
             // Add new rules
             for (rule in getNewRules(oldRelation, newRelation)) {
-                
+
                 writer.println()
                 writer.println(rule.creationSQL)
             }
@@ -95,8 +94,8 @@ object PgDiffRules {
      * @return list of rules that should be added
      */
     private fun getNewRules(
-        oldRelation: PgRelation<*,*>?,
-        newRelation: PgRelation<*,*>?
+        oldRelation: PgRelation<*, *>?,
+        newRelation: PgRelation<*, *>?
     ): List<PgRule> {
         val list: MutableList<PgRule> = ArrayList()
         if (newRelation != null) {

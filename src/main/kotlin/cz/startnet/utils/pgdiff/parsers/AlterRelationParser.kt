@@ -8,7 +8,6 @@ package cz.startnet.utils.pgdiff.parsers
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.*
 import java.text.MessageFormat
-import java.util.*
 
 
 /**
@@ -220,7 +219,7 @@ object AlterRelationParser : PatternBasedSubParser(
      */
     private fun parseAlterColumn(
         parser: Parser,
-        rel: PgRelation<*,*>,
+        rel: PgRelation<*, *>,
         database: PgDatabase
     ) {
         parser.expectOptional("COLUMN")

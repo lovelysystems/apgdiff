@@ -8,7 +8,8 @@ package cz.startnet.utils.pgdiff.loader
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.parsers.*
 import cz.startnet.utils.pgdiff.schema.PgDatabase
-import java.io.*
+import java.io.BufferedReader
+import java.io.IOException
 import java.text.MessageFormat
 import java.util.regex.Pattern
 

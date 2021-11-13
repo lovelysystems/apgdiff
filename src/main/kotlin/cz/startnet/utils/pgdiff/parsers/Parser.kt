@@ -154,7 +154,7 @@ class Parser(val string: String) {
                 }
                 endPos++
             }
-            val result = string.substring(position, endPos).toLowerCase(
+            val result = string.substring(position, endPos).lowercase(
                 Locale.ENGLISH
             )
             position = endPos
