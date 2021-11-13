@@ -1,5 +1,5 @@
 plugins {
-    id("com.lovelysystems.gradle") version ("1.3.2")
+    id("com.lovelysystems.gradle") version ("1.6.1")
     application
     jacoco
     kotlin("jvm") version "1.5.0"
