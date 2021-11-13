@@ -1,6 +1,6 @@
 # Changes for apgdiff
 
-## unreleased
+## 2021-11-13 / 0.0.1
 
 - run diff on ignored statements, to ensure that the batch script is valid
 - added support for comments on extensions
