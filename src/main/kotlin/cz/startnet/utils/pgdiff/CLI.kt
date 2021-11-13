@@ -11,6 +11,7 @@ import java.nio.charset.Charset
 class CLI : CliktCommand(name = "apgdiff") {
     val inCharsetName by option(help = "Input file charset name").default("UTF-8")
     val outCharsetName by option(help = "Input file charset name").default("UTF-8")
+    val outFile by option(help = "File to write the diff sql script").file()
     val addDefaults by option(
         help = "Whether DEFAULT ... should be added in case new" +
                 " column has NOT NULL constraint. The default value is dropped later."
@@ -29,15 +30,18 @@ class CLI : CliktCommand(name = "apgdiff") {
         )
         val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
         val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))
+        val charset = Charset.forName(outCharsetName) ?: error("charset $outCharsetName not found")
+
         val res = PgDiff.createDiff(
             dumpOld, dumpNew,
             outputIgnoredStatements = outputIgnoredStatements,
             options = arguments
         )
-
-        System.out.writer(Charset.forName(outCharsetName)).use {
+        val writer = outFile?.writer(charset) ?: System.out.writer(charset)
+        writer.use {
             it.write(res.script)
         }
+
         val diff = res.diffIgnored()
         if (diff.isNotEmpty()) {
             System.err.println("CAUTION ignored statements differ:")
