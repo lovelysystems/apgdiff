@@ -1,5 +1,5 @@
 
-DROP VIEW IF EXISTS testview;
+DROP VIEW IF EXISTS testview CASCADE;
 
 CREATE VIEW testview AS
 	SELECT testtable.name,

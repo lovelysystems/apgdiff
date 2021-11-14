@@ -13,11 +13,13 @@ open class DBObject(val objectType: String, val name: String) {
     val ownerSQL: String
         get() = "ALTER $objectType ${quotedIdentifier()} OWNER TO $owner;"
 
-    val commentSQL: String
+    open val commentSQL: String
         get() = "COMMENT ON $objectType ${quotedIdentifier()} IS $comment;"
 
+    // use this property only if the object needs to be dropped immediately, e.g. when ALTER is not implemented
+    // normal drops are done by the drop visitor
     val dropSQL: String
-        get() = "DROP $objectType IF EXISTS ${quotedIdentifier()};"
+        get() = "DROP $objectType IF EXISTS ${quotedIdentifier()} CASCADE;"
 
     fun commentSQL(writer: PrintWriter) {
         writer.println(commentSQL)
@@ -26,11 +28,6 @@ open class DBObject(val objectType: String, val name: String) {
     fun ownerSQL(writer: PrintWriter) {
         writer.println(ownerSQL)
     }
-
-    open fun dropSQL(writer: PrintWriter) {
-        writer.println(dropSQL)
-    }
-
 }
 
 

@@ -5,10 +5,6 @@ ALTER SCHEMA testschema2 OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
 
-DROP TABLE IF EXISTS testtable2;
-
-DROP SEQUENCE IF EXISTS testtable2_id_seq;
-
 CREATE SEQUENCE testtable3_id_seq
 	START WITH 1
 	INCREMENT BY 1
@@ -44,5 +40,6 @@ ALTER TABLE testtable1 OWNER TO postgres;
 
 ALTER SEQUENCE testtable1_id_seq
 	OWNED BY testschema2.testtable1.id;
-
-DROP SCHEMA testschema1 CASCADE;
+DROP TABLE IF EXISTS "public".testtable2;
+DROP SEQUENCE IF EXISTS "public".testtable2_id_seq;
+DROP SCHEMA IF EXISTS testschema1 CASCADE;

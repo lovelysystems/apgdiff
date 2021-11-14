@@ -10,7 +10,6 @@ import com.github.difflib.UnifiedDiffUtils
 import cz.startnet.utils.pgdiff.loader.PgDumpLoader
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
-import java.io.PrintWriter
 
 
 data class PgDiffResult(
@@ -55,7 +54,7 @@ object PgDiff {
             options.isIgnoreSchemaCreation
         )
         val stream = ByteArrayOutputStream()
-        val writer = PrintWriter(stream)
+        val writer = DiffWriter(stream, options)
         val diffDBs = PgDiffDatabases(writer, options, oldDatabase, newDatabase, outputIgnoredStatements)
         diffDBs()
         writer.close()

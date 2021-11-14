@@ -25,5 +25,6 @@ data class PgDiffOptions(
     /**
      * Whether Schema creation should be ignored.
      */
-    val isIgnoreSchemaCreation: Boolean = false
+    val isIgnoreSchemaCreation: Boolean = false,
+    val dropCascade: Boolean = false,
 )

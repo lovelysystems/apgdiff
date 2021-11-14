@@ -92,30 +92,6 @@ object PgDiffSequences {
     }
 
     /**
-     * Outputs statements for dropping of sequences that do not exist anymore.
-     *
-     * @param writer           writer the output should be written to
-     * @param oldSchema        original schema
-     * @param newSchema        new schema
-     */
-    fun dropSequences(
-        writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?
-    ) {
-        if (oldSchema == null) {
-            return
-        }
-
-        // Drop sequences that do not exist in new schema
-        for (sequence in oldSchema.sequences) {
-            if (!newSchema!!.containsSequence(sequence.name)) {
-                writer.println()
-                sequence.dropSQL(writer)
-            }
-        }
-    }
-
-    /**
      * Outputs statement for modified sequences.
      *
      * @param writer           writer the output should be written to

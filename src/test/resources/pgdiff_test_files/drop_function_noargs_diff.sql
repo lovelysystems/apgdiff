@@ -1,2 +1,1 @@
-
-DROP FUNCTION return_one();
+DROP FUNCTION IF EXISTS "public".return_one();

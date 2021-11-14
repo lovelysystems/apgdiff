@@ -68,22 +68,20 @@ object PgDiffViews {
     }
 
     /**
-     * Outputs statements for dropping views.
-     *
-     * @param writer           writer the output should be written to
-     * @param oldSchema        original schema
-     * @param newSchema        new schema
+     * Outputs statements for dropping modified views.
+     * Removed views are handled by the drop visitor
      */
     fun dropViews(
         writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?
+        oldSchema: PgSchema?,
+        newSchema: PgSchema
     ) {
         if (oldSchema == null) {
             return
         }
         for (oldView in oldSchema.views) {
-            val newView = newSchema!!.getView(oldView.name)
-            if (newView == null || isViewModified(oldView, newView)) {
+            val newView = newSchema.getView(oldView.name) ?: continue
+            if (isViewModified(oldView, newView)) {
                 writer.println()
                 writer.println(oldView.dropSQL)
             }

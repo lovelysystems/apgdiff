@@ -1,2 +1,1 @@
-
-DROP SEQUENCE IF EXISTS testseq;
+DROP SEQUENCE IF EXISTS "public".testseq;

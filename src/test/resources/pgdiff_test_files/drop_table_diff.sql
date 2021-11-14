@@ -1,2 +1,1 @@
-
-DROP TABLE IF EXISTS testtable2;
+DROP TABLE IF EXISTS "public".testtable2;

@@ -40,52 +40,6 @@ object PgDiffRules {
     }
 
     /**
-     * Outputs statements for dropping rules.
-     *
-     * @param writer           writer the output should be written to
-     * @param oldSchema        original schema
-     * @param newSchema        new schema
-     */
-    fun dropRules(
-        writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?
-    ) {
-        for (newRelation in newSchema!!.rels) {
-            val oldRelation = oldSchema?.getRelation(newRelation.name)
-
-            // Drop rules that no more exist or are modified
-            for (rule in dropRules(oldRelation, newRelation)) {
-                writer.println()
-                writer.println(rule.dropSQL)
-            }
-        }
-    }
-
-    /**
-     * Returns list of rules that should be dropped.
-     *
-     * @param oldRelation original relation
-     * @param newRelation new relation
-     *
-     * @return list of rules that should be dropped
-     */
-    private fun dropRules(
-        oldRelation: PgRelation<*, *>?,
-        newRelation: PgRelation<*, *>?
-    ): List<PgRule> {
-        val list: MutableList<PgRule> = ArrayList()
-        if (newRelation != null && oldRelation != null) {
-            val newRules = newRelation.rules
-            for (oldRule in oldRelation.rules) {
-                if (!newRules.contains(oldRule)) {
-                    list.add(oldRule)
-                }
-            }
-        }
-        return list
-    }
-
-    /**
      * Returns list of rules that should be added.
      *
      * @param oldRelation original relation

@@ -1,2 +1,1 @@
-
-DROP FUNCTION power_number(integer);
+DROP FUNCTION IF EXISTS "public".power_number(integer);

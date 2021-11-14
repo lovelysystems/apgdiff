@@ -186,28 +186,6 @@ object PgDiffTypes {
     }
 
     /**
-     * Outputs statements for dropping types.
-     *
-     * @param writer           writer the output should be written to
-     * @param oldSchema        original schema
-     * @param newSchema        new schema
-     */
-    fun dropTypes(
-        writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?
-    ) {
-        if (oldSchema == null) {
-            return
-        }
-        for (type in oldSchema.types) {
-            if (!newSchema!!.containsType(type.name)) {
-                writer.println()
-                writer.println(type.dropSQL)
-            }
-        }
-    }
-
-    /**
      * Outputs statements for addition, removal and modifications of type
      * columns.
      *
