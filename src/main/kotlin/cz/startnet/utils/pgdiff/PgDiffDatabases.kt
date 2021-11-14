@@ -2,12 +2,10 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgDatabase
 import java.io.ByteArrayOutputStream
-import java.io.PrintWriter
-import java.nio.charset.Charset
 
 
 class PgDiffDatabases(
-    private val writer: PrintWriter,
+    private val writer: DiffWriter,
     private val arguments: PgDiffOptions,
     private val oldDatabase: PgDatabase,
     private val newDatabase: PgDatabase,
@@ -40,7 +38,11 @@ class PgDiffDatabases(
         createNewExtensions()
         commentExtensions()
         updateSchemas()
-        dropOldSchemas()
+
+        val dropObjectsVisitor = DropObjectsVisitor(newDatabase, writer, arguments.dropCascade)
+        dropObjectsVisitor.accept(oldDatabase)
+
+        // dropOldSchemas()
         if (arguments.isAddTransaction) {
             writer.println()
             writer.println("COMMIT TRANSACTION;")
@@ -112,22 +114,6 @@ class PgDiffDatabases(
 
 
     /**
-     * Drops old schemas that do not exist anymore.
-     */
-    private fun dropOldSchemas() {
-        for (oldSchema in oldDatabase.schemas) {
-            if (newDatabase.getSchema(oldSchema.name) == null) {
-                writer.println()
-                writer.println(
-                    "DROP SCHEMA " + PgDiffUtils.dropIfExists
-                            + PgDiffUtils.getQuotedName(oldSchema.name)
-                            + " CASCADE;"
-                )
-            }
-        }
-    }
-
-    /**
      * Drops old extensions that do not exist anymore.
      */
     private fun dropOldExtensions() {
@@ -151,7 +137,7 @@ class PgDiffDatabases(
                 || newDatabase.schemas[0].name != "public")
         for (newSchema in newDatabase.schemas) {
             val diff = ByteArrayOutputStream()
-            val schemaWriter = PrintWriter(diff, false, Charset.forName(arguments.outCharsetName))
+            val schemaWriter = DiffWriter(diff, arguments)
             val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema != null) {
                 if (oldSchema.comment == null
@@ -159,13 +145,12 @@ class PgDiffDatabases(
                     || oldSchema.comment != null && newSchema.comment != null && oldSchema.comment != newSchema.comment
                 ) {
                     schemaWriter.println()
-                    schemaWriter.print("COMMENT ON SCHEMA ")
-                    schemaWriter.print(
-                        PgDiffUtils.getQuotedName(newSchema.name)
+                    schemaWriter.printStmt(
+                        "COMMENT ON SCHEMA",
+                        PgDiffUtils.getQuotedName(newSchema.name),
+                        "IS",
+                        newSchema.comment!!
                     )
-                    schemaWriter.print(" IS ")
-                    schemaWriter.print(newSchema.comment)
-                    schemaWriter.println(';')
                 } else if (oldSchema.comment != null
                     && newSchema.comment == null
                 ) {
@@ -178,12 +163,6 @@ class PgDiffDatabases(
                 }
             }
             PgDiffTriggers.dropTriggers(
-                schemaWriter, oldSchema, newSchema
-            )
-            PgDiffRules.dropRules(
-                schemaWriter, oldSchema, newSchema
-            )
-            PgDiffFunctions.dropFunctions(
                 schemaWriter, oldSchema, newSchema
             )
             PgDiffViews.dropViews(
@@ -201,12 +180,6 @@ class PgDiffDatabases(
             PgDiffTables.dropClusters(
                 schemaWriter, oldSchema, newSchema
             )
-            PgDiffTables.dropTables(
-                schemaWriter, oldSchema, newSchema
-            )
-            PgDiffSequences.dropSequences(
-                schemaWriter, oldSchema, newSchema
-            )
             PgDiffPolicies.dropPolicies(
                 schemaWriter, oldSchema, newSchema
             )
@@ -218,7 +191,7 @@ class PgDiffDatabases(
             )
             PgDiffTypes.alterTypes(schemaWriter, arguments, oldSchema, newSchema)
             PgDiffTypes.createTypes(schemaWriter, oldSchema, newSchema)
-            PgDiffTypes.dropTypes(schemaWriter, oldSchema, newSchema)
+            // PgDiffTypes.dropTypes(schemaWriter, oldSchema, newSchema)
 
             PgDiffDomains(newSchema, oldSchema, schemaWriter)()
             PgDiffOperators(newSchema, oldSchema, schemaWriter)()

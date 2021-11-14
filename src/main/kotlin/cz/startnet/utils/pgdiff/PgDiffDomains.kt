@@ -12,7 +12,6 @@ class PgDiffDomains(
     operator fun invoke() {
         alter()
         create()
-        drop()
     }
 
     fun alter() {
@@ -69,16 +68,6 @@ class PgDiffDomains(
             if (old == null) {
                 writer.println()
                 new.creationSQL(writer)
-            }
-        }
-    }
-
-    fun drop() {
-        val toDrop = oldSchema?.domains?.filter { !newSchema.domains.containsSame(it) }
-        if (!toDrop.isNullOrEmpty()) {
-            toDrop.forEach {
-                writer.println()
-                it.dropSQL(writer)
             }
         }
     }

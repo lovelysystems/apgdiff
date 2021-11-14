@@ -7,24 +7,13 @@ package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 
-/**
- * Stores rule information.
- *
- * @author jalissonmello
- */
-class PgRule(name: String) : DBObject(name, "RULE") {
+class PgRule(
+    name: String,
+    val relationName: QualifiedName,
+    val event: String,
+    val query: String?,
+) : DBObject("RULE", name) {
 
-    var query: String? = null
-
-    /**
-     * Name of the relation the rule is defined on.
-     */
-    var relationName: String? = null
-
-    /**
-     * event of rule.
-     */
-    var event: String? = null
 
     /**
      * Creates and returns SQL for creation of the view.
@@ -48,7 +37,10 @@ class PgRule(name: String) : DBObject(name, "RULE") {
             sbSQL.append(" ")
             sbSQL.append(query)
             sbSQL.append(";")
-            sbSQL.append(commentSQL)
+            if (comment != null) {
+                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.append(commentSQL)
+            }
             return sbSQL.toString()
         }
 
@@ -64,4 +56,8 @@ class PgRule(name: String) : DBObject(name, "RULE") {
         }
         return equals
     }
+
+    override val commentSQL: String
+        get() = "COMMENT ON RULE ${quotedIdentifier()} ON ${relationName} IS $comment;"
+
 }

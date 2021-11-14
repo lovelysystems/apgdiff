@@ -1,5 +1,5 @@
 
-DROP VIEW IF EXISTS foo;
+DROP VIEW IF EXISTS foo CASCADE;
 
 CREATE VIEW foo AS
 	SELECT table_name.bar AS "Foo's bar"

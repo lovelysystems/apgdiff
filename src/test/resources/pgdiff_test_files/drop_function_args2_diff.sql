@@ -1,2 +1,1 @@
-
-DROP FUNCTION multiply_numbers(integer, integer);
+DROP FUNCTION IF EXISTS "public".multiply_numbers(integer, integer);

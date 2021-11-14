@@ -21,14 +21,11 @@ class PgDiffOperators(
                 if (old == null) {
                     toCreate.add(new)
                 } else if (!old.sameSettings(new)) {
+                    // TODO: implement ALTER OPERATOR
                     toDrop.add(old)
                     toCreate.add(new)
                 }
             }
-            toDrop.addAll(
-                oldSchema.operators.filter { newSchema.getOperator(it.signature) == null }
-            )
-
             if (toDrop.isNotEmpty() || toCreate.isNotEmpty()) {
                 drop(toDrop)
                 create(toCreate)
@@ -50,7 +47,7 @@ class PgDiffOperators(
     fun drop(operators: Collection<PgOperator>) {
         operators.forEach {
             writer.println()
-            it.dropSQL(writer)
+            writer.println(it.dropSQL)
         }
     }
 }

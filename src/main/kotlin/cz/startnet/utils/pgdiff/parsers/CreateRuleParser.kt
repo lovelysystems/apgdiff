@@ -1,18 +1,12 @@
-/**
- * Copyright 2018 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgRule
-import java.text.MessageFormat
+import cz.startnet.utils.pgdiff.schema.toQualifiedName
 
 /**
- * Parses CREATE RULE statements.
- *
- * @author jalissonmello
+CREATE [ OR REPLACE ] RULE name AS ON event
+TO table_name [ WHERE condition ]
+DO [ ALSO | INSTEAD ] { NOTHING | command | ( command ; command ... ) }
  */
 object CreateRuleParser : PatternBasedSubParser(
     "^CREATE[\\s]+RULE[\\s]+.*$"
@@ -22,32 +16,27 @@ object CreateRuleParser : PatternBasedSubParser(
         parser.expectOptional("OR", "REPLACE")
         parser.expect("RULE")
         val ruleName = parser.parseIdentifier()
-        val rule = PgRule(ParserUtils.getObjectName(ruleName))
         parser.expect("AS", "ON")
-        if (parser.expectOptional("INSERT")) {
-            rule.event = "INSERT"
+        val event = if (parser.expectOptional("INSERT")) {
+            "INSERT"
         } else if (parser.expectOptional("UPDATE")) {
-            rule.event = "UPDATE"
+            "UPDATE"
         } else if (parser.expectOptional("DELETE")) {
-            rule.event = "DELETE"
+            "DELETE"
         } else if (parser.expectOptional("SELECT")) {
-            rule.event = "SELECT"
+            "SELECT"
         } else {
-            parser.throwUnsupportedCommand()
+            error("rule event cannot be parsed from ${parser.rest}")
         }
         parser.expect("TO")
-        val relationName = parser.parseIdentifier()
+        val relationName = parser.parseIdentifier().toQualifiedName(ctx.database.defaultSchema.name)
         val query = parser.rest
-        rule.relationName = ParserUtils.getObjectName(relationName)
-        rule.query = query
-        val schemaName = ParserUtils.getSchemaName(ruleName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
-        schema.getRelation(rule.relationName)!!.addRule(rule)
+        val relationSchema = ctx.database.getSchema(relationName.schema)
+            ?: error("cannot resolve schema for rule relation $relationName  in stmt: ${parser.string}")
+
+        val relation = relationSchema.getRelation(relationName.name)
+            ?: error("cannot resolve relation for rule $relationName in stmt: ${parser.string}")
+        val rule = PgRule(ParserUtils.getObjectName(ruleName), relationName, event, query)
+        relation.addRule(rule)
     }
 }

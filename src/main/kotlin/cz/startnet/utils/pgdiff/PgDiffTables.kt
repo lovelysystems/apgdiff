@@ -541,28 +541,6 @@ object PgDiffTables {
     }
 
     /**
-     * Outputs statements for dropping tables.
-     *
-     * @param writer           writer the output should be written to
-     * @param oldSchema        original schema
-     * @param newSchema        new schema
-     */
-    fun dropTables(
-        writer: PrintWriter,
-        oldSchema: PgSchema?, newSchema: PgSchema?
-    ) {
-        if (oldSchema == null) {
-            return
-        }
-        for (table in oldSchema.tables) {
-            if (!newSchema!!.containsTable(table.name)) {
-                writer.println()
-                writer.println(table.dropSQL)
-            }
-        }
-    }
-
-    /**
      * Outputs statements for addition, removal and modifications of table
      * columns.
      *

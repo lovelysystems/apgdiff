@@ -1,2 +1,1 @@
-
-DROP FUNCTION multiply_numbers(smallint, smallint);
+DROP FUNCTION IF EXISTS "public".multiply_numbers(smallint, smallint);

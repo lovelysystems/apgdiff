@@ -12,6 +12,7 @@ class CLI : CliktCommand(name = "apgdiff") {
     val inCharsetName by option(help = "Input file charset name").default("UTF-8")
     val outCharsetName by option(help = "Input file charset name").default("UTF-8")
     val outFile by option(help = "File to write the diff sql script").file()
+    val dropCascade by option(help = "Make objects drops cascading").flag(default = false)
     val addDefaults by option(
         help = "Whether DEFAULT ... should be added in case new" +
                 " column has NOT NULL constraint. The default value is dropped later."
@@ -26,7 +27,8 @@ class CLI : CliktCommand(name = "apgdiff") {
 
     override fun run() {
         val arguments = PgDiffOptions(
-            isAddDefaults = addDefaults
+            isAddDefaults = addDefaults,
+            dropCascade = dropCascade
         )
         val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
         val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))

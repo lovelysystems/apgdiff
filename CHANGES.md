@@ -2,6 +2,9 @@
 
 ## unreleased
 
+- fixed rule creation and drop statements
+- added --drop-cascade option to generate cascading drops
+- optimized diffs by moving more drops to the end of the diff 
 - fixed cross schema owner changes on tables and views
 - allow to set an output file for the diff
 

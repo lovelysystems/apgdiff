@@ -1,2 +1,1 @@
-
-DROP VIEW IF EXISTS testview;
+DROP VIEW IF EXISTS "public".testview;
