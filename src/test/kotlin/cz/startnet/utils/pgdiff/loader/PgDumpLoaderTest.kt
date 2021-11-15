@@ -15,7 +15,7 @@ class PgDumpLoaderTest {
     fun loadSchema(sqlFile: File) {
         javaClass.getResourceAsStream("/loader_test_files/$sqlFile").use {
             PgDumpLoader.loadDatabaseSchema(
-                it.bufferedReader(), false, false
+                it.bufferedReader()
             )
         }
     }

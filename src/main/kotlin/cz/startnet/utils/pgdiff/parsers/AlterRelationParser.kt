@@ -51,7 +51,7 @@ object AlterRelationParser : PatternBasedSubParser(
             val sequence = schema.getSequence(objectName)
             if (sequence != null) {
                 // use the sequence parser since for historical reasons it is also ok to use ALTER TABLE with sequences
-                AlterSequenceParser.parseAlter(sequence, parser, ctx)
+                AlterSequenceParser.parseAlter(sequence, parser)
                 return
             }
             throw RuntimeException(

@@ -18,13 +18,5 @@ data class PgDiffOptions(
      * Whether to ignore whitespace while comparing content of functions.
      */
     val isIgnoreFunctionWhitespace: Boolean = false,
-    /**
-     * Whether Slony triggers should be ignored.
-     */
-    val isIgnoreSlonyTriggers: Boolean = false,
-    /**
-     * Whether Schema creation should be ignored.
-     */
-    val isIgnoreSchemaCreation: Boolean = false,
     val dropCascade: Boolean = false,
 )

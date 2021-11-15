@@ -19,19 +19,12 @@ CreateTableParser : PatternBasedSubParser(
         val tableName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(tableName, ctx.database)
         var schema = ctx.database.getSchema(schemaName)
-        if (schema == null) {
-            if (ctx.ignoreSchemaCreation) {
-                schema = PgSchema(schemaName)
-                ctx.database.addSchema(schema)
-            } else {
-                throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindSchema"), schemaName,
-                        parser.string
-                    )
+            ?: throw RuntimeException(
+                MessageFormat.format(
+                    Resources.getString("CannotFindSchema"), schemaName,
+                    parser.string
                 )
-            }
-        }
+            )
         val table = if (foreign) {
             PgForeignTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
         } else {

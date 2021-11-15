@@ -76,14 +76,10 @@ object CreateTriggerParser : PatternBasedSubParser(
             parser.expectOptional("FUNCTION")
         )
         trigger.function = parser.rest
-        val ignoreSlonyTrigger = (ctx.ignoreSlonyTriggers
-                && ("_slony_logtrigger" == trigger.name || "_slony_denyaccess" == trigger.name))
-        if (!ignoreSlonyTrigger) {
-            val schema = ctx.database.getSchema(
-                ParserUtils.getSchemaName(relationName, ctx.database)
-            )
-            schema!!.getRelation(trigger.relationName)!!.addTrigger(trigger)
-        }
+        val schema = ctx.database.getSchema(
+            ParserUtils.getSchemaName(relationName, ctx.database)
+        )
+        schema!!.getRelation(trigger.relationName)!!.addTrigger(trigger)
     }
 
     private fun parseReferencing(parser: Parser, trigger: PgTrigger): Boolean {

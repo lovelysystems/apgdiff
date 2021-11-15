@@ -44,14 +44,10 @@ object PgDiff {
         options: PgDiffOptions = PgDiffOptions(),
     ): PgDiffResult {
         val oldDatabase = PgDumpLoader.loadDatabaseSchema(
-            oldReader,
-            options.isIgnoreSlonyTriggers,
-            options.isIgnoreSchemaCreation
+            oldReader
         )
         val newDatabase = PgDumpLoader.loadDatabaseSchema(
-            newReader,
-            options.isIgnoreSlonyTriggers,
-            options.isIgnoreSchemaCreation
+            newReader
         )
         val stream = ByteArrayOutputStream()
         val writer = DiffWriter(stream, options)

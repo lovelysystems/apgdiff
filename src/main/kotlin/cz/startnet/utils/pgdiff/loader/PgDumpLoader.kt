@@ -1,8 +1,3 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff.loader
 
 import cz.startnet.utils.pgdiff.Resources
@@ -13,12 +8,8 @@ import java.io.IOException
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
-/**
- * Loads PostgreSQL dump into classes.
- *
- * @author fordfrog
- */
 object PgDumpLoader {
+
     /**
      * Pattern for testing a dollar quoting tag.
      */
@@ -28,30 +19,16 @@ object PgDumpLoader {
     )
 
     /**
-     * / **
      * Storage of unprocessed line part.
      */
     private var lineBuffer: String? = null
 
-    /**
-     * Loads database schema from dump file.
-     *
-     * @param reader                  buffered reader that should be read
-     * @param ignoreSlonyTriggers     whether Slony triggers should be ignored
-     * @param ignoreSchemaCreation    whether schema creation should be ignored
-     *
-     * @return database schema from dump file
-     */
     fun loadDatabaseSchema(
-        reader: BufferedReader,
-        ignoreSlonyTriggers: Boolean,
-        ignoreSchemaCreation: Boolean
+        reader: BufferedReader
     ): PgDatabase {
         val database = PgDatabase()
         val ctx = ParserContext(
-            database,
-            ignoreSchemaCreation,
-            ignoreSlonyTriggers
+            database
         )
         val subParsers = listOf<SubParser>(
             IgnoredStatementParser("^(CREATE|ALTER)[\\s]+OPERATOR[\\s]+(FAMILY|CLASS)[\\s]+.*$"),

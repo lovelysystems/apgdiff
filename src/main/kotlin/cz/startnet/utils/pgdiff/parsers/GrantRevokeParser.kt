@@ -54,7 +54,7 @@ object GrantRevokeParser : PatternBasedSubParser(
             ) || "REFERENCES".equals(privilege, ignoreCase = true)
         ) {
             parseColumns(
-                parser, parser.string
+                parser
             )
         } else {
             null
@@ -77,7 +77,7 @@ object GrantRevokeParser : PatternBasedSubParser(
                     || "REFERENCES".equals(privilege, ignoreCase = true)
                 ) {
                     parseColumns(
-                        parser, parser.string
+                        parser
                     )
                 } else {
                     null
@@ -111,7 +111,7 @@ object GrantRevokeParser : PatternBasedSubParser(
             || "ALL FUNCTIONS IN SCHEMA".equals(objectType, ignoreCase = true)
         ) {
             parseConsumeFunctionSignature(
-                parser, parser.string
+                parser
             )
         }
         identifiers.add(identifier)
@@ -122,7 +122,7 @@ object GrantRevokeParser : PatternBasedSubParser(
                     .equals(objectType, ignoreCase = true)
             ) {
                 parseConsumeFunctionSignature(
-                    parser, parser.string
+                    parser
                 )
             }
             identifiers.add(identifier)
@@ -289,15 +289,13 @@ object GrantRevokeParser : PatternBasedSubParser(
     }
 
     private fun parseConsumeFunctionSignature(
-        parser: Parser,
-        statement: String
+        parser: Parser
     ) {
         parser.parseFunctionArguments()
     }
 
     private fun parseColumns(
-        parser: Parser,
-        statement: String
+        parser: Parser
     ): List<String>? {
         val result: MutableList<String> = ArrayList()
         val present = parser.expectOptional("(")

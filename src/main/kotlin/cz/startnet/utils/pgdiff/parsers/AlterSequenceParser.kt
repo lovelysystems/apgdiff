@@ -47,14 +47,14 @@ object AlterSequenceParser : PatternBasedSubParser(
                     parser.string
                 )
             )
-        parseAlter(sequence, parser, ctx)
+        parseAlter(sequence, parser)
     }
 
 
     /**
      * Parses just the alter definition after ALTER SEQUENCE or ALTER TABLE, since it is allowed to use ALTER TABLE
      */
-    fun parseAlter(sequence: PgSequence, parser: Parser, ctx: ParserContext) {
+    fun parseAlter(sequence: PgSequence, parser: Parser) {
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("OWNER", "TO")) {
                 sequence.owner = parser.parseIdentifier()
