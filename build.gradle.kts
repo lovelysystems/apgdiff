@@ -1,7 +1,7 @@
 plugins {
     id("com.lovelysystems.gradle") version ("1.6.1")
     application
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.4.2"
     kotlin("jvm") version "1.5.31"
 }
 
@@ -10,11 +10,6 @@ repositories {
 }
 
 group = "com.lovelysystems"
-
-jacoco {
-    toolVersion = "0.8.6"
-    reportsDirectory.set(buildDir.resolve("coverage"))
-}
 
 dependencies {
     implementation("io.github.java-diff-utils:java-diff-utils:4.5")
@@ -33,19 +28,6 @@ application {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-    reports {
-        xml.isEnabled = false
-        csv.isEnabled = false
-        html.destination = file(buildDir.resolve("coverage/html"))
-    }
-}
-
-tasks.check {
-    dependsOn(tasks.jacocoTestReport)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
