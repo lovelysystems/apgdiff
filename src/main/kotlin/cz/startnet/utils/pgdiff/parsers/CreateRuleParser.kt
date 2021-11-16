@@ -36,7 +36,7 @@ object CreateRuleParser : PatternBasedSubParser(
 
         val relation = relationSchema.getRelation(relationName.name)
             ?: error("cannot resolve relation for rule $relationName in stmt: ${parser.string}")
-        val rule = PgRule(ParserUtils.getObjectName(ruleName), relationName, event, query)
+        val rule = PgRule(ParserUtils.getObjectName(ruleName), relationName, event, query, parser.statementNum)
         relation.addRule(rule)
     }
 }

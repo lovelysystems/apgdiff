@@ -17,7 +17,7 @@ private fun Parser.optionalDefinition(name: String): String? {
 fun Parser.parseOperatorSignature(ctx: ParserContext): PgOperator {
     val objectName = ctx.database.getSchemaObjectName(parseIdentifier())
     val schema = ctx.database.getSchema(objectName)
-    val tmpOperator = PgOperator(objectName.name)
+    val tmpOperator = PgOperator(objectName.name, 0)
     expect("(")
     tmpOperator.leftType = parseDataType()
     expect(",")
@@ -46,7 +46,7 @@ object CreateOperatorParser : PatternBasedSubParser(
         parser.expect("CREATE", "OPERATOR")
         val objectName = ctx.database.getSchemaObjectName(parser.parseIdentifier())
         val schema = ctx.database.getSchema(objectName)
-        val operator = PgOperator(objectName.name)
+        val operator = PgOperator(objectName.name, parser.statementNum)
         schema.operators.add(operator)
         parser.expect("(")
         parser.expect("FUNCTION", "=")

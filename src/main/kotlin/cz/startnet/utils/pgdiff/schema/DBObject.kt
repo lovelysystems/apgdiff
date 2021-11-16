@@ -3,7 +3,7 @@ package cz.startnet.utils.pgdiff.schema
 import cz.startnet.utils.pgdiff.PgDiffUtils
 import java.io.PrintWriter
 
-open class DBObject(val objectType: String, val name: String) {
+open class DBObject(val objectType: String, val name: String, val position: Int) {
 
     var comment: String? = null
     var owner: String? = null

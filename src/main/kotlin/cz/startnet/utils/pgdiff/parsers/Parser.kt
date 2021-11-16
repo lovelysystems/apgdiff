@@ -19,7 +19,7 @@ fun interface SubParser {
  *
  * @author fordfrog
  */
-class Parser(val string: String) {
+class Parser(val string: String, val statementNum:Int=0) {
 
     /**
      * Current position.

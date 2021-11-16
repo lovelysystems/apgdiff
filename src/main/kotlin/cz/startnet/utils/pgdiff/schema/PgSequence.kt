@@ -7,7 +7,7 @@ package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 
-class PgSequence(name: String) : DBObject("SEQUENCE", name) {
+class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, position) {
     /**
      * Value for CACHE or null if no value is specified.
      */

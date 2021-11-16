@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- order schemas in diffs by first occurrence of a relation to solve dependency issues
 - fixed rule creation and drop statements
 - added --drop-cascade option to generate cascading drops
 - optimized diffs by moving more drops to the end of the diff 

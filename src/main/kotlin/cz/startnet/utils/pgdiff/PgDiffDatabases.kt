@@ -133,9 +133,16 @@ class PgDiffDatabases(
      * Updates objects in schemas.
      */
     private fun updateSchemas() {
-        val setSearchPath = (newDatabase.schemas.size > 1
-                || newDatabase.schemas[0].name != "public")
-        for (newSchema in newDatabase.schemas) {
+        // order schemas by positions of the first relation, to order by schema dependencies
+        // TODO: a more safe way would be create all objects based on their position
+        val schemas = newDatabase.schemas.sortedBy {
+            if (it.rels.isNotEmpty()) {
+                it.rels.minOf { it.position }
+            } else {
+                0
+            }
+        }
+        for (newSchema in schemas) {
             val diff = ByteArrayOutputStream()
             val schemaWriter = DiffWriter(diff, arguments)
             val oldSchema = oldDatabase.getSchema(newSchema.name)
@@ -256,6 +263,8 @@ class PgDiffDatabases(
             schemaWriter.flush()
             val diffString = diff.toString(arguments.outCharsetName)
             if (diffString.isNotEmpty()) {
+                val setSearchPath = (newDatabase.schemas.size > 1
+                        || newDatabase.schemas[0].name != "public")
                 val searchPathHelper: SearchPathHelper = if (setSearchPath) {
                     SearchPathHelper(
                         "SET search_path = "

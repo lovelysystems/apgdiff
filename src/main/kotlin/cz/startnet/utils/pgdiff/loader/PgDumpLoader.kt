@@ -64,10 +64,10 @@ object PgDumpLoader {
             CreatePolicyParser,
             CreateRuleParser
         )
-
         var statement = getWholeStatement(reader)
+        var statementNum = 1
         while (statement != null) {
-            val parser = Parser(statement)
+            val parser = Parser(statement, statementNum = statementNum)
             val matchedSubParser = subParsers.firstOrNull {
                 it(parser, ctx)
             }
@@ -75,6 +75,7 @@ object PgDumpLoader {
                 database.addIgnoredStatement(statement)
             }
             statement = getWholeStatement(reader)
+            statementNum += 1
         }
         return database
     }

@@ -42,9 +42,9 @@ object CreateViewParser : PatternBasedSubParser(
         val query = parser.rest!!
 
         val view = if (materialized) {
-            PgMaterializedView(ParserUtils.getObjectName(viewName))
+            PgMaterializedView(ParserUtils.getObjectName(viewName), parser.statementNum)
         } else {
-            PgView(ParserUtils.getObjectName(viewName))
+            PgView(ParserUtils.getObjectName(viewName), parser.statementNum)
         }
 
         view.isTemporary = temporary

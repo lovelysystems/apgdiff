@@ -1,4 +1,12 @@
 
+SET search_path = data, pg_catalog;
+CREATE POLICY no_private ON sub_tasks FOR ALL TO anonymous, webuser;
+CREATE POLICY only_evens ON sub_tasks FOR ALL TO PUBLIC
+USING (
+  ((id % 2) = 0)
+);
+CREATE POLICY only_owners ON sub_tasks FOR ALL TO PUBLIC;
+
 SET search_path = public, pg_catalog;
 CREATE POLICY check_evens ON todos FOR ALL TO PUBLIC
 WITH CHECK (
@@ -12,11 +20,3 @@ WITH CHECK (
   ((id % 2) = 0)
 );
 CREATE POLICY only_owners ON todos FOR ALL TO PUBLIC;
-
-SET search_path = data, pg_catalog;
-CREATE POLICY no_private ON sub_tasks FOR ALL TO anonymous, webuser;
-CREATE POLICY only_evens ON sub_tasks FOR ALL TO PUBLIC
-USING (
-  ((id % 2) = 0)
-);
-CREATE POLICY only_owners ON sub_tasks FOR ALL TO PUBLIC;

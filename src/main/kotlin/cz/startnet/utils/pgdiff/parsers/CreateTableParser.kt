@@ -26,9 +26,9 @@ CreateTableParser : PatternBasedSubParser(
                 )
             )
         val table = if (foreign) {
-            PgForeignTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
+            PgForeignTable(ParserUtils.getObjectName(tableName), ctx.database, schema, parser.statementNum)
         } else {
-            PgTable(ParserUtils.getObjectName(tableName), ctx.database, schema)
+            PgTable(ParserUtils.getObjectName(tableName), ctx.database, schema, parser.statementNum)
         }
 
         table.isUnlogged = unlogged

@@ -2,7 +2,7 @@ package cz.startnet.utils.pgdiff.schema
 
 import java.io.PrintWriter
 
-class PgOperator(name: String) : DBObject("OPERATOR", name) {
+class PgOperator(name: String, position: Int) : DBObject("OPERATOR", name, position) {
 
     companion object {
         const val NONE = "NONE"
