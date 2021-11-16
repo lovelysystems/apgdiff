@@ -81,20 +81,17 @@ object PgDiffTables {
         newSchema: PgSchema
     ) {
         for (newTable in newSchema.tables) {
-            if (oldSchema == null
-                || !oldSchema.containsTable(newTable.name)
-            ) {
-                continue
-            }
-            val oldTable = oldSchema.getTable(newTable.name)
-            updateTableColumns(
-                writer, arguments, oldTable, newTable
-            )
+            val oldTable = oldSchema?.getTable(newTable.name)
+
+            // pg_dump dumps sequences separately, so we need to generate the sequence also if the old table is not there
+            addAlterGenerated(writer, oldTable, newTable)
+
+            if (oldTable == null) continue
+            updateTableColumns(writer, arguments, oldTable, newTable)
             checkInherits(writer, oldTable, newTable, newSchema)
             addInheritedColumnDefaults(writer, oldTable, newTable)
             checkTablespace(writer, oldTable, newTable)
             addAlterStatistics(writer, oldTable, newTable)
-            addAlterGenerated(writer, oldTable, newTable)
             addAlterStorage(writer, oldTable, newTable)
             alterComments(writer, oldTable, newTable)
             alterOwnerTo(writer, oldTable, newTable)
@@ -152,10 +149,11 @@ object PgDiffTables {
      */
     private fun addAlterGenerated(
         writer: PrintWriter,
-        oldTable: PgTableBase?, newTable: PgTableBase
+        oldTable: PgTableBase?,
+        newTable: PgTableBase
     ) {
         for (newColumn in newTable.columns) {
-            val oldColumn = oldTable!!.getColumn(newColumn.name)
+            val oldColumn = oldTable?.getColumn(newColumn.name)
             val oldGenerated = oldColumn?.generated
             val newGenerated = newColumn.generated
             if (newGenerated == null && oldGenerated != null) {
@@ -256,13 +254,15 @@ object PgDiffTables {
      */
     private fun addDropTableColumns(
         statements: MutableList<String>,
-        oldTable: PgTableBase?, newTable: PgTableBase?
+        oldTable: PgTableBase,
+        newTable: PgTableBase,
+        dropCascade: Boolean
     ) {
-        for (column in oldTable!!.columns) {
-            if (!newTable!!.containsColumn(column.name)) {
+        val cascade = if (dropCascade) " CASCADE" else ""
+        for (column in oldTable.columns) {
+            if (!newTable.containsColumn(column.name)) {
                 statements.add(
-                    "\tDROP COLUMN " + PgDiffUtils.dropIfExists
-                            + PgDiffUtils.getQuotedName(column.name)
+                    "\tDROP COLUMN IF EXISTS ${PgDiffUtils.getQuotedName(column.name)}$cascade"
                 )
             }
         }
@@ -556,7 +556,10 @@ object PgDiffTables {
     ) {
         val statements: MutableList<String> = ArrayList()
         val dropDefaultsColumns: MutableList<PgColumn> = ArrayList()
-        addDropTableColumns(statements, oldTable, newTable)
+        if (oldTable != null) {
+            addDropTableColumns(statements, oldTable, newTable, arguments.dropCascade)
+        }
+
         addCreateTableColumns(
             statements, arguments, oldTable, newTable, dropDefaultsColumns
         )

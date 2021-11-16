@@ -28,6 +28,10 @@ open class DBObject(val objectType: String, val name: String, val position: Int)
     fun ownerSQL(writer: PrintWriter) {
         writer.println(ownerSQL)
     }
+
+    override fun toString(): String {
+        return "DBObject($objectType $name)"
+    }
 }
 
 
