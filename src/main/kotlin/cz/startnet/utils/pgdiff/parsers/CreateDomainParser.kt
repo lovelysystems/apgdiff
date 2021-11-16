@@ -18,7 +18,7 @@ object CreateDomainParser : PatternBasedSubParser(
         parser.expect("CREATE", "DOMAIN")
         val objectName = ctx.database.getSchemaObjectName(parser.parseIdentifier())
         val schema = ctx.database.getSchema(objectName)
-        val domain = PgDomain(objectName.name)
+        val domain = PgDomain(objectName.name, parser.statementNum)
         schema.domains.add(domain)
         parser.expectOptional("AS")
         domain.dataType = parser.parseIdentifier()

@@ -13,7 +13,7 @@ object CreateSequenceParser : PatternBasedSubParser(
     override fun parse(parser: Parser, ctx: ParserContext) {
         parser.expect("CREATE", "SEQUENCE")
         val sequenceName = parser.parseIdentifier()
-        val sequence = PgSequence(ParserUtils.getObjectName(sequenceName))
+        val sequence = PgSequence(ParserUtils.getObjectName(sequenceName), parser.statementNum)
         val schemaName = ParserUtils.getSchemaName(sequenceName, ctx.database)
         val schema = ctx.database.getSchema(schemaName)
             ?: throw RuntimeException(

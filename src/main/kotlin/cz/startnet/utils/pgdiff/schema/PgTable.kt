@@ -6,8 +6,8 @@ sealed class PgTableBase(
     name: String,
     objectType: String,
     private val database: PgDatabase,
-    private val schema: PgSchema
-) : PgRelation<PgTableBase, PgColumn>(name, objectType) {
+    private val schema: PgSchema, position: Int
+) : PgRelation<PgTableBase, PgColumn>(name, objectType, position) {
     /**
      * List of inheritedColumns defined on the table.
      */
@@ -331,6 +331,10 @@ sealed class PgTableBase(
 
 }
 
-class PgTable(name: String, database: PgDatabase, schema: PgSchema) : PgTableBase(name, "TABLE", database, schema)
-class PgForeignTable(name: String, database: PgDatabase, schema: PgSchema) :
-    PgTableBase(name, "FOREIGN TABLE", database, schema)
+class PgTable(name: String, database: PgDatabase, schema: PgSchema, position: Int) : PgTableBase(
+    name, "TABLE", database, schema,
+    position
+)
+
+class PgForeignTable(name: String, database: PgDatabase, schema: PgSchema, position: Int) :
+    PgTableBase(name, "FOREIGN TABLE", database, schema, position)

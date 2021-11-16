@@ -15,7 +15,7 @@ data class DomainConstraint(val name: String, val check: String) {
 }
 
 
-class PgDomain(name: String) : DBObject("DOMAIN", name) {
+class PgDomain(name: String, position: Int) : DBObject("DOMAIN", name, position) {
 
     var default: String? = null
     var dataType: String? = null

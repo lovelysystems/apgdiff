@@ -2,7 +2,7 @@ package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
 
-class PgType(name: String) : PgRelation<PgType, PgTypeColumn>(name, "TYPE") {
+class PgType(name: String, position: Int) : PgRelation<PgType, PgTypeColumn>(name, "TYPE", position) {
 
     /**
      * List of columns defined on the type

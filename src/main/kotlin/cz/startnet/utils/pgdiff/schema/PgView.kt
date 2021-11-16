@@ -13,7 +13,10 @@ import java.util.*
  *
  * @author fordfrog
  */
-sealed class PgViewBase(name: String, objectType: String) : PgRelation<PgViewBase, PGViewColumn>(name, objectType) {
+sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRelation<PgViewBase, PGViewColumn>(
+    name, objectType,
+    position
+) {
     /**
      * Were column names explicitly declared as part of the view?
      */
@@ -192,5 +195,5 @@ sealed class PgViewBase(name: String, objectType: String) : PgRelation<PgViewBas
 }
 
 
-class PgView(name: String) : PgViewBase(name, "VIEW")
-class PgMaterializedView(name: String) : PgViewBase(name, "MATERIALIZED VIEW")
+class PgView(name: String, position: Int) : PgViewBase(name, "VIEW", position)
+class PgMaterializedView(name: String, position: Int) : PgViewBase(name, "MATERIALIZED VIEW", position)

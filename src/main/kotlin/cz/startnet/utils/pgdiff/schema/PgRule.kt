@@ -11,8 +11,8 @@ class PgRule(
     name: String,
     val relationName: QualifiedName,
     val event: String,
-    val query: String?,
-) : DBObject("RULE", name) {
+    val query: String?, position: Int,
+) : DBObject("RULE", name, position) {
 
 
     /**

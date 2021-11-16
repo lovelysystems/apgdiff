@@ -18,8 +18,11 @@ import cz.startnet.utils.pgdiff.PgDiffUtils
  * p = partitioned table,
  * I = partitioned index
  */
-sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>>(name: String, objectType: String) :
-    DBObject(objectType, name) {
+sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>>(
+    name: String, objectType: String,
+    position: Int
+) :
+    DBObject(objectType, name, position) {
 
     /**
      * List of columns defined on the relation.

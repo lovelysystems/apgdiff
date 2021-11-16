@@ -15,7 +15,7 @@ object CreateTypeParser : PatternBasedSubParser(
         parser.expect("CREATE", "TYPE")
         val objectName = ctx.database.getSchemaObjectName(parser.parseIdentifier())
         val schema = ctx.database.getSchema(objectName)
-        val type = PgType(objectName.name)
+        val type = PgType(objectName.name, parser.statementNum)
         schema.addType(type)
         parser.expect("AS")
         if (parser.expectOptional("ENUM")) {
