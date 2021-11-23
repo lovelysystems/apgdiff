@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import java.nio.charset.Charset
@@ -24,21 +25,33 @@ class CLI : CliktCommand(name = "apgdiff") {
     val oldDumpFile by argument(help = "Path to the original dump file").file(mustBeReadable = true)
     val newDumpFile by argument(help = "Path to the new dump file").file(mustBeReadable = true)
 
+    val schemas: List<String> by option(
+        "-n",
+        "--schema",
+        help = "diff the specified schema(s) only. diffs all if not given",
+        metavar = "PATTERN"
+    ).multiple()
+
+    val excludeSchemas: List<String> by option(
+        "-N",
+        "--exclude-schema",
+        help = "do NOT diff the specified schema(s)",
+        metavar = "PATTERN"
+    ).multiple()
+
 
     override fun run() {
         val arguments = PgDiffOptions(
             isAddDefaults = addDefaults,
-            dropCascade = dropCascade
+            dropCascade = dropCascade,
+            outputIgnoredStatements = outputIgnoredStatements,
+            excludeSchemas = excludeSchemas,
         )
         val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
         val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))
         val charset = Charset.forName(outCharsetName) ?: error("charset $outCharsetName not found")
 
-        val res = PgDiff.createDiff(
-            dumpOld, dumpNew,
-            outputIgnoredStatements = outputIgnoredStatements,
-            options = arguments
-        )
+        val res = PgDiff(arguments).createDiff(dumpOld, dumpNew)
         val writer = outFile?.writer(charset) ?: System.out.writer(charset)
         writer.use {
             it.write(res.script)

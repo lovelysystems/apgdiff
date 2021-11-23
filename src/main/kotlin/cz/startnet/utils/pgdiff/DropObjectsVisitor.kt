@@ -5,11 +5,16 @@ import cz.startnet.utils.pgdiff.schema.*
 /**
  * A visitor that prints drop statements for any objects that are absent in the new database
  */
-class DropObjectsVisitor(val newDB: PgDatabase, val writer: DiffWriter, val cascade: Boolean) : WalkingVisitor() {
+class DropObjectsVisitor(
+    val newDB: PgDatabase,
+    val writer: DiffWriter,
+    val options: PgDiffOptions,
+) : WalkingVisitor() {
 
     lateinit var newSchema: PgSchema
 
     override fun visit(o: PgSchema) {
+        if (!options.schemaIncluded(o.name)) return
         newDB.getSchema(o.name)?.also {
             newSchema = it
             super.visit(o)
@@ -89,7 +94,7 @@ class DropObjectsVisitor(val newDB: PgDatabase, val writer: DiffWriter, val casc
     }
 
     private fun printDropStmt(vararg parts: String) {
-        if (cascade)
+        if (options.dropCascade)
             writer.printStmt("DROP", *parts, "CASCADE")
         else
             writer.printStmt("DROP", *parts)

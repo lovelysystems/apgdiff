@@ -32,16 +32,16 @@ data class PgDiffResult(
 }
 
 
-object PgDiff {
+class PgDiff(
+    private val options: PgDiffOptions = PgDiffOptions()
+) {
 
     /**
      * Creates diff on the two database schemas.
      */
     fun createDiff(
         oldReader: BufferedReader,
-        newReader: BufferedReader,
-        outputIgnoredStatements: Boolean = false,
-        options: PgDiffOptions = PgDiffOptions(),
+        newReader: BufferedReader
     ): PgDiffResult {
         val oldDatabase = PgDumpLoader.loadDatabaseSchema(
             oldReader
@@ -51,7 +51,7 @@ object PgDiff {
         )
         val stream = ByteArrayOutputStream()
         val writer = DiffWriter(stream, options)
-        val diffDBs = PgDiffDatabases(writer, options, oldDatabase, newDatabase, outputIgnoredStatements)
+        val diffDBs = PgDiffDatabases(writer, options, oldDatabase, newDatabase)
         diffDBs()
         writer.close()
         return PgDiffResult(

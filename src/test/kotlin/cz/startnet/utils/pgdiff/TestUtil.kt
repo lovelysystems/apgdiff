@@ -45,7 +45,7 @@ class SQLDiffFilesArgumentsProvider : ArgumentsProvider {
 }
 
 fun PgDiff.createDiff(oldDump: String, newDump: String = oldDump): PgDiffResult {
-    return PgDiff.createDiff(
+    return createDiff(
         oldDump.byteInputStream().bufferedReader(),
         newDump.byteInputStream().bufferedReader()
     )

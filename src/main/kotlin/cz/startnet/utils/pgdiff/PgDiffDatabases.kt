@@ -8,8 +8,7 @@ class PgDiffDatabases(
     private val writer: DiffWriter,
     private val arguments: PgDiffOptions,
     private val oldDatabase: PgDatabase,
-    private val newDatabase: PgDatabase,
-    private val outputIgnoredStatements: Boolean = false
+    private val newDatabase: PgDatabase
 ) {
 
     /**
@@ -39,15 +38,14 @@ class PgDiffDatabases(
         commentExtensions()
         updateSchemas()
 
-        val dropObjectsVisitor = DropObjectsVisitor(newDatabase, writer, arguments.dropCascade)
+        val dropObjectsVisitor = DropObjectsVisitor(newDatabase, writer, arguments)
         dropObjectsVisitor.accept(oldDatabase)
 
-        // dropOldSchemas()
         if (arguments.isAddTransaction) {
             writer.println()
             writer.println("COMMIT TRANSACTION;")
         }
-        if (outputIgnoredStatements) {
+        if (arguments.outputIgnoredStatements) {
             if (oldDatabase.ignoredStatements.isNotEmpty()) {
                 writer.println()
                 writer.print("/* ")
@@ -82,6 +80,7 @@ class PgDiffDatabases(
      */
     private fun createNewSchemas() {
         for (newSchema in newDatabase.schemas) {
+            if (!arguments.schemaIncluded(newSchema.name)) continue
             val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema == null) {
                 writer.println()
@@ -143,6 +142,7 @@ class PgDiffDatabases(
             }
         }
         for (newSchema in schemas) {
+            if (!arguments.schemaIncluded(newSchema.name)) continue
             val diff = ByteArrayOutputStream()
             val schemaWriter = DiffWriter(diff, arguments)
             val oldSchema = oldDatabase.getSchema(newSchema.name)
