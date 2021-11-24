@@ -29,14 +29,14 @@ class CLI : CliktCommand(name = "apgdiff") {
         "-n",
         "--schema",
         help = "diff the specified schema(s) only. diffs all if not given",
-        metavar = "PATTERN"
+        metavar = "REGEX_PATTERN"
     ).multiple()
 
     val excludeSchemas: List<String> by option(
         "-N",
         "--exclude-schema",
         help = "do NOT diff the specified schema(s)",
-        metavar = "PATTERN"
+        metavar = "REGEX_PATTERN"
     ).multiple()
 
 
