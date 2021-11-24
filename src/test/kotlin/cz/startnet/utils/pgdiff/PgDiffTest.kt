@@ -20,7 +20,7 @@ class PgDiffTest {
     @ArgumentsSource(SQLDiffFilesArgumentsProvider::class)
     fun runDiffSameOriginal(testFiles: SQLDiffTestFiles) {
         val dump = testFiles.old.readText()
-        val diff = PgDiff.createDiff(dump, dump)
+        val diff = PgDiff().createDiff(dump, dump)
         diff.script.shouldBeBlank()
         diff.diffIgnored().shouldBeEmpty()
     }
@@ -34,7 +34,7 @@ class PgDiffTest {
     @ArgumentsSource(SQLDiffFilesArgumentsProvider::class)
     fun runDiffSameNew(testFiles: SQLDiffTestFiles) {
         val dump = testFiles.new.readText()
-        val diff = PgDiff.createDiff(dump)
+        val diff = PgDiff().createDiff(dump)
         diff.shouldHaveNoDiff()
     }
 
@@ -48,7 +48,7 @@ class PgDiffTest {
     fun runDiff(testFiles: SQLDiffTestFiles) {
         val old = testFiles.old.readText()
         val new = testFiles.new.readText()
-        val diff = PgDiff.createDiff(old, new)
+        val diff = PgDiff().createDiff(old, new)
         diff.diffIgnored().joinToString("\n").shouldBeEmpty()
     }
 
@@ -56,7 +56,7 @@ class PgDiffTest {
     fun testIgnoredDiffer() {
         val old = "CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname 'foodb');"
         val new = "CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname 'bardb');"
-        val diff = PgDiff.createDiff(old, new)
+        val diff = PgDiff().createDiff(old, new)
         diff.script.shouldBeBlank()
         diff.diffIgnored().joinToString("\n") shouldBe """
             --- old
@@ -83,7 +83,7 @@ class PgDiffTest {
                     end;
                     ${'$'}${'$'};
             """.trimIndent()
-        val diff = PgDiff.createDiff(old, new)
+        val diff = PgDiff().createDiff(old, new)
         diff.script shouldContain ", drop_before boolean DEFAULT true)"
     }
 
@@ -93,9 +93,24 @@ class PgDiffTest {
             CREATE OPERATOR FAMILY internal.point_ops USING btree;
             ALTER OPERATOR FAMILY internal.point_ops USING btree OWNER TO postgres;
         """.trimIndent()
-        val diff = PgDiff.createDiff(dump)
+        val diff = PgDiff().createDiff(dump)
         diff.shouldHaveNoDiff()
         diff.ignoredNew.size shouldBe 2
+    }
+
+    @Test
+    fun `excluded schemas should not be created or dropped`() {
+        val pgDiff = PgDiff(options = PgDiffOptions(excludeSchemas = listOf("fe")))
+        pgDiff.createDiff("", "create schema fe;").shouldHaveNoDiff()
+        pgDiff.createDiff("create schema fe;", "").shouldHaveNoDiff()
+
+        pgDiff.createDiff(
+            "", """
+            create schema fe;
+            create table fe.t(x int);
+            """.trimIndent()
+        ).shouldHaveNoDiff()
+
     }
 
 }
