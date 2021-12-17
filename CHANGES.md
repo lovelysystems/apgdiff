@@ -1,6 +1,6 @@
 # Changes for apgdiff
 
-## unreleased
+## 2021-12-17 / 0.0.2
 
 - allow to specify included and excluded schemas
 - fixed an issue which caused identity upon table creation to be normal columns
