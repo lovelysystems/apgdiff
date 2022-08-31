@@ -22,6 +22,12 @@ runtime only libc.
 docker run --rm lovelysystems/apgdiff:dev --help
 ```
 
+Note that this native image is only compiled towards the platform the docker build is running on. So for example if you
+build on an M1 Mac it will generate an arm64 executable.
+
+There is currently no cross compilation possible directly by `native-image`
+see <https://github.com/oracle/graal/issues/407>
+
 # Credits
 
 This project is a kotlin rewrite of https://github.com/netwo-io/apgdiff . The

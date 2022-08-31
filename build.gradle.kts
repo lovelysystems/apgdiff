@@ -1,5 +1,5 @@
 plugins {
-    id("com.lovelysystems.gradle") version ("1.6.1")
+    id("com.lovelysystems.gradle") version ("1.8.1")
     application
     id("org.jetbrains.kotlinx.kover") version "0.4.2"
     kotlin("jvm") version "1.5.31"
@@ -14,7 +14,7 @@ group = "com.lovelysystems"
 dependencies {
     implementation("io.github.java-diff-utils:java-diff-utils:4.5")
     implementation("com.github.ajalt.clikt:clikt:3.3.0")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation(kotlin("test-junit5"))
     // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
     testImplementation("org.testcontainers:testcontainers:1.15.2")
