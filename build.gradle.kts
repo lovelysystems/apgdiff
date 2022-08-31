@@ -2,7 +2,7 @@ plugins {
     id("com.lovelysystems.gradle") version ("1.8.1")
     application
     id("org.jetbrains.kotlinx.kover") version "0.4.2"
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.7.10"
 }
 
 repositories {
@@ -17,7 +17,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation(kotlin("test-junit5"))
     // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
-    testImplementation("org.testcontainers:testcontainers:1.15.2")
+    testImplementation("org.testcontainers:testcontainers:1.17.3")
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
 }
 
@@ -31,7 +31,7 @@ tasks.withType<Test> {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 val fatJar by tasks.creating(Jar::class) {

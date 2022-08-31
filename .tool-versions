@@ -1,0 +1,4 @@
+# this file gets used by asdf and uses a symbolic version
+# create a symlink named 17 in ~/.asdf/installs/java to the 17 version you want to use
+# then run `asdf reshim java`
+java 17

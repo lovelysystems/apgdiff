@@ -1,5 +1,9 @@
 # Changes for apgdiff
 
+## unreleased
+
+- upgraded gradle, kotlin and build compat to java 17
+
 ## 2021-12-17 / 0.0.2
 
 - allow to specify included and excluded schemas
