@@ -1,8 +1,8 @@
 plugins {
-    id("com.lovelysystems.gradle") version ("1.8.1")
+    id("com.lovelysystems.gradle") version ("1.11.5")
     application
-    id("org.jetbrains.kotlinx.kover") version "0.4.2"
-    kotlin("jvm") version "1.7.10"
+    id("org.jetbrains.kotlinx.kover") version "0.7.3"
+    kotlin("jvm") version "1.9.0"
 }
 
 repositories {
@@ -17,8 +17,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation(kotlin("test-junit5"))
     // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
-    testImplementation("org.testcontainers:testcontainers:1.17.3")
+    testImplementation("org.testcontainers:testcontainers:1.18.3")
     testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
+
+    implementation("org.slf4j:slf4j-api:2.0.7")
+    testImplementation("ch.qos.logback:logback-classic:1.4.11")
 }
 
 application {
@@ -54,7 +57,8 @@ val fatJar by tasks.creating(Jar::class) {
 
 lovely {
     gitProject()
-    dockerProject("lovelysystems/apgdiff")
-    dockerFiles.from(tasks["fatJar"].outputs)
+    dockerProject("lovelysystems/apgdiff") {
+        from(tasks["fatJar"].outputs)
+    }
 }
 

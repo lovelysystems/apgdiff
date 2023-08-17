@@ -33,10 +33,10 @@ class VanillaDBContainer(imageName: String) :
         super.configure()
     }
 
-    private fun exec(vararg command: String): Container.ExecResult {
+    fun exec(vararg command: String): Container.ExecResult {
         return execInContainer(*command).let {
             if (it.exitCode != 0) {
-                throw error(it.stderr)
+                error(it.stderr)
             }
             it
         }
@@ -69,7 +69,7 @@ class VanillaDBContainer(imageName: String) :
 @Execution(ExecutionMode.CONCURRENT)
 class DBTest {
 
-    private val dbContainer = VanillaDBContainer("postgres:12.6").withFileSystemBind(
+    private val dbContainer = VanillaDBContainer("postgres:14.6").withFileSystemBind(
         testFileDir.absolutePath, "/testfiles"
     )!!
 
@@ -78,8 +78,8 @@ class DBTest {
         dbContainer.start()
         dbContainer.isRunning.shouldBeTrue()
         // load the original
-        Thread.sleep(100) // TODO: get rid of this sleep
-        dbContainer.execInContainer(
+        Thread.sleep(300) // TODO: get rid of this sleep
+        dbContainer.exec(
             "psql", "-c",
             "create role dv; create role admin; create role anonymous; create role asi; create role webuser; create role manager"
         )
