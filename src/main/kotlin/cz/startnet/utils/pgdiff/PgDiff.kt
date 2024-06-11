@@ -1,16 +1,12 @@
-/**
- * Copyright 2006 StartNet s.r.o.
- *
- * Distributed under MIT license
- */
 package cz.startnet.utils.pgdiff
 
-import com.github.difflib.DiffUtils
-import com.github.difflib.UnifiedDiffUtils
 import cz.startnet.utils.pgdiff.loader.PgDumpLoader
+import io.github.petertrr.diffutils.diff
+import io.github.petertrr.diffutils.patch.Delta
+import io.github.petertrr.diffutils.patch.DeltaType
+import io.github.petertrr.diffutils.text.DiffRowGenerator
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
-
 
 data class PgDiffResult(
     val script: String,
@@ -18,11 +14,9 @@ data class PgDiffResult(
     val ignoredNew: List<String>
 ) {
     fun diffIgnored(): List<String> {
+        DiffRowGenerator
         if (ignoredOld != ignoredNew) {
-            val d = DiffUtils.diff(ignoredOld, ignoredNew)
-            val unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff(
-                "old", "new", ignoredOld, d, 0
-            )
+            val unifiedDiff = generateUnifiedDiff(ignoredOld, ignoredNew)
             return unifiedDiff
         } else {
             return emptyList()
@@ -31,6 +25,34 @@ data class PgDiffResult(
 
 }
 
+fun Delta<String>.toPatchLines(): List<String> {
+    return when (type) {
+        DeltaType.DELETE -> {
+            source.lines.map { "-$it" }
+        }
+
+        DeltaType.CHANGE -> {
+            source.lines.map { "-$it" } + target.lines.map { "+$it" }
+        }
+
+        DeltaType.INSERT -> {
+            target.lines.map { "+$it" }
+        }
+
+        DeltaType.EQUAL -> {
+            source.lines.map { " $it" }
+        }
+
+        else -> {
+            throw IllegalStateException("Unknown delta type $this")
+        }
+    }
+}
+
+fun generateUnifiedDiff(oldString: List<String>, newString: List<String>): List<String> {
+    val patch = diff(oldString, newString)
+    return listOf("--- old", "+++ new") + patch.deltas.flatMap { it.toPatchLines() }
+}
 
 class PgDiff(
     private val options: PgDiffOptions = PgDiffOptions()

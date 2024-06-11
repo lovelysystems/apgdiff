@@ -61,7 +61,6 @@ class PgDiffTest {
         diff.diffIgnored().joinToString("\n") shouldBe """
             --- old
             +++ new
-            @@ -1,1 +1,1 @@
             -CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname 'foodb');
             +CREATE SERVER myserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname 'bardb');
             """.trimIndent()
