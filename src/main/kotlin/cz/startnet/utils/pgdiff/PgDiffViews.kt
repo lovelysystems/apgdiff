@@ -8,7 +8,7 @@ package cz.startnet.utils.pgdiff
 import cz.startnet.utils.pgdiff.schema.PgColumnPrivilege
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgViewBase
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs views.
@@ -24,7 +24,7 @@ object PgDiffViews {
      * @param newSchema        new schema
      */
     fun createViews(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         for (newView in newSchema.views) {
@@ -72,7 +72,7 @@ object PgDiffViews {
      * Removed views are handled by the drop visitor
      */
     fun dropViews(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?,
         newSchema: PgSchema
     ) {
@@ -121,7 +121,7 @@ object PgDiffViews {
      * @param newSchema        new schema
      */
     fun alterViews(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
@@ -209,7 +209,7 @@ object PgDiffViews {
      * @param newView          new view
      */
     private fun diffDefaultValues(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldView: PgViewBase?, newView: PgViewBase
     ) {
 
@@ -263,7 +263,7 @@ object PgDiffViews {
     }
 
     private fun alterPrivileges(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldView: PgViewBase?, newView: PgViewBase
     ) {
         val emptyLinePrinted = false
@@ -345,7 +345,7 @@ object PgDiffViews {
     }
 
     private fun alterPrivilegesColumns(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldView: PgViewBase?, newView: PgViewBase
     ) {
         var emptyLinePrinted = false

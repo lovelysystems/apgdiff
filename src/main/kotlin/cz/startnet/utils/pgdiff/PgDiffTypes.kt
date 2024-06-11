@@ -4,7 +4,7 @@ import cz.startnet.utils.pgdiff.schema.PgColumnUtils
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgType
 import cz.startnet.utils.pgdiff.schema.PgTypeColumn
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 import java.text.MessageFormat
 
 /**
@@ -20,7 +20,7 @@ object PgDiffTypes {
      * @param newSchema        new schema
      */
     fun alterTypes(
-        writer: PrintWriter,
+        writer: StringBuilder,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
         newSchema: PgSchema
     ) {
@@ -172,7 +172,7 @@ object PgDiffTypes {
      * @param newSchema        new schema
      */
     fun createTypes(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (type in newSchema!!.types) {
@@ -195,7 +195,7 @@ object PgDiffTypes {
      * @param newType         new type
      */
     private fun updateTypeColumns(
-        writer: PrintWriter,
+        writer: StringBuilder,
         arguments: PgDiffOptions, oldType: PgType?,
         newType: PgType
     ) {

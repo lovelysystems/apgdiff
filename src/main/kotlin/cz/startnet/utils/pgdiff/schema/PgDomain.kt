@@ -1,7 +1,9 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.io.PrintWriter
+import cz.startnet.utils.pgdiff.print
+import cz.startnet.utils.pgdiff.println
+import kotlin.text.StringBuilder
 
 data class DomainConstraint(val name: String, val check: String) {
 
@@ -24,11 +26,11 @@ class PgDomain(name: String, position: Int) : DBObject("DOMAIN", name, position)
     var constraints = mutableListOf<DomainConstraint>()
     var notNull: Boolean = false
 
-    fun alterSQL(writer: PrintWriter, suffix: String) {
+    fun alterSQL(writer: StringBuilder, suffix: String) {
         writer.println("ALTER DOMAIN ${quotedIdentifier()} $suffix")
     }
 
-    fun creationSQL(writer: PrintWriter) {
+    fun creationSQL(writer: StringBuilder) {
         // todo schema handling
         writer.print("CREATE DOMAIN ${quotedIdentifier()} AS $dataType")
         collation?.let {

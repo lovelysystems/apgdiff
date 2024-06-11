@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream
 
 
 class PgDiffDatabases(
-    private val writer: DiffWriter,
+    private val writer: StringBuilder,
     private val arguments: PgDiffOptions,
     private val oldDatabase: PgDatabase,
     private val newDatabase: PgDatabase
@@ -144,7 +144,8 @@ class PgDiffDatabases(
         for (newSchema in schemas) {
             if (!arguments.schemaIncluded(newSchema.name)) continue
             val diff = ByteArrayOutputStream()
-            val schemaWriter = DiffWriter(diff, arguments)
+            val diffWriter = DiffWriter(diff, arguments)
+            val schemaWriter = diffWriter.builder
             val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema != null) {
                 if (oldSchema.comment == null
@@ -260,7 +261,7 @@ class PgDiffDatabases(
                 schemaWriter, oldSchema, newSchema
             )
 
-            schemaWriter.flush()
+            diffWriter.flush()
             val diffString = diff.toString(arguments.outCharsetName)
             if (diffString.isNotEmpty()) {
                 val setSearchPath = (newDatabase.schemas.size > 1

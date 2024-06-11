@@ -6,7 +6,7 @@
 package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs rules.
@@ -21,7 +21,7 @@ object PgDiffGrant {
      * @param oldSchema        original schema
      * @param newSchema        new schema
      */
-    fun createGrants(writer: PrintWriter, oldSchema: PgSchema?, newSchema: PgSchema?) {
+    fun createGrants(writer: StringBuilder, oldSchema: PgSchema?, newSchema: PgSchema?) {
         val oldGrants: List<String?>?
         oldGrants = oldSchema?.grants
         for (newGrant in newSchema?.grants.orEmpty()) {

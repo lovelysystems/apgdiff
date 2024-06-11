@@ -73,7 +73,7 @@ class PgDiff(
         )
         val stream = ByteArrayOutputStream()
         val writer = DiffWriter(stream, options)
-        val diffDBs = PgDiffDatabases(writer, options, oldDatabase, newDatabase)
+        val diffDBs = PgDiffDatabases(writer.builder, options, oldDatabase, newDatabase)
         diffDBs()
         writer.close()
         return PgDiffResult(

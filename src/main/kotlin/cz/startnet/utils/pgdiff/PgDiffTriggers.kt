@@ -8,7 +8,7 @@ package cz.startnet.utils.pgdiff
 import cz.startnet.utils.pgdiff.schema.PgRelation
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgTrigger
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs triggers.
@@ -24,7 +24,7 @@ object PgDiffTriggers {
      * @param newSchema        new schema
      */
     fun createTriggers(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {
@@ -46,7 +46,7 @@ object PgDiffTriggers {
      * @param newSchema        new schema
      */
     fun dropTriggers(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {
@@ -119,7 +119,7 @@ object PgDiffTriggers {
      * @param newSchema        new schema
      */
     fun alterComments(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
@@ -202,7 +202,7 @@ object PgDiffTriggers {
      * @param newSchema        new schema
      */
     fun disableOrEnableTriggers(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema!!.rels) {

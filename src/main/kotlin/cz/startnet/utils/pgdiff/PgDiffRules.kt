@@ -8,7 +8,7 @@ package cz.startnet.utils.pgdiff
 import cz.startnet.utils.pgdiff.schema.PgRelation
 import cz.startnet.utils.pgdiff.schema.PgRule
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs rules.
@@ -24,7 +24,7 @@ object PgDiffRules {
      * @param newSchema        new schema
      */
     fun createRules(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newRelation in newSchema?.rels.orEmpty()) {

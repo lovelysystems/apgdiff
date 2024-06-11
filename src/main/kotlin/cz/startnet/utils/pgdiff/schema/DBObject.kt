@@ -1,7 +1,8 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.io.PrintWriter
+import cz.startnet.utils.pgdiff.println
+import kotlin.text.StringBuilder
 
 open class DBObject(val objectType: String, val name: String, val position: Int) {
 
@@ -21,11 +22,11 @@ open class DBObject(val objectType: String, val name: String, val position: Int)
     val dropSQL: String
         get() = "DROP $objectType IF EXISTS ${quotedIdentifier()} CASCADE;"
 
-    fun commentSQL(writer: PrintWriter) {
+    fun commentSQL(writer: StringBuilder) {
         writer.println(commentSQL)
     }
 
-    fun ownerSQL(writer: PrintWriter) {
+    fun ownerSQL(writer: StringBuilder) {
         writer.println(ownerSQL)
     }
 

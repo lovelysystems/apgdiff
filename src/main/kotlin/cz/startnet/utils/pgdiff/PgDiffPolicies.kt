@@ -7,11 +7,11 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgPolicy
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 object PgDiffPolicies {
     fun createPolicies(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -28,7 +28,7 @@ object PgDiffPolicies {
     }
 
     fun alterPolicies(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -75,7 +75,7 @@ object PgDiffPolicies {
     }
 
     fun dropPolicies(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -93,7 +93,7 @@ object PgDiffPolicies {
         }
     }
 
-    private fun createPolicySQL(writer: PrintWriter, policy: PgPolicy) {
+    private fun createPolicySQL(writer: StringBuilder, policy: PgPolicy) {
         writer.print(
             "CREATE POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
@@ -125,7 +125,7 @@ object PgDiffPolicies {
         writer.println(";")
     }
 
-    private fun alterPolicySQL(writer: PrintWriter, policy: PgPolicy) {
+    private fun alterPolicySQL(writer: StringBuilder, policy: PgPolicy) {
         writer.print(
             "ALTER POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
@@ -156,7 +156,7 @@ object PgDiffPolicies {
         writer.println(";")
     }
 
-    private fun dropPolicySQL(writer: PrintWriter, policy: PgPolicy) {
+    private fun dropPolicySQL(writer: StringBuilder, policy: PgPolicy) {
         writer.println(
             "DROP POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)

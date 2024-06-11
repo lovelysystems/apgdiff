@@ -8,7 +8,7 @@ package cz.startnet.utils.pgdiff
 import cz.startnet.utils.pgdiff.schema.PgIndex
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgTableBase
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs indexes.
@@ -24,7 +24,7 @@ object PgDiffIndexes {
      * @param newSchema        new schema
      */
     fun createIndexes(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -55,7 +55,7 @@ object PgDiffIndexes {
      * @param newSchema        new schema
      */
     fun dropIndexes(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -133,7 +133,7 @@ object PgDiffIndexes {
      * @param newSchema        new schema
      */
     fun alterComments(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {

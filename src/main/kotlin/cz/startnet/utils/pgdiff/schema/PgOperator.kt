@@ -1,6 +1,8 @@
 package cz.startnet.utils.pgdiff.schema
 
-import java.io.PrintWriter
+import cz.startnet.utils.pgdiff.print
+import cz.startnet.utils.pgdiff.println
+import kotlin.text.StringBuilder
 
 class PgOperator(name: String, position: Int) : DBObject("OPERATOR", name, position) {
 
@@ -34,7 +36,7 @@ class PgOperator(name: String, position: Int) : DBObject("OPERATOR", name, posit
                 && joinProc == other.joinProc && hashes == other.hashes && merges == other.merges
     }
 
-    fun creationSQL(writer: PrintWriter) {
+    fun creationSQL(writer: StringBuilder) {
         writer.print("CREATE OPERATOR ${super.quotedIdentifier()} (\n")
 
         val args = mutableListOf<String>()

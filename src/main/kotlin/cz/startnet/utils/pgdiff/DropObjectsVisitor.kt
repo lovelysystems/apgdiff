@@ -7,7 +7,7 @@ import cz.startnet.utils.pgdiff.schema.*
  */
 class DropObjectsVisitor(
     val newDB: PgDatabase,
-    val writer: DiffWriter,
+    val writer: StringBuilder,
     val options: PgDiffOptions,
 ) : WalkingVisitor() {
 

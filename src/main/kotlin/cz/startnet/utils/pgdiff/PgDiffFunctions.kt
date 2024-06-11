@@ -2,7 +2,7 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgFunction
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 object PgDiffFunctions {
     /**
@@ -14,7 +14,7 @@ object PgDiffFunctions {
      * @param newSchema        new schema
      */
     fun createFunctions(
-        writer: PrintWriter,
+        writer: StringBuilder,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
         newSchema: PgSchema
     ) {
@@ -45,7 +45,7 @@ object PgDiffFunctions {
      * @param newSchema        new schema
      */
     fun dropFunctions(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         if (oldSchema == null) {
@@ -69,7 +69,7 @@ object PgDiffFunctions {
      * @param newSchema        new schema
      */
     fun alterComments(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         if (oldSchema == null) {

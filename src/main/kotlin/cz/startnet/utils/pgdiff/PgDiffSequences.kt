@@ -7,7 +7,7 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgSequence
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs sequences.
@@ -23,7 +23,7 @@ object PgDiffSequences {
      * @param newSchema        new schema
      */
     fun createSequences(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         // Add new sequences
@@ -75,7 +75,7 @@ object PgDiffSequences {
      * @param newSchema        new schema
      */
     fun alterCreatedSequences(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         // Alter created sequences
@@ -99,7 +99,7 @@ object PgDiffSequences {
      * @param newSchema        new schema
      */
     fun alterSequences(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         if (oldSchema == null) {
@@ -217,7 +217,7 @@ object PgDiffSequences {
     }
 
     private fun alterPrivileges(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSequence: PgSequence, newSequence: PgSequence?
     ) {
         val emptyLinePrinted = false

@@ -1,20 +1,22 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.io.PrintWriter
+import cz.startnet.utils.pgdiff.print
+import cz.startnet.utils.pgdiff.println
+import kotlin.text.StringBuilder
 import java.util.regex.Pattern
 
 
 // GENERATED { ALWAYS | BY DEFAULT } AS IDENTITY [ ( sequence_options ) ]
 sealed class GeneratedDef {
-    abstract fun sql(writer: PrintWriter)
+    abstract fun sql(writer: StringBuilder)
 }
 
 data class IdentityColumnDef(
     val always: Boolean,
     val sequenceOptions: String? = null
 ) : GeneratedDef() {
-    override fun sql(writer: PrintWriter) {
+    override fun sql(writer: StringBuilder) {
         writer.print(" ADD GENERATED")
         if (always) {
             writer.print(" ALWAYS")
@@ -29,7 +31,7 @@ data class IdentityColumnDef(
 }
 
 class GeneratedColumnDef : GeneratedDef() {
-    override fun sql(writer: PrintWriter) {
+    override fun sql(writer: StringBuilder) {
         TODO("Not yet implemented")
     }
 }
@@ -104,7 +106,7 @@ sealed class PgColumnBase<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
 
     fun quotedIdentifier() = PgDiffUtils.getQuotedName(name)
 
-    fun commentSQL(writer: PrintWriter) {
+    fun commentSQL(writer: StringBuilder) {
         val commentStr = comment ?: "NULL"
         writer.println(
             "COMMENT ON COLUMN ${relation.quotedIdentifier()}.${quotedIdentifier()} IS $commentStr;"

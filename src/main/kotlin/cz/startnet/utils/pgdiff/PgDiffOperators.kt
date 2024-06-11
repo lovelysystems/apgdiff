@@ -2,12 +2,12 @@ package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgOperator
 import cz.startnet.utils.pgdiff.schema.PgSchema
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 class PgDiffOperators(
     val newSchema: PgSchema,
     val oldSchema: PgSchema?,
-    val writer: PrintWriter
+    val writer: StringBuilder
 ) {
 
     operator fun invoke() {

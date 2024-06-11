@@ -3,7 +3,7 @@
  */
 package cz.startnet.utils.pgdiff
 
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Helps to output search path only if it was not output yet.
@@ -31,7 +31,7 @@ class SearchPathHelper
      *
      * @param writer writer
      */
-    fun outputSearchPath(writer: PrintWriter) {
+    fun outputSearchPath(writer: StringBuilder) {
         if (!wasOutput && searchPath != null && !searchPath.isEmpty()) {
             writer.println()
             writer.println(searchPath)

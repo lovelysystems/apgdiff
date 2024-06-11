@@ -6,7 +6,7 @@
 package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.*
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 import java.text.MessageFormat
 
 /**
@@ -23,7 +23,7 @@ object PgDiffTables {
      * @param newSchema        new schema
      */
     fun dropClusters(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -47,7 +47,7 @@ object PgDiffTables {
      * @param newSchema        new schema
      */
     fun createClusters(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         for (newTable in newSchema?.tables.orEmpty()) {
@@ -76,7 +76,7 @@ object PgDiffTables {
      * @param newSchema        new schema
      */
     fun alterTables(
-        writer: PrintWriter,
+        writer: StringBuilder,
         arguments: PgDiffOptions, oldSchema: PgSchema?,
         newSchema: PgSchema
     ) {
@@ -110,7 +110,7 @@ object PgDiffTables {
      * @param newTable         new table
      */
     private fun addAlterStatistics(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase?
     ) {
         val stats: MutableMap<String?, Int> = HashMap()
@@ -148,7 +148,7 @@ object PgDiffTables {
      * Generate the needed alter table xxx add generated when needed
      */
     private fun addAlterGenerated(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?,
         newTable: PgTableBase
     ) {
@@ -180,7 +180,7 @@ object PgDiffTables {
      * @param newTable         new table
      */
     private fun addAlterStorage(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         for (newColumn in newTable.columns) {
@@ -352,7 +352,7 @@ object PgDiffTables {
      * @param newSchema        new schema
      */
     private fun checkInherits(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?,
         newTable: PgTableBase?,
         newSchema: PgSchema?
@@ -423,7 +423,7 @@ object PgDiffTables {
      * @param newTable         new table
      */
     private fun addInheritedColumnDefaults(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase?
     ) {
         for (newColumn in newTable!!.inheritedColumns) {
@@ -458,7 +458,7 @@ object PgDiffTables {
      * @param newTable         new table
      */
     private fun checkTablespace(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         if (oldTable?.tablespace == null && newTable.tablespace == null
@@ -483,7 +483,7 @@ object PgDiffTables {
      * @param newSchema        new schema
      */
     fun createTables(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema
     ) {
         for (table in newSchema.tables) {
@@ -550,7 +550,7 @@ object PgDiffTables {
      * @param newTable         new table
      */
     private fun updateTableColumns(
-        writer: PrintWriter,
+        writer: StringBuilder,
         arguments: PgDiffOptions, oldTable: PgTableBase?,
         newTable: PgTableBase
     ) {
@@ -594,7 +594,7 @@ object PgDiffTables {
     }
 
     private fun alterPrivilegesColumns(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         var emptyLinePrinted = false
@@ -698,7 +698,7 @@ object PgDiffTables {
      * @param newTable         new table
      */
     private fun alterComments(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         if (oldTable?.comment == null
@@ -737,7 +737,7 @@ object PgDiffTables {
     }
 
     private fun alterPrivileges(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         var emptyLinePrinted = false
@@ -820,7 +820,7 @@ object PgDiffTables {
     }
 
     private fun alterOwnerTo(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         val oldOwnerTo = oldTable?.owner
@@ -831,7 +831,7 @@ object PgDiffTables {
     }
 
     private fun alterRLS(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldTable: PgTableBase?, newTable: PgTableBase
     ) {
         if ((oldTable!!.hasRLSEnabled() == null || oldTable.hasRLSEnabled() != null && !oldTable.hasRLSEnabled()!!)

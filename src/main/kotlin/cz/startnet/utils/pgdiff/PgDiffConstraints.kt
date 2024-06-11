@@ -8,7 +8,7 @@ package cz.startnet.utils.pgdiff
 import cz.startnet.utils.pgdiff.schema.PgConstraint
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgTableBase
-import java.io.PrintWriter
+import kotlin.text.StringBuilder
 
 /**
  * Diffs constraints.
@@ -27,7 +27,7 @@ object PgDiffConstraints {
      * processed
      */
     fun createConstraints(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema,
         primaryKey: Boolean
     ) {
@@ -53,7 +53,7 @@ object PgDiffConstraints {
      * processed
      */
     fun dropConstraints(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema,
         primaryKey: Boolean
     ) {
@@ -145,7 +145,7 @@ object PgDiffConstraints {
      * @param newSchema        new schema
      */
     fun alterComments(
-        writer: PrintWriter,
+        writer: StringBuilder,
         oldSchema: PgSchema?, newSchema: PgSchema?
     ) {
         if (oldSchema == null) {
