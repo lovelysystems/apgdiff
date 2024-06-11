@@ -3,6 +3,8 @@ package cz.startnet.utils.pgdiff.loader
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.parsers.*
 import cz.startnet.utils.pgdiff.schema.PgDatabase
+import kotlinx.io.Source
+import kotlinx.io.readLine
 import java.io.BufferedReader
 import java.io.IOException
 import java.text.MessageFormat
@@ -24,7 +26,7 @@ object PgDumpLoader {
     private var lineBuffer: String? = null
 
     fun loadDatabaseSchema(
-        reader: BufferedReader
+        reader: Source
     ): PgDatabase {
         val database = PgDatabase()
         val ctx = ParserContext(
@@ -87,7 +89,7 @@ object PgDumpLoader {
      *
      * @return whole statement from the reader into single-line string
      */
-    private fun getWholeStatement(reader: BufferedReader): String? {
+    private fun getWholeStatement(reader: Source): String? {
         val sbStatement = StringBuilder(1024)
         if (lineBuffer != null) {
             sbStatement.append(lineBuffer)

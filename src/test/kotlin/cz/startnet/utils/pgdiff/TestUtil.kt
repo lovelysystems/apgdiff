@@ -2,6 +2,8 @@ package cz.startnet.utils.pgdiff
 
 import io.kotest.matchers.string.shouldBeBlank
 import io.kotest.matchers.string.shouldBeEmpty
+import kotlinx.io.asSource
+import kotlinx.io.buffered
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
@@ -46,8 +48,8 @@ class SQLDiffFilesArgumentsProvider : ArgumentsProvider {
 
 fun PgDiff.createDiff(oldDump: String, newDump: String = oldDump): PgDiffResult {
     return createDiff(
-        oldDump.byteInputStream().bufferedReader(),
-        newDump.byteInputStream().bufferedReader()
+        oldDump.byteInputStream().asSource().buffered(), //  .bufferedReader(),
+        newDump.byteInputStream().asSource().buffered()//.bufferedReader()
     )
 }
 

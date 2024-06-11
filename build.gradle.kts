@@ -14,6 +14,7 @@ dependencies {
     //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
     runtimeOnly("io.github.petertrr:kotlin-multiplatform-diff-jvm:0.5.0")
     implementation("io.github.petertrr:kotlin-multiplatform-diff:0.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
     implementation("com.github.ajalt.clikt:clikt:3.3.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation(kotlin("test-junit5"))

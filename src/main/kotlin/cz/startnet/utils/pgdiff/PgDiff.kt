@@ -5,8 +5,8 @@ import io.github.petertrr.diffutils.diff
 import io.github.petertrr.diffutils.patch.Delta
 import io.github.petertrr.diffutils.patch.DeltaType
 import io.github.petertrr.diffutils.text.DiffRowGenerator
+import kotlinx.io.Source
 import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
 
 data class PgDiffResult(
     val script: String,
@@ -62,8 +62,8 @@ class PgDiff(
      * Creates diff on the two database schemas.
      */
     fun createDiff(
-        oldReader: BufferedReader,
-        newReader: BufferedReader
+        oldReader: Source,
+        newReader: Source
     ): PgDiffResult {
         val oldDatabase = PgDumpLoader.loadDatabaseSchema(
             oldReader
@@ -71,13 +71,15 @@ class PgDiff(
         val newDatabase = PgDumpLoader.loadDatabaseSchema(
             newReader
         )
-        val stream = ByteArrayOutputStream()
-        val writer = DiffWriter(stream, options)
-        val diffDBs = PgDiffDatabases(writer.builder, options, oldDatabase, newDatabase)
+        //val stream = ByteArrayOutputStream()
+        //val writer = DiffWriter(stream, options)
+        val builder = StringBuilder()
+        val diffDBs = PgDiffDatabases(builder, options, oldDatabase, newDatabase)
         diffDBs()
-        writer.close()
+        // writer.close()
         return PgDiffResult(
-            stream.toString(options.outCharsetName),
+            builder.toString(), // TODO: charset
+            //stream.toString(options.outCharsetName),
             ignoredOld = oldDatabase.ignoredStatements,
             ignoredNew = newDatabase.ignoredStatements
         )

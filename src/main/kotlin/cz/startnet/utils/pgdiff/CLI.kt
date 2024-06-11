@@ -7,6 +7,9 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import java.nio.charset.Charset
 
 class CLI : CliktCommand(name = "apgdiff") {
@@ -47,11 +50,16 @@ class CLI : CliktCommand(name = "apgdiff") {
             outputIgnoredStatements = outputIgnoredStatements,
             excludeSchemas = excludeSchemas,
         )
-        val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
-        val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))
+
+        val oldSource = SystemFileSystem.source(Path(oldDumpFile.absolutePath)).buffered()
+        val newSource = SystemFileSystem.source(Path(newDumpFile.absolutePath)).buffered()
+
+//        val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
+//        val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))
         val charset = Charset.forName(outCharsetName) ?: error("charset $outCharsetName not found")
 
-        val res = PgDiff(arguments).createDiff(dumpOld, dumpNew)
+
+        val res = PgDiff(arguments).createDiff(oldSource, newSource)
         val writer = outFile?.writer(charset) ?: System.out.writer(charset)
         writer.use {
             it.write(res.script)

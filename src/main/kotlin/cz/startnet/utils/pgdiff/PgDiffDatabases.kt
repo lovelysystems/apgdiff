@@ -1,7 +1,6 @@
 package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.PgDatabase
-import java.io.ByteArrayOutputStream
 
 
 class PgDiffDatabases(
@@ -143,9 +142,10 @@ class PgDiffDatabases(
         }
         for (newSchema in schemas) {
             if (!arguments.schemaIncluded(newSchema.name)) continue
-            val diff = ByteArrayOutputStream()
-            val diffWriter = DiffWriter(diff, arguments)
-            val schemaWriter = diffWriter.builder
+            //val diff = ByteArrayOutputStream()
+            //val diffWriter = DiffWriter(diff, arguments)
+
+            val schemaWriter = StringBuilder() //diffWriter.builder
             val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema != null) {
                 if (oldSchema.comment == null
@@ -261,8 +261,8 @@ class PgDiffDatabases(
                 schemaWriter, oldSchema, newSchema
             )
 
-            diffWriter.flush()
-            val diffString = diff.toString(arguments.outCharsetName)
+            //diffWriter.flush()
+            val diffString = schemaWriter.toString() // diff.toString(arguments.outCharsetName) TODO: utf8
             if (diffString.isNotEmpty()) {
                 val setSearchPath = (newDatabase.schemas.size > 1
                         || newDatabase.schemas[0].name != "public")
