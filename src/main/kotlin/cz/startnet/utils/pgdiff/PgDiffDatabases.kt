@@ -16,21 +16,21 @@ class PgDiffDatabases(
      */
     operator fun invoke() {
         if (arguments.isAddTransaction) {
-            writer.println("START TRANSACTION;")
+            writer.appendLine("START TRANSACTION;")
         }
         if (oldDatabase.comment == null
             && newDatabase.comment != null
             || oldDatabase.comment != null && newDatabase.comment != null && oldDatabase.comment != newDatabase.comment
         ) {
             writer.println()
-            writer.print("COMMENT ON DATABASE current_database() IS ")
+            writer.append("COMMENT ON DATABASE current_database() IS ")
             writer.print(newDatabase.comment)
             writer.println(';')
         } else if (oldDatabase.comment != null
             && newDatabase.comment == null
         ) {
             writer.println()
-            writer.println("COMMENT ON DATABASE current_database() IS NULL;")
+            writer.appendLine("COMMENT ON DATABASE current_database() IS NULL;")
         }
         createNewSchemas()
         dropOldExtensions()
@@ -43,34 +43,34 @@ class PgDiffDatabases(
 
         if (arguments.isAddTransaction) {
             writer.println()
-            writer.println("COMMIT TRANSACTION;")
+            writer.appendLine("COMMIT TRANSACTION;")
         }
         if (arguments.outputIgnoredStatements) {
             if (oldDatabase.ignoredStatements.isNotEmpty()) {
                 writer.println()
-                writer.print("/* ")
-                writer.println(
+                writer.append("/* ")
+                writer.appendLine(
                     Resources.getString(
                         "OriginalDatabaseIgnoredStatements"
                     )
                 )
                 for (statement in oldDatabase.ignoredStatements) {
                     writer.println()
-                    writer.println(statement)
+                    writer.appendLine(statement)
                 }
-                writer.println("*/")
+                writer.appendLine("*/")
             }
             if (newDatabase.ignoredStatements.isNotEmpty()) {
                 writer.println()
-                writer.print("/* ")
-                writer.println(
+                writer.append("/* ")
+                writer.appendLine(
                     Resources.getString("NewDatabaseIgnoredStatements")
                 )
                 for (statement in newDatabase.ignoredStatements) {
                     writer.println()
-                    writer.println(statement)
+                    writer.appendLine(statement)
                 }
-                writer.println("*/")
+                writer.appendLine("*/")
             }
         }
     }
@@ -84,9 +84,9 @@ class PgDiffDatabases(
             val oldSchema = oldDatabase.getSchema(newSchema.name)
             if (oldSchema == null) {
                 writer.println()
-                writer.println(newSchema.creationSQL)
+                writer.appendLine(newSchema.creationSQL)
             } else if (newSchema.owner != oldSchema.owner) {
-                writer.println(newSchema.ownerSQL)
+                writer.appendLine(newSchema.ownerSQL)
             }
         }
     }
@@ -98,7 +98,7 @@ class PgDiffDatabases(
         for (newExtension in newDatabase.extensions) {
             if (oldDatabase.getExtension(newExtension.name) == null) {
                 writer.println()
-                writer.println(newExtension.creationSQL)
+                writer.appendLine(newExtension.creationSQL)
             }
         }
     }
@@ -119,7 +119,7 @@ class PgDiffDatabases(
         for (oldExtension in oldDatabase.extensions) {
             if (newDatabase.getExtension(oldExtension.name) == null) {
                 writer.println()
-                writer.println(
+                writer.appendLine(
                     "DROP EXTENSION " + PgDiffUtils.dropIfExists
                             + PgDiffUtils.getQuotedName(oldExtension.name)
                             + " CASCADE;"
@@ -163,11 +163,11 @@ class PgDiffDatabases(
                     && newSchema.comment == null
                 ) {
                     schemaWriter.println()
-                    schemaWriter.print("COMMENT ON SCHEMA ")
-                    schemaWriter.print(
+                    schemaWriter.append("COMMENT ON SCHEMA ")
+                    schemaWriter.append(
                         PgDiffUtils.getQuotedName(newSchema.name)
                     )
-                    schemaWriter.println(" IS NULL;")
+                    schemaWriter.appendLine(" IS NULL;")
                 }
             }
             PgDiffTriggers.dropTriggers(

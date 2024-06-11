@@ -32,9 +32,9 @@ object PgDiffTables {
             val newCluster = newTable.clusterIndexName
             if (oldCluster != null && newCluster == null && newTable.containsIndex(oldCluster)) {
                 writer.println()
-                writer.print("ALTER TABLE ")
-                writer.print(PgDiffUtils.getQuotedName(newTable.name))
-                writer.println(" SET WITHOUT CLUSTER;")
+                writer.append("ALTER TABLE ")
+                writer.append(PgDiffUtils.getQuotedName(newTable.name))
+                writer.appendLine(" SET WITHOUT CLUSTER;")
             }
         }
     }
@@ -58,10 +58,10 @@ object PgDiffTables {
                 || oldCluster != null && newCluster != null && newCluster.compareTo(oldCluster) != 0
             ) {
                 writer.println()
-                writer.print("ALTER TABLE ")
-                writer.print(PgDiffUtils.getQuotedName(newTable.name))
-                writer.print(" CLUSTER ON ")
-                writer.print(PgDiffUtils.getQuotedName(newCluster))
+                writer.append("ALTER TABLE ")
+                writer.append(PgDiffUtils.getQuotedName(newTable.name))
+                writer.append(" CLUSTER ON ")
+                writer.append(PgDiffUtils.getQuotedName(newCluster))
                 writer.println(';')
             }
         }
@@ -134,11 +134,11 @@ object PgDiffTables {
         }
         for ((key, value) in stats) {
             writer.println()
-            writer.print("ALTER TABLE ONLY ")
-            writer.print(PgDiffUtils.getQuotedName(newTable!!.name))
-            writer.print(" ALTER COLUMN ")
-            writer.print(PgDiffUtils.getQuotedName(key))
-            writer.print(" SET STATISTICS ")
+            writer.append("ALTER TABLE ONLY ")
+            writer.append(PgDiffUtils.getQuotedName(newTable!!.name))
+            writer.append(" ALTER COLUMN ")
+            writer.append(PgDiffUtils.getQuotedName(key))
+            writer.append(" SET STATISTICS ")
             writer.print(value)
             writer.println(';')
         }
@@ -163,10 +163,10 @@ object PgDiffTables {
                 continue
             }
             writer.println()
-            writer.print("ALTER TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.print(" ALTER COLUMN ")
-            writer.print(PgDiffUtils.getQuotedName(newColumn.name))
+            writer.append("ALTER TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.append(" ALTER COLUMN ")
+            writer.append(PgDiffUtils.getQuotedName(newColumn.name))
             newGenerated.sql(writer)
             writer.print(';')
         }
@@ -191,7 +191,7 @@ object PgDiffTables {
             ) null else newColumn.storage
             if (newStorage == null && oldStorage != null) {
                 writer.println()
-                writer.println(
+                writer.appendLine(
                     MessageFormat.format(
                         Resources.getString(
                             "WarningUnableToDetermineStorageType"
@@ -205,12 +205,12 @@ object PgDiffTables {
                 continue
             }
             writer.println()
-            writer.print("ALTER TABLE ONLY ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.print(" ALTER COLUMN ")
-            writer.print(PgDiffUtils.getQuotedName(newColumn.name))
-            writer.print(" SET STORAGE ")
-            writer.print(newStorage)
+            writer.append("ALTER TABLE ONLY ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.append(" ALTER COLUMN ")
+            writer.append(PgDiffUtils.getQuotedName(newColumn.name))
+            writer.append(" SET STORAGE ")
+            writer.append(newStorage)
             writer.print(';')
         }
     }
@@ -374,11 +374,11 @@ object PgDiffTables {
                     String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
                 }
                 writer.println()
-                writer.println(
+                writer.appendLine(
                     "ALTER TABLE "
                             + PgDiffUtils.getQuotedName(newTable.name)
                 )
-                writer.println(
+                writer.appendLine(
                     "\tINHERIT "
                             + inheritTableName + ';'
                 )
@@ -401,11 +401,11 @@ object PgDiffTables {
                     String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
                 }
                 writer.println()
-                writer.println(
+                writer.appendLine(
                     "ALTER TABLE "
                             + PgDiffUtils.getQuotedName(newTable.name)
                 )
-                writer.println(
+                writer.appendLine(
                     "\tNO INHERIT "
                             + inheritTableName + ';'
                 )
@@ -435,17 +435,17 @@ object PgDiffTables {
             val newDefault = newColumn.defaultValue.orEmpty()
             if (oldDefault != newDefault) {
                 writer.println()
-                writer.print("ALTER TABLE ONLY ")
-                writer.println(PgDiffUtils.getQuotedName(newTable.name))
-                writer.print("\tALTER COLUMN ")
-                writer.print(PgDiffUtils.getQuotedName(newColumn.inheritedColumn.name))
+                writer.append("ALTER TABLE ONLY ")
+                writer.appendLine(PgDiffUtils.getQuotedName(newTable.name))
+                writer.append("\tALTER COLUMN ")
+                writer.append(PgDiffUtils.getQuotedName(newColumn.inheritedColumn.name))
                 if (newDefault.isEmpty()) {
-                    writer.print(" DROP DEFAULT")
+                    writer.append(" DROP DEFAULT")
                 } else {
-                    writer.print(" SET DEFAULT ")
-                    writer.print(newDefault)
+                    writer.append(" SET DEFAULT ")
+                    writer.append(newDefault)
                 }
-                writer.println(";")
+                writer.appendLine(";")
             }
         }
     }
@@ -468,11 +468,11 @@ object PgDiffTables {
             return
         }
         writer.println()
-        writer.println(
+        writer.appendLine(
             "ALTER TABLE "
                     + PgDiffUtils.getQuotedName(newTable.name)
         )
-        writer.println("\tTABLESPACE " + newTable.tablespace + ';')
+        writer.appendLine("\tTABLESPACE " + newTable.tablespace + ';')
     }
 
     /**
@@ -491,19 +491,19 @@ object PgDiffTables {
                 || !oldSchema.containsTable(table.name)
             ) {
                 writer.println()
-                writer.println(table.getCreationSQL(newSchema))
+                writer.appendLine(table.getCreationSQL(newSchema))
                 writer.println()
                 if (table.owner != null) {
                     table.ownerSQL(writer)
                 }
                 for (tablePrivilege in table.privileges) {
-                    writer.println(
+                    writer.appendLine(
                         "REVOKE ALL ON TABLE "
                                 + PgDiffUtils.getQuotedName(table.name)
                                 + " FROM " + tablePrivilege.roleName + ";"
                     )
                     if ("" != tablePrivilege.getPrivilegesSQL(true)) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + tablePrivilege.getPrivilegesSQL(true)
                                     + " ON TABLE "
@@ -513,7 +513,7 @@ object PgDiffTables {
                         )
                     }
                     if ("" != tablePrivilege.getPrivilegesSQL(false)) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + tablePrivilege.getPrivilegesSQL(false)
                                     + " ON TABLE "
@@ -523,14 +523,14 @@ object PgDiffTables {
                     }
                 }
                 if (table.hasRLSEnabled() != null && table.hasRLSEnabled()!!) {
-                    writer.println(
+                    writer.appendLine(
                         "ALTER TABLE "
                                 + PgDiffUtils.getQuotedName(table.name)
                                 + "  ENABLE ROW LEVEL SECURITY;"
                     )
                 }
                 if (table.hasRLSForced() != null && table.hasRLSForced()!!) {
-                    writer.println(
+                    writer.appendLine(
                         "ALTER TABLE "
                                 + PgDiffUtils.getQuotedName(table.name)
                                 + "  FORCE ROW LEVEL SECURITY;"
@@ -569,23 +569,23 @@ object PgDiffTables {
         if (statements.isNotEmpty()) {
             val quotedTableName = PgDiffUtils.getQuotedName(newTable.name)
             writer.println()
-            writer.println("ALTER ${newTable.objectType} $quotedTableName")
+            writer.appendLine("ALTER ${newTable.objectType} $quotedTableName")
             for (i in statements.indices) {
-                writer.print(statements[i])
-                writer.println(if (i + 1 < statements.size) "," else ";")
+                writer.append(statements[i])
+                writer.appendLine(if (i + 1 < statements.size) "," else ";")
             }
             if (dropDefaultsColumns.isNotEmpty()) {
                 writer.println()
-                writer.println("ALTER ${newTable.objectType} $quotedTableName")
+                writer.appendLine("ALTER ${newTable.objectType} $quotedTableName")
                 for (i in dropDefaultsColumns.indices) {
-                    writer.print("\tALTER COLUMN ")
-                    writer.print(
+                    writer.append("\tALTER COLUMN ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(
                             dropDefaultsColumns[i].name
                         )
                     )
-                    writer.print(" DROP DEFAULT")
-                    writer.println(
+                    writer.append(" DROP DEFAULT")
+                    writer.appendLine(
                         if (i + 1 < dropDefaultsColumns.size) "," else ";"
                     )
                 }
@@ -609,7 +609,7 @@ object PgDiffTables {
                             emptyLinePrinted = true
                             writer.println()
                         }
-                        writer.println(
+                        writer.appendLine(
                             "REVOKE ALL ("
                                     + PgDiffUtils.getQuotedName(newColumn.name)
                                     + ") ON TABLE "
@@ -632,7 +632,7 @@ object PgDiffTables {
                         emptyLinePrinted = true
                         writer.println()
                     }
-                    writer.println(
+                    writer.appendLine(
                         "REVOKE ALL ("
                                 + PgDiffUtils.getQuotedName(newColumn.name)
                                 + ") ON TABLE "
@@ -645,7 +645,7 @@ object PgDiffTables {
                             PgDiffUtils.getQuotedName(newColumn.name)
                         )
                     ) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + newColumnPrivilege.getPrivilegesSQL(
                                 true,
@@ -668,7 +668,7 @@ object PgDiffTables {
                             PgDiffUtils.getQuotedName(newColumn.name)
                         )
                     ) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + newColumnPrivilege.getPrivilegesSQL(
                                 false, PgDiffUtils.getQuotedName(
@@ -706,18 +706,18 @@ object PgDiffTables {
             || oldTable?.comment != null && newTable.comment != null && oldTable.comment != newTable.comment
         ) {
             writer.println()
-            writer.print("COMMENT ON TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.print(" IS ")
+            writer.append("COMMENT ON TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.append(" IS ")
             writer.print(newTable.comment)
             writer.println(';')
         } else if (oldTable?.comment != null
             && newTable.comment == null
         ) {
             writer.println()
-            writer.print("COMMENT ON TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.println(" IS NULL;")
+            writer.append("COMMENT ON TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.appendLine(" IS NULL;")
         }
 
         for (newColumn in newTable.inheritedColumns) {
@@ -748,7 +748,7 @@ object PgDiffTables {
                     emptyLinePrinted = true
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON TABLE "
                             + PgDiffUtils.getQuotedName(oldTable.name)
                             + " FROM " + oldTablePrivilege.roleName + ";"
@@ -758,13 +758,13 @@ object PgDiffTables {
                     emptyLinePrinted = true
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON TABLE "
                             + PgDiffUtils.getQuotedName(newTable.name)
                             + " FROM " + newTablePrivilege.roleName + ";"
                 )
                 if ("" != newTablePrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newTablePrivilege.getPrivilegesSQL(true)
                                 + " ON TABLE "
@@ -774,7 +774,7 @@ object PgDiffTables {
                     )
                 }
                 if ("" != newTablePrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newTablePrivilege.getPrivilegesSQL(false)
                                 + " ON TABLE "
@@ -791,13 +791,13 @@ object PgDiffTables {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON TABLE "
                             + PgDiffUtils.getQuotedName(newTable.name)
                             + " FROM " + newTablePrivilege.roleName + ";"
                 )
                 if ("" != newTablePrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newTablePrivilege.getPrivilegesSQL(true)
                                 + " ON TABLE "
@@ -807,7 +807,7 @@ object PgDiffTables {
                     )
                 }
                 if ("" != newTablePrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newTablePrivilege.getPrivilegesSQL(false)
                                 + " ON TABLE "
@@ -838,33 +838,33 @@ object PgDiffTables {
             && newTable.hasRLSEnabled() != null && newTable.hasRLSEnabled()!!
         ) {
             writer.println()
-            writer.print("ALTER TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.println(" ENABLE ROW LEVEL SECURITY;")
+            writer.append("ALTER TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.appendLine(" ENABLE ROW LEVEL SECURITY;")
         }
         if (oldTable.hasRLSEnabled() != null && oldTable.hasRLSEnabled()!!
             && (newTable.hasRLSEnabled() == null || newTable.hasRLSEnabled() != null && !newTable.hasRLSEnabled()!!)
         ) {
             writer.println()
-            writer.print("ALTER TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.println(" DISABLE ROW LEVEL SECURITY;")
+            writer.append("ALTER TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.appendLine(" DISABLE ROW LEVEL SECURITY;")
         }
         if ((oldTable.hasRLSForced() == null || oldTable.hasRLSForced() != null && !oldTable.hasRLSForced()!!)
             && newTable.hasRLSForced() != null && newTable.hasRLSForced()!!
         ) {
             writer.println()
-            writer.print("ALTER TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.println(" FORCE ROW LEVEL SECURITY;")
+            writer.append("ALTER TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.appendLine(" FORCE ROW LEVEL SECURITY;")
         }
         if (oldTable.hasRLSForced() != null && oldTable.hasRLSForced()!!
             && (newTable.hasRLSForced() == null || newTable.hasRLSForced() != null && !newTable.hasRLSForced()!!)
         ) {
             writer.println()
-            writer.print("ALTER TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newTable.name))
-            writer.println(" NO FORCE ROW LEVEL SECURITY;")
+            writer.append("ALTER TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newTable.name))
+            writer.appendLine(" NO FORCE ROW LEVEL SECURITY;")
         }
     }
 }

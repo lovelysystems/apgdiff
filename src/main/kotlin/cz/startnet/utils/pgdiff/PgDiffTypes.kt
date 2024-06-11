@@ -30,10 +30,10 @@ object PgDiffTypes {
                 writer, arguments, oldType, newType
             )
             if (newType.owner != oldType.owner) {
-                writer.println(newType.ownerSQL)
+                writer.appendLine(newType.ownerSQL)
             }
             if (newType.comment != oldType.comment) {
-                writer.println(newType.commentSQL)
+                writer.appendLine(newType.commentSQL)
             }
         }
     }
@@ -180,7 +180,7 @@ object PgDiffTypes {
                 || !oldSchema.containsType(type.name)
             ) {
                 writer.println()
-                writer.println(type.creationSQL)
+                writer.appendLine(type.creationSQL)
             }
         }
     }
@@ -211,23 +211,23 @@ object PgDiffTypes {
         if (statements.isNotEmpty()) {
             val quotedTypeName = PgDiffUtils.getQuotedName(newType.name)
             writer.println()
-            writer.println("ALTER TYPE $quotedTypeName")
+            writer.appendLine("ALTER TYPE $quotedTypeName")
             for (i in statements.indices) {
-                writer.print(statements[i])
-                writer.println(if (i + 1 < statements.size) "," else ";")
+                writer.append(statements[i])
+                writer.appendLine(if (i + 1 < statements.size) "," else ";")
             }
             if (dropDefaultsColumns.isNotEmpty()) {
                 writer.println()
-                writer.println("ALTER TYPE $quotedTypeName")
+                writer.appendLine("ALTER TYPE $quotedTypeName")
                 for (i in dropDefaultsColumns.indices) {
-                    writer.print("\tALTER ATTRIBUTE ")
-                    writer.print(
+                    writer.append("\tALTER ATTRIBUTE ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(
                             dropDefaultsColumns[i].name
                         )
                     )
-                    writer.print(" DROP DEFAULT")
-                    writer.println(
+                    writer.append(" DROP DEFAULT")
+                    writer.appendLine(
                         if (i + 1 < dropDefaultsColumns.size) "," else ";"
                     )
                 }

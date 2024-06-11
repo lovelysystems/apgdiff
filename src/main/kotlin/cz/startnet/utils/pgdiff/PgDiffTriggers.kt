@@ -33,7 +33,7 @@ object PgDiffTriggers {
             // Add new triggers
             for (trigger in getNewTriggers(oldRelation, newRelation)) {
                 writer.println()
-                writer.println(trigger.creationSQL)
+                writer.appendLine(trigger.creationSQL)
             }
         }
     }
@@ -55,7 +55,7 @@ object PgDiffTriggers {
             // Drop triggers that no more exist or are modified
             for (trigger in getDropTriggers(oldRelation, newRelation)) {
                 writer.println()
-                writer.println(trigger.dropSQL)
+                writer.appendLine(trigger.dropSQL)
             }
         }
     }
@@ -134,17 +134,17 @@ object PgDiffTriggers {
                     || oldTrigger.comment != null && newTrigger.comment != null && oldTrigger.comment != newTrigger.comment
                 ) {
                     writer.println()
-                    writer.print("COMMENT ON TRIGGER ")
-                    writer.print(
+                    writer.append("COMMENT ON TRIGGER ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(newTrigger.name)
                     )
-                    writer.print(" ON ")
-                    writer.print(
+                    writer.append(" ON ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(
                             newTrigger.relationName
                         )
                     )
-                    writer.print(" IS ")
+                    writer.append(" IS ")
                     writer.print(newTrigger.comment)
                     writer.println(';')
                 } else if (oldTrigger.comment != null
@@ -152,17 +152,17 @@ object PgDiffTriggers {
                 ) {
 
                     writer.println()
-                    writer.print("COMMENT ON TRIGGER ")
-                    writer.print(
+                    writer.append("COMMENT ON TRIGGER ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(newTrigger.name)
                     )
-                    writer.print(" ON ")
-                    writer.print(
+                    writer.append(" ON ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(
                             newTrigger.relationName
                         )
                     )
-                    writer.println(" IS NULL;")
+                    writer.appendLine(" IS NULL;")
                 }
             }
         }
@@ -212,7 +212,7 @@ object PgDiffTriggers {
             for (trigger in getEnablerOrDisableTriggers(oldRelation, newRelation)) {
 
                 writer.println()
-                writer.println(trigger.disableOrEnableSQL)
+                writer.appendLine(trigger.disableOrEnableSQL)
             }
         }
     }

@@ -47,7 +47,7 @@ class PgDiffOperators(
     fun drop(operators: Collection<PgOperator>) {
         operators.forEach {
             writer.println()
-            writer.println(it.dropSQL)
+            writer.appendLine(it.dropSQL)
         }
     }
 }

@@ -37,7 +37,7 @@ object PgDiffConstraints {
             // Add new constraints
             for (constraint in getNewConstraints(oldTable, newTable, primaryKey)) {
                 writer.println()
-                writer.println(constraint.creationSQL)
+                writer.appendLine(constraint.creationSQL)
             }
         }
     }
@@ -63,7 +63,7 @@ object PgDiffConstraints {
             // Drop constraints that no more exist or are modified
             for (constraint in getDropConstraints(oldTable, newTable, primaryKey)) {
                 writer.println()
-                writer.println(constraint.dropSQL)
+                writer.appendLine(constraint.dropSQL)
             }
         }
     }
@@ -160,58 +160,58 @@ object PgDiffConstraints {
                     || oldConstraint.comment != null && newConstraint.comment != null && oldConstraint.comment != newConstraint.comment
                 ) {
                     writer.println()
-                    writer.print("COMMENT ON ")
+                    writer.append("COMMENT ON ")
                     if (newConstraint.isPrimaryKeyConstraint) {
-                        writer.print("INDEX ")
-                        writer.print(
+                        writer.append("INDEX ")
+                        writer.append(
                             PgDiffUtils.getQuotedName(
                                 newConstraint.name
                             )
                         )
                     } else {
-                        writer.print("CONSTRAINT ")
-                        writer.print(
+                        writer.append("CONSTRAINT ")
+                        writer.append(
                             PgDiffUtils.getQuotedName(
                                 newConstraint.name
                             )
                         )
-                        writer.print(" ON ")
-                        writer.print(
+                        writer.append(" ON ")
+                        writer.append(
                             PgDiffUtils.getQuotedName(
                                 newConstraint.tableName!!
                             )
                         )
                     }
-                    writer.print(" IS ")
+                    writer.append(" IS ")
                     writer.print(newConstraint.comment)
                     writer.println(';')
                 } else if (oldConstraint.comment != null
                     && newConstraint.comment == null
                 ) {
                     writer.println()
-                    writer.print("COMMENT ON ")
+                    writer.append("COMMENT ON ")
                     if (newConstraint.isPrimaryKeyConstraint) {
-                        writer.print("INDEX ")
-                        writer.print(
+                        writer.append("INDEX ")
+                        writer.append(
                             PgDiffUtils.getQuotedName(
                                 newConstraint.name
                             )
                         )
                     } else {
-                        writer.print("CONSTRAINT ")
-                        writer.print(
+                        writer.append("CONSTRAINT ")
+                        writer.append(
                             PgDiffUtils.getQuotedName(
                                 newConstraint.name
                             )
                         )
-                        writer.print(" ON ")
-                        writer.print(
+                        writer.append(" ON ")
+                        writer.append(
                             PgDiffUtils.getQuotedName(
                                 newConstraint.tableName!!
                             )
                         )
                     }
-                    writer.println(" IS NULL;")
+                    writer.appendLine(" IS NULL;")
                 }
             }
         }

@@ -32,16 +32,16 @@ object PgDiffSequences {
                 continue
             }
             writer.println()
-            writer.println(sequence.creationSQL)
+            writer.appendLine(sequence.creationSQL)
             for (sequencePrivilege in sequence
                 .privileges) {
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON SEQUENCE "
                             + PgDiffUtils.getQuotedName(sequence.name)
                             + " FROM " + sequencePrivilege.roleName + ";"
                 )
                 if ("" != sequencePrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + sequencePrivilege.getPrivilegesSQL(true)
                                 + " ON SEQUENCE "
@@ -51,7 +51,7 @@ object PgDiffSequences {
                     )
                 }
                 if ("" != sequencePrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + sequencePrivilege.getPrivilegesSQL(false)
                                 + " ON SEQUENCE "
@@ -86,7 +86,7 @@ object PgDiffSequences {
             ) {
 
                 writer.println()
-                writer.println(sequence.ownedBySQL)
+                writer.appendLine(sequence.ownedBySQL)
             }
         }
     }
@@ -183,11 +183,11 @@ object PgDiffSequences {
             }
             if (sbSQL.length > 0) {
                 writer.println()
-                writer.print(
+                writer.append(
                     "ALTER SEQUENCE "
                             + PgDiffUtils.getQuotedName(newSequence.name)
                 )
-                writer.print(sbSQL.toString())
+                writer.append(sbSQL.toString())
                 writer.println(';')
             }
             if (oldSequence.comment == null
@@ -195,18 +195,18 @@ object PgDiffSequences {
                 || oldSequence.comment != null && newSequence.comment != null && oldSequence.comment != newSequence.comment
             ) {
                 writer.println()
-                writer.print("COMMENT ON SEQUENCE ")
-                writer.print(PgDiffUtils.getQuotedName(newSequence.name))
-                writer.print(" IS ")
+                writer.append("COMMENT ON SEQUENCE ")
+                writer.append(PgDiffUtils.getQuotedName(newSequence.name))
+                writer.append(" IS ")
                 writer.print(newSequence.comment)
                 writer.println(';')
             } else if (oldSequence.comment != null
                 && newSequence.comment == null
             ) {
                 writer.println()
-                writer.print("COMMENT ON SEQUENCE ")
-                writer.print(newSequence.name)
-                writer.println(" IS NULL;")
+                writer.append("COMMENT ON SEQUENCE ")
+                writer.append(newSequence.name)
+                writer.appendLine(" IS NULL;")
             }
             alterPrivileges(writer, oldSequence, newSequence)
 
@@ -228,7 +228,7 @@ object PgDiffSequences {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON SEQUENCE "
                             + PgDiffUtils.getQuotedName(oldSequence.name)
                             + " FROM " + oldSequencePrivilege.roleName + ";"
@@ -237,13 +237,13 @@ object PgDiffSequences {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON SEQUENCE "
                             + PgDiffUtils.getQuotedName(newSequence.name)
                             + " FROM " + newSequencePrivilege.roleName + ";"
                 )
                 if ("" != newSequencePrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(true)
                                 + " ON SEQUENCE "
@@ -253,7 +253,7 @@ object PgDiffSequences {
                     )
                 }
                 if ("" != newSequencePrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(false)
                                 + " ON SEQUENCE "
@@ -270,13 +270,13 @@ object PgDiffSequences {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON SEQUENCE "
                             + PgDiffUtils.getQuotedName(newSequence!!.name)
                             + " FROM " + newSequencePrivilege.roleName + ";"
                 )
                 if ("" != newSequencePrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(true)
                                 + " ON SEQUENCE "
@@ -286,7 +286,7 @@ object PgDiffSequences {
                     )
                 }
                 if ("" != newSequencePrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newSequencePrivilege.getPrivilegesSQL(false)
                                 + " ON SEQUENCE "

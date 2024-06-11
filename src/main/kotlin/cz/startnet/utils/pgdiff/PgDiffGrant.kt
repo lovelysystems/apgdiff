@@ -29,7 +29,7 @@ object PgDiffGrant {
                 continue
             }
             writer.println()
-            writer.println(newGrant)
+            writer.appendLine(newGrant)
         }
     }
 }

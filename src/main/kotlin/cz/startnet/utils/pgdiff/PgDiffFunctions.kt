@@ -30,9 +30,9 @@ object PgDiffFunctions {
                 // drop the function if args differ since the signature cannot be changed via replace
                 val toDrop = (oldFunction != null && oldFunction.arguments != newFunction.arguments)
                 if (toDrop) {
-                    writer.println(newFunction.dropSQL)
+                    writer.appendLine(newFunction.dropSQL)
                 }
-                writer.println(newFunction.creationSQL(!toDrop))
+                writer.appendLine(newFunction.creationSQL(!toDrop))
             }
         }
     }
@@ -56,7 +56,7 @@ object PgDiffFunctions {
         for (oldFunction in oldSchema.functions) {
             if (!newSchema.containsFunction(oldFunction.signature)) {
                 writer.println()
-                writer.println(oldFunction.dropSQL)
+                writer.appendLine(oldFunction.dropSQL)
             }
         }
     }
@@ -83,13 +83,13 @@ object PgDiffFunctions {
             ) {
 
                 writer.println()
-                writer.println("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS ${newFunction.comment};")
+                writer.appendLine("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS ${newFunction.comment};")
             } else if (oldFunction.comment != null
                 && newFunction.comment == null
             ) {
 
                 writer.println()
-                writer.println("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS NULL;")
+                writer.appendLine("COMMENT ON FUNCTION ${newFunction.signatureSQL} IS NULL;")
             }
         }
     }

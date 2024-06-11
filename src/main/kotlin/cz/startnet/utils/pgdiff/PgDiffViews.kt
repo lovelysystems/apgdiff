@@ -33,18 +33,18 @@ object PgDiffViews {
             ) {
 
                 writer.println()
-                writer.println(newView.creationSQL)
+                writer.appendLine(newView.creationSQL)
                 if (newView.owner != null && oldView == null) {
                     newView.ownerSQL(writer)
                 }
                 for (viewPrivilege in newView.privileges) {
-                    writer.println(
+                    writer.appendLine(
                         "REVOKE ALL ON TABLE "
                                 + PgDiffUtils.getQuotedName(newView.name)
                                 + " FROM " + viewPrivilege.roleName + ";"
                     )
                     if ("" != viewPrivilege.getPrivilegesSQL(true)) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + viewPrivilege.getPrivilegesSQL(true)
                                     + " ON TABLE "
@@ -54,7 +54,7 @@ object PgDiffViews {
                         )
                     }
                     if ("" != viewPrivilege.getPrivilegesSQL(false)) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + viewPrivilege.getPrivilegesSQL(false)
                                     + " ON TABLE "
@@ -83,7 +83,7 @@ object PgDiffViews {
             val newView = newSchema.getView(oldView.name) ?: continue
             if (isViewModified(oldView, newView)) {
                 writer.println()
-                writer.println(oldView.dropSQL)
+                writer.appendLine(oldView.dropSQL)
             }
         }
     }
@@ -136,11 +136,11 @@ object PgDiffViews {
             ) {
 
                 writer.println()
-                writer.print("COMMENT ON ${newView.relationKind} ")
-                writer.print(
+                writer.append("COMMENT ON ${newView.relationKind} ")
+                writer.append(
                     PgDiffUtils.getQuotedName(newView.name)
                 )
-                writer.print(" IS ")
+                writer.append(" IS ")
                 writer.print(newView.comment)
                 writer.println(';')
             } else if (oldView.comment != null
@@ -148,9 +148,9 @@ object PgDiffViews {
             ) {
 
                 writer.println()
-                writer.print("COMMENT ON ${newView.relationKind} ")
-                writer.print(PgDiffUtils.getQuotedName(newView.name))
-                writer.println(" IS NULL;")
+                writer.append("COMMENT ON ${newView.relationKind} ")
+                writer.append(PgDiffUtils.getQuotedName(newView.name))
+                writer.appendLine(" IS NULL;")
             }
             val columnNames: MutableList<String> = ArrayList(newView.columns.size)
             for (col in newView.columns) {
@@ -173,11 +173,11 @@ object PgDiffViews {
                 ) {
 
                     writer.println()
-                    writer.print("COMMENT ON COLUMN ")
-                    writer.print(PgDiffUtils.getQuotedName(newView.name))
+                    writer.append("COMMENT ON COLUMN ")
+                    writer.append(PgDiffUtils.getQuotedName(newView.name))
                     writer.print('.')
-                    writer.print(PgDiffUtils.getQuotedName(newCol!!.name))
-                    writer.print(" IS ")
+                    writer.append(PgDiffUtils.getQuotedName(newCol!!.name))
+                    writer.append(" IS ")
                     writer.print(newCol.comment)
                     writer.println(';')
                 } else if (oldComment != null
@@ -185,11 +185,11 @@ object PgDiffViews {
                 ) {
 
                     writer.println()
-                    writer.print("COMMENT ON COLUMN ")
-                    writer.print(PgDiffUtils.getQuotedName(newView.name))
+                    writer.append("COMMENT ON COLUMN ")
+                    writer.append(PgDiffUtils.getQuotedName(newView.name))
                     writer.print('.')
-                    writer.print(PgDiffUtils.getQuotedName(oldCol!!.name))
-                    writer.println(" IS NULL;")
+                    writer.append(PgDiffUtils.getQuotedName(oldCol!!.name))
+                    writer.appendLine(" IS NULL;")
                 }
             }
             if (oldView.owner != null && newView.owner != oldView.owner) {
@@ -221,24 +221,24 @@ object PgDiffViews {
                 if (oldCol.defaultValue != newCol.defaultValue) {
 
                     writer.println()
-                    writer.print("ALTER TABLE ")
-                    writer.print(
+                    writer.append("ALTER TABLE ")
+                    writer.append(
                         PgDiffUtils.getQuotedName(newView.name)
                     )
-                    writer.print(" ALTER COLUMN ")
-                    writer.print(PgDiffUtils.getQuotedName(newCol.name))
-                    writer.print(" SET DEFAULT ")
+                    writer.append(" ALTER COLUMN ")
+                    writer.append(PgDiffUtils.getQuotedName(newCol.name))
+                    writer.append(" SET DEFAULT ")
                     writer.print(newCol.defaultValue)
                     writer.println(';')
                 }
             } else {
 
                 writer.println()
-                writer.print("ALTER TABLE ")
-                writer.print(PgDiffUtils.getQuotedName(newView.name))
-                writer.print(" ALTER COLUMN ")
-                writer.print(PgDiffUtils.getQuotedName(oldCol.name))
-                writer.println(" DROP DEFAULT;")
+                writer.append("ALTER TABLE ")
+                writer.append(PgDiffUtils.getQuotedName(newView.name))
+                writer.append(" ALTER COLUMN ")
+                writer.append(PgDiffUtils.getQuotedName(oldCol.name))
+                writer.appendLine(" DROP DEFAULT;")
             }
         }
 
@@ -252,11 +252,11 @@ object PgDiffViews {
             }
 
             writer.println()
-            writer.print("ALTER TABLE ")
-            writer.print(PgDiffUtils.getQuotedName(newView.name))
-            writer.print(" ALTER COLUMN ")
-            writer.print(PgDiffUtils.getQuotedName(newCol.name))
-            writer.print(" SET DEFAULT ")
+            writer.append("ALTER TABLE ")
+            writer.append(PgDiffUtils.getQuotedName(newView.name))
+            writer.append(" ALTER COLUMN ")
+            writer.append(PgDiffUtils.getQuotedName(newCol.name))
+            writer.append(" SET DEFAULT ")
             writer.print(newCol.defaultValue)
             writer.println(';')
         }
@@ -274,7 +274,7 @@ object PgDiffViews {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON TABLE "
                             + PgDiffUtils.getQuotedName(oldView.name)
                             + " FROM " + oldViewPrivilege.roleName + ";"
@@ -283,13 +283,13 @@ object PgDiffViews {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON TABLE "
                             + PgDiffUtils.getQuotedName(newView.name)
                             + " FROM " + newViewPrivilege.roleName + ";"
                 )
                 if ("" != newViewPrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newViewPrivilege.getPrivilegesSQL(true)
                                 + " ON TABLE "
@@ -299,7 +299,7 @@ object PgDiffViews {
                     )
                 }
                 if ("" != newViewPrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newViewPrivilege.getPrivilegesSQL(false)
                                 + " ON TABLE "
@@ -316,13 +316,13 @@ object PgDiffViews {
                 if (!emptyLinePrinted) {
                     writer.println()
                 }
-                writer.println(
+                writer.appendLine(
                     "REVOKE ALL ON TABLE "
                             + PgDiffUtils.getQuotedName(newView.name)
                             + " FROM " + newViewPrivilege.roleName + ";"
                 )
                 if ("" != newViewPrivilege.getPrivilegesSQL(true)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newViewPrivilege.getPrivilegesSQL(true)
                                 + " ON TABLE "
@@ -332,7 +332,7 @@ object PgDiffViews {
                     )
                 }
                 if ("" != newViewPrivilege.getPrivilegesSQL(false)) {
-                    writer.println(
+                    writer.appendLine(
                         "GRANT "
                                 + newViewPrivilege.getPrivilegesSQL(false)
                                 + " ON TABLE "
@@ -361,7 +361,7 @@ object PgDiffViews {
                             emptyLinePrinted = true
                             writer.println()
                         }
-                        writer.println(
+                        writer.appendLine(
                             "REVOKE ALL ("
                                     + PgDiffUtils.getQuotedName(newColumn.name)
                                     + ") ON TABLE "
@@ -384,7 +384,7 @@ object PgDiffViews {
                         emptyLinePrinted = true
                         writer.println()
                     }
-                    writer.println(
+                    writer.appendLine(
                         "REVOKE ALL ("
                                 + PgDiffUtils.getQuotedName(newColumn.name)
                                 + ") ON TABLE "
@@ -397,7 +397,7 @@ object PgDiffViews {
                             PgDiffUtils.getQuotedName(newColumn.name)
                         )
                     ) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + newColumnPrivilege.getPrivilegesSQL(
                                 true,
@@ -420,7 +420,7 @@ object PgDiffViews {
                             PgDiffUtils.getQuotedName(newColumn.name)
                         )
                     ) {
-                        writer.println(
+                        writer.appendLine(
                             "GRANT "
                                     + newColumnPrivilege.getPrivilegesSQL(
                                 false, PgDiffUtils.getQuotedName(

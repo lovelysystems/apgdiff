@@ -94,70 +94,70 @@ object PgDiffPolicies {
     }
 
     private fun createPolicySQL(writer: StringBuilder, policy: PgPolicy) {
-        writer.print(
+        writer.append(
             "CREATE POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
                     + " ON "
                     + PgDiffUtils.getQuotedName(policy.tableName!!)
         )
-        writer.print(" FOR " + policy.command)
+        writer.append(" FOR " + policy.command)
         var roles = ""
-        writer.print(" TO ")
+        writer.append(" TO ")
         val iterator: Iterator<String?> = policy.roles.iterator()
         while (iterator.hasNext()) {
             roles += iterator.next().toString() + if (iterator.hasNext()) ", " else ""
         }
-        writer.print(roles)
+        writer.append(roles)
         if (policy.using != null) {
             writer.println()
-            writer.println("USING (")
-            writer.print("  ")
+            writer.appendLine("USING (")
+            writer.append("  ")
             writer.println(policy.using)
-            writer.print(")")
+            writer.append(")")
         }
         if (policy.withCheck != null) {
             writer.println()
-            writer.println("WITH CHECK (")
-            writer.print("  ")
+            writer.appendLine("WITH CHECK (")
+            writer.append("  ")
             writer.println(policy.withCheck)
-            writer.print(")")
+            writer.append(")")
         }
-        writer.println(";")
+        writer.appendLine(";")
     }
 
     private fun alterPolicySQL(writer: StringBuilder, policy: PgPolicy) {
-        writer.print(
+        writer.append(
             "ALTER POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
                     + " ON "
                     + PgDiffUtils.getQuotedName(policy.tableName!!)
         )
         var roles = ""
-        writer.print(" TO ")
+        writer.append(" TO ")
         val iterator: Iterator<String?> = policy.roles.iterator()
         while (iterator.hasNext()) {
             roles += iterator.next().toString() + if (iterator.hasNext()) ", " else ""
         }
-        writer.print(roles)
+        writer.append(roles)
         if (policy.using != null) {
             writer.println()
-            writer.println("USING (")
-            writer.print("  ")
+            writer.appendLine("USING (")
+            writer.append("  ")
             writer.println(policy.using)
-            writer.print(")")
+            writer.append(")")
         }
         if (policy.withCheck != null) {
             writer.println()
-            writer.println("WITH CHECK (")
-            writer.print("  ")
+            writer.appendLine("WITH CHECK (")
+            writer.append("  ")
             writer.println(policy.withCheck)
-            writer.print(")")
+            writer.append(")")
         }
-        writer.println(";")
+        writer.appendLine(";")
     }
 
     private fun dropPolicySQL(writer: StringBuilder, policy: PgPolicy) {
-        writer.println(
+        writer.appendLine(
             "DROP POLICY "
                     + PgDiffUtils.getQuotedName(policy.name)
                     + " ON "

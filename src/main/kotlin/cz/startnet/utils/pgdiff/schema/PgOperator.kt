@@ -1,6 +1,5 @@
 package cz.startnet.utils.pgdiff.schema
 
-import cz.startnet.utils.pgdiff.print
 import cz.startnet.utils.pgdiff.println
 import kotlin.text.StringBuilder
 
@@ -37,7 +36,7 @@ class PgOperator(name: String, position: Int) : DBObject("OPERATOR", name, posit
     }
 
     fun creationSQL(writer: StringBuilder) {
-        writer.print("CREATE OPERATOR ${super.quotedIdentifier()} (\n")
+        writer.append("CREATE OPERATOR ${super.quotedIdentifier()} (\n")
 
         val args = mutableListOf<String>()
         args.add("    FUNCTION = $functionName")
@@ -73,9 +72,9 @@ class PgOperator(name: String, position: Int) : DBObject("OPERATOR", name, posit
             args.add("MERGES")
         }
 
-        writer.println(args.joinToString(",\n    "))
+        writer.appendLine(args.joinToString(",\n    "))
 
-        writer.println("    );")
+        writer.appendLine("    );")
         writer.println()
 
     }

@@ -1,7 +1,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import cz.startnet.utils.pgdiff.println
 import kotlin.text.StringBuilder
 
 class PgExtension(val name: String) {
@@ -42,7 +41,7 @@ class PgExtension(val name: String) {
         }
 
     fun commentSQL(writer: StringBuilder) {
-        writer.println(
+        writer.appendLine(
             "COMMENT ON EXTENSION ${PgDiffUtils.getQuotedName(name)} IS $comment;"
         )
     }

@@ -34,7 +34,7 @@ object PgDiffRules {
             for (rule in getNewRules(oldRelation, newRelation)) {
 
                 writer.println()
-                writer.println(rule.creationSQL)
+                writer.appendLine(rule.creationSQL)
             }
         }
     }

@@ -1,8 +1,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import cz.startnet.utils.pgdiff.print
-import cz.startnet.utils.pgdiff.println
 import kotlin.text.StringBuilder
 
 data class DomainConstraint(val name: String, val check: String) {
@@ -27,25 +25,25 @@ class PgDomain(name: String, position: Int) : DBObject("DOMAIN", name, position)
     var notNull: Boolean = false
 
     fun alterSQL(writer: StringBuilder, suffix: String) {
-        writer.println("ALTER DOMAIN ${quotedIdentifier()} $suffix")
+        writer.appendLine("ALTER DOMAIN ${quotedIdentifier()} $suffix")
     }
 
     fun creationSQL(writer: StringBuilder) {
         // todo schema handling
-        writer.print("CREATE DOMAIN ${quotedIdentifier()} AS $dataType")
+        writer.append("CREATE DOMAIN ${quotedIdentifier()} AS $dataType")
         collation?.let {
-            writer.print(" COLLATE $collation")
+            writer.append(" COLLATE $collation")
         }
         default?.let {
-            writer.print(" DEFAULT $default")
+            writer.append(" DEFAULT $default")
         }
         if (notNull) {
-            writer.print(" NOT NULL")
+            writer.append(" NOT NULL")
         }
         constraints.forEach {
-            writer.print("\n    ${it.sql()}")
+            writer.append("\n    ${it.sql()}")
         }
-        writer.println(";")
+        writer.appendLine(";")
         owner?.let {
             ownerSQL(writer)
         }

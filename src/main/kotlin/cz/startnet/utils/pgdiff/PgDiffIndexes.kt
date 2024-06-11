@@ -34,14 +34,14 @@ object PgDiffIndexes {
             if (oldSchema == null) {
                 for (index in newTable.indexes) {
                     writer.println()
-                    writer.println(index.creationSQL)
+                    writer.appendLine(index.creationSQL)
                 }
             } else {
                 for (index in getNewIndexes(
                     oldSchema.getTable(newTableName), newTable
                 )) {
                     writer.println()
-                    writer.println(index.creationSQL)
+                    writer.appendLine(index.creationSQL)
                 }
             }
         }
@@ -65,7 +65,7 @@ object PgDiffIndexes {
             // Drop indexes that do not exist in new schema or are modified
             for (index in getDropIndexes(oldTable, newTable)) {
                 writer.println()
-                writer.println(index.dropSQL)
+                writer.appendLine(index.dropSQL)
             }
         }
     }
@@ -147,11 +147,11 @@ object PgDiffIndexes {
             ) {
 
                 writer.println()
-                writer.print("COMMENT ON INDEX ")
-                writer.print(
+                writer.append("COMMENT ON INDEX ")
+                writer.append(
                     PgDiffUtils.getQuotedName(newIndex.name)
                 )
-                writer.print(" IS ")
+                writer.append(" IS ")
                 writer.print(newIndex.comment)
                 writer.println(';')
             } else if (oldIndex.comment != null
@@ -159,11 +159,11 @@ object PgDiffIndexes {
             ) {
 
                 writer.println()
-                writer.print("COMMENT ON INDEX ")
-                writer.print(
+                writer.append("COMMENT ON INDEX ")
+                writer.append(
                     PgDiffUtils.getQuotedName(newIndex.name)
                 )
-                writer.println(" IS NULL;")
+                writer.appendLine(" IS NULL;")
             }
         }
     }

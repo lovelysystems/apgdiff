@@ -34,7 +34,7 @@ class SearchPathHelper
     fun outputSearchPath(writer: StringBuilder) {
         if (!wasOutput && searchPath != null && !searchPath.isEmpty()) {
             writer.println()
-            writer.println(searchPath)
+            writer.appendLine(searchPath)
             wasOutput = true
         }
     }
