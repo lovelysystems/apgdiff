@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.parsers.ParserUtils
-import java.util.*
 
 /**
  * Stores database information.

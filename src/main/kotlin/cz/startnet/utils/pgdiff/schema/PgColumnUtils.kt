@@ -5,7 +5,6 @@
  */
 package cz.startnet.utils.pgdiff.schema
 
-import java.util.*
 
 /**
  * Utilities for [PgColumn].
@@ -22,8 +21,9 @@ object PgColumnUtils {
      * @return found default value or null
      */
     fun getDefaultValue(type: String?): String? {
+        requireNotNull(type) { "Type must not be null" }
         val defaultValue: String?
-        val adjType = type!!.lowercase(Locale.ENGLISH)
+        val adjType = type.lowercase()
         defaultValue =
             if ("smallint" == adjType || "integer" == adjType || "bigint" == adjType || adjType.startsWith("decimal")
                 || adjType.startsWith("numeric")

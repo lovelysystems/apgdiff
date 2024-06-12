@@ -4,7 +4,6 @@ import cz.startnet.utils.pgdiff.schema.PgColumnUtils
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgType
 import cz.startnet.utils.pgdiff.schema.PgTypeColumn
-import kotlin.text.StringBuilder
 import java.text.MessageFormat
 
 /**
@@ -145,7 +144,7 @@ object PgDiffTypes {
                 } else {
                     if (arguments.isAddDefaults) {
                         val defaultValue = PgColumnUtils.getDefaultValue(
-                            newColumn.type
+                            requireNotNull(newColumn.type)
                         )
                         if (defaultValue != null) {
                             statements.add(

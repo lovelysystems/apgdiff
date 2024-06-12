@@ -1,9 +1,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import kotlin.text.StringBuilder
-import java.util.regex.Pattern
-
 
 // GENERATED { ALWAYS | BY DEFAULT } AS IDENTITY [ ( sequence_options ) ]
 sealed class GeneratedDef {
@@ -25,12 +22,6 @@ data class IdentityColumnDef(
         sequenceOptions?.let {
             writer.append(" (\n    $sequenceOptions\n)")
         }
-    }
-}
-
-class GeneratedColumnDef : GeneratedDef() {
-    override fun sql(writer: StringBuilder) {
-        TODO("Not yet implemented")
     }
 }
 
@@ -118,22 +109,23 @@ sealed class PgColumnBase<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
      * @param definition definition of the column
      */
     fun parseDefinition(definition: String?) {
+        requireNotNull(definition) { "Definition must not be null" }
         var string = definition
-        var matcher = PATTERN_NOT_NULL.matcher(string)
-        if (matcher.matches()) {
-            string = matcher.group(1).trim { it <= ' ' }
+        var matcher = PATTERN_NOT_NULL.matchEntire(string)
+        if (matcher!=null) {
+            string = matcher.groupValues[1].trim { it <= ' ' }
             nullValue = false
         } else {
-            matcher = PATTERN_NULL.matcher(string)
-            if (matcher.matches()) {
-                string = matcher.group(1).trim { it <= ' ' }
+            matcher = PATTERN_NULL.matchEntire(string)
+            if (matcher!=null) {
+                string = matcher.groupValues[1].trim { it <= ' ' }
                 nullValue = true
             }
         }
-        matcher = PATTERN_DEFAULT.matcher(string)
-        if (matcher.matches()) {
-            string = matcher.group(1).trim { it <= ' ' }
-            defaultValue = matcher.group(2).trim { it <= ' ' }
+        matcher = PATTERN_DEFAULT.matchEntire(string)
+        if (matcher!=null) {
+            string = matcher.groupValues[1].trim { it <= ' ' }
+            defaultValue = matcher.groupValues[2].trim { it <= ' ' }
         }
         type = string
     }
@@ -152,20 +144,14 @@ class PgTypeColumn(type: PgType, name: String) : PgColumnBase<PgType, PgTypeColu
 /**
  * Pattern for parsing NULL arguments.
  */
-private val PATTERN_NULL = Pattern.compile(
-    "^(.+)[\\s]+NULL$", Pattern.CASE_INSENSITIVE
-)
+private val PATTERN_NULL = Regex("^(.+)[\\s]+NULL$", RegexOption.IGNORE_CASE)
 
 /**
  * Pattern for parsing NOT NULL arguments.
  */
-private val PATTERN_NOT_NULL = Pattern.compile(
-    "^(.+)[\\s]+NOT[\\s]+NULL$", Pattern.CASE_INSENSITIVE
-)
+private val PATTERN_NOT_NULL = Regex("^(.+)[\\s]+NOT[\\s]+NULL$", RegexOption.IGNORE_CASE)
 
 /**
  * Pattern for parsing DEFAULT value.
  */
-private val PATTERN_DEFAULT = Pattern.compile(
-    "^(.+)[\\s]+DEFAULT[\\s]+(.+)$", Pattern.CASE_INSENSITIVE
-)
+private val PATTERN_DEFAULT = Regex("^(.+)[\\s]+DEFAULT[\\s]+(.+)$", RegexOption.IGNORE_CASE)

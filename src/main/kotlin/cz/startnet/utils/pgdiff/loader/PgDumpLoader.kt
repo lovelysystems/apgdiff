@@ -5,19 +5,16 @@ import cz.startnet.utils.pgdiff.parsers.*
 import cz.startnet.utils.pgdiff.schema.PgDatabase
 import kotlinx.io.Source
 import kotlinx.io.readLine
-import java.io.BufferedReader
-import java.io.IOException
 import java.text.MessageFormat
-import java.util.regex.Pattern
 
 object PgDumpLoader {
 
     /**
      * Pattern for testing a dollar quoting tag.
      */
-    private val PATTERN_DOLLAR_TAG = Pattern.compile(
+    private val PATTERN_DOLLAR_TAG = Regex(
         "[\"\\s]",
-        Pattern.CASE_INSENSITIVE or Pattern.DOTALL
+        setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
     )
 
     /**
@@ -100,13 +97,7 @@ object PgDumpLoader {
         while (true) {
             if (pos == -1) {
                 val newLine: String?
-                newLine = try {
-                    reader.readLine()
-                } catch (ex: IOException) {
-                    throw FileException(
-                        Resources.getString("CannotReadFile"), ex
-                    )
-                }
+                newLine = reader.readLine()
                 if (newLine == null) {
                     return if (sbStatement.toString().trim { it <= ' ' }.length == 0) {
                         null
@@ -238,6 +229,6 @@ object PgDumpLoader {
      * @return true if the tag is correct, otherwise false
      */
     private fun isCorrectTag(tag: String): Boolean {
-        return !PATTERN_DOLLAR_TAG.matcher(tag).find()
+        return !PATTERN_DOLLAR_TAG.matches(tag)
     }
 }

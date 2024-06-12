@@ -6,7 +6,6 @@ import io.github.petertrr.diffutils.patch.Delta
 import io.github.petertrr.diffutils.patch.DeltaType
 import io.github.petertrr.diffutils.text.DiffRowGenerator
 import kotlinx.io.Source
-import java.io.BufferedReader
 
 data class PgDiffResult(
     val script: String,

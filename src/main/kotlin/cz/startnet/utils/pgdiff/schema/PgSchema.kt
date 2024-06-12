@@ -1,7 +1,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.*
 
 class PgSchema(val name: String) {
 
@@ -115,7 +114,7 @@ class PgSchema(val name: String) {
      * @return [.String]
      */
     val grants: List<String>
-        get() = Collections.unmodifiableList(grantStatements)
+        get() = grantStatements
 
     /**
      * Finds index according to specified index `name`.

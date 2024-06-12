@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.regex.Pattern
 
 /**
  * Stores table constraint information.
@@ -120,7 +119,7 @@ class PgConstraint(var name: String) {
      * @return true if this is a PRIMARY KEY constraint, otherwise false
      */
     val isPrimaryKeyConstraint: Boolean
-        get() = PATTERN_PRIMARY_KEY.matcher(definition).matches()
+        get() = PATTERN_PRIMARY_KEY.matches(definition!!)
 
     /**
      * {@inheritDoc}
@@ -154,6 +153,6 @@ class PgConstraint(var name: String) {
         /**
          * Pattern for checking whether the constraint is PRIMARY KEY constraint.
          */
-        private val PATTERN_PRIMARY_KEY = Pattern.compile(".*PRIMARY[\\s]+KEY.*", Pattern.CASE_INSENSITIVE)
+        private val PATTERN_PRIMARY_KEY = Regex(".*PRIMARY[\\s]+KEY.*", RegexOption.IGNORE_CASE)
     }
 }

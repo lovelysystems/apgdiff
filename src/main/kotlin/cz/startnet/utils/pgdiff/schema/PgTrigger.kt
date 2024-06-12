@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.*
 
 /**
  * Stores trigger information.
@@ -28,11 +27,11 @@ class PgTrigger(val name: String) {
             }
 
             init {
-                val aMap = HashMap<EventTimeQualification, String>()
-                aMap.put(before, "BEFORE")
-                aMap.put(after, "AFTER")
-                aMap.put(instead_of, "INSTEAD OF")
-                stringRepresentation = Collections.unmodifiableMap(aMap)
+                stringRepresentation = mapOf(
+                    before to "BEFORE",
+                    after to "AFTER",
+                    instead_of to "INSTEAD OF"
+                )
             }
         }
     }

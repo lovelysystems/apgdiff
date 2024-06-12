@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.*
 
 /**
  * Stores view information.
@@ -130,7 +129,7 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
                 }
                 sbSQL.append(')')
             }
-            if (Objects.nonNull(with) && !with!!.isEmpty()) {
+            if (!with.isNullOrEmpty()) {
                 sbSQL.append(" WITH (")
                 sbSQL.append(with)
                 sbSQL.append(")")

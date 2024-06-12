@@ -7,7 +7,6 @@ package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import java.text.MessageFormat
-import java.util.*
 
 fun interface SubParser {
 
@@ -154,9 +153,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
                 }
                 endPos++
             }
-            val result = string.substring(position, endPos).lowercase(
-                Locale.ENGLISH
-            )
+            val result = string.substring(position, endPos).lowercase()
             position = endPos
             result
         }

@@ -5,8 +5,7 @@ object DefaultSchemaParser : PatternBasedSubParser(
             + "(?:,[\\s]+.*)?;$"
 ) {
     override fun parse(parser: Parser, ctx: ParserContext) {
-        val matcher = pattern.matcher(parser.string)
-        matcher.matches()
-        ctx.database.setDefaultSchema(matcher.group(1)!!)
+        val matcher = pattern.matchEntire(parser.string) ?:  error("schema parser does not match")
+        ctx.database.setDefaultSchema(matcher.groupValues[1])
     }
 }

@@ -5,7 +5,6 @@
  */
 package cz.startnet.utils.pgdiff
 
-import java.util.*
 
 /**
  * Utilities for creation of diffs.
@@ -507,7 +506,7 @@ object PgDiffUtils {
         if (excludeKeywords) {
             return name
         }
-        val upperName = name.uppercase(Locale.ENGLISH)
+        val upperName = name.uppercase()
         for (keyword in KEYWORDS) {
             if (keyword == upperName) {
                 return '"'.toString() + name + '"'

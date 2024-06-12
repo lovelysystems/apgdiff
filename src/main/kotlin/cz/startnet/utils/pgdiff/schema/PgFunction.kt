@@ -1,7 +1,6 @@
 package cz.startnet.utils.pgdiff.schema
 
 import cz.startnet.utils.pgdiff.PgDiffUtils
-import java.util.*
 
 
 class PgFunction(val name: String, val schema: String) {
@@ -109,7 +108,7 @@ class PgFunction(val name: String, val schema: String) {
                 if (addComma) {
                     sbString.append(',')
                 }
-                sbString.append(argument.dataType.lowercase(Locale.ENGLISH))
+                sbString.append(argument.dataType.lowercase())
                 addComma = true
             }
             sbString.append(')')

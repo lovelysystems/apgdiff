@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.*
-import kotlin.text.StringBuilder
 import java.text.MessageFormat
 
 /**
@@ -323,7 +322,7 @@ object PgDiffTables {
                 } else {
                     if (arguments.isAddDefaults) {
                         val defaultValue = PgColumnUtils.getDefaultValue(
-                            newColumn.type
+                            requireNotNull(newColumn.type)
                         )
                         if (defaultValue != null) {
                             statements.add(
