@@ -175,37 +175,19 @@ object GrantRevokeParser : PatternBasedSubParser(
                     val privValue = privilegesColumns[i]
                     if (privValue != null) {
                         for (columnName in privValue) {
-                            if (rel.containsColumn(columnName)) {
-                                val column = rel
-                                    .getColumn(columnName)
-                                    ?: throw RuntimeException(
-                                        MessageFormat.format(
-                                            Resources.getString("CannotFindTableColumn"),
-                                            columnName,
-                                            rel.name, parser
-                                                .string
-                                        )
+                            val column = rel.getColumnSafe(columnName)
+                            for (roleName in roles) {
+                                var columnPrivilege = column
+                                    .getPrivilege(roleName)
+                                if (columnPrivilege == null) {
+                                    columnPrivilege = PgColumnPrivilege(
+                                        roleName
                                     )
-                                for (roleName in roles) {
-                                    var columnPrivilege = column
-                                        .getPrivilege(roleName)
-                                    if (columnPrivilege == null) {
-                                        columnPrivilege = PgColumnPrivilege(
-                                            roleName
-                                        )
-                                        column.addPrivilege(columnPrivilege)
-                                    }
-                                    columnPrivilege.setPrivileges(
-                                        privKey,
-                                        grant, grantOption
-                                    )
+                                    column.addPrivilege(columnPrivilege)
                                 }
-                            } else {
-                                throw ParserException(
-                                    MessageFormat.format(
-                                        Resources.getString("CannotFindColumnInTable"),
-                                        columnName, rel.name
-                                    )
+                                columnPrivilege.setPrivileges(
+                                    privKey,
+                                    grant, grantOption
                                 )
                             }
                         }

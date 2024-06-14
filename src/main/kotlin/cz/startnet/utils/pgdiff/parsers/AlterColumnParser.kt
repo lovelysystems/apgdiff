@@ -1,11 +1,9 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.IdentityColumnDef
 import cz.startnet.utils.pgdiff.schema.PgColumnBase
 import cz.startnet.utils.pgdiff.schema.PgDatabase
 import cz.startnet.utils.pgdiff.schema.PgRelation
-import java.text.MessageFormat
 
 data class ParserContext(
     val database: PgDatabase,
@@ -27,77 +25,21 @@ ALTER [ COLUMN ] column_name SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
 class AlterColumnParser(val columnName: String, val parser: Parser, val rel: PgRelation<*, *>, val ctx: ParserContext) {
 
     fun getColumnSafe(): PgColumnBase<*, *> {
-        return rel.getColumn(columnName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindTableColumn"),
-                    columnName, rel.name, parser.string
-                )
-            )
-
+        return parser.withErrorContext { rel.getColumnSafe(columnName) }
     }
 
-    fun parseSet() {
+    fun parseSet() = parser.withErrorContext {
         if (parser.expectOptional("STATISTICS")) {
             getColumnSafe().statistics = parser.parseInteger()
         } else if (parser.expectOptional("NOT NULL")) {
-            if (rel.containsColumn(columnName)) {
-                getColumnSafe().nullValue = false
-            } else if (rel.containsInheritedColumn(columnName)) {
-                val inheritedColumn = rel.getInheritedColumn(columnName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindTableColumn"),
-                            columnName, rel.name, parser.string
-                        )
-                    )
-                inheritedColumn.nullValue = false
-            } else {
-                throw ParserException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindColumnInTable"),
-                        columnName, rel.name
-                    )
-                )
-            }
+            val col = rel.getInheritedColumn(columnName) ?: rel.getColumnSafe(columnName)
+            col.nullValue = false
         } else if (parser.expectOptional("DEFAULT")) {
             val defaultValue = parser.expression
-            if (rel.containsColumn(columnName)) {
-                val column = rel.getColumn(columnName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindTableColumn"),
-                            columnName, rel.name,
-                            parser.string
-                        )
-                    )
-                column.defaultValue = defaultValue
-            } else if (rel.containsInheritedColumn(columnName)) {
-                val column = rel.getInheritedColumn(columnName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindTableColumn"),
-                            columnName, rel.name,
-                            parser.string
-                        )
-                    )
-                column.defaultValue = defaultValue
-            } else {
-                throw ParserException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindColumnInTable"),
-                        columnName, rel.name
-                    )
-                )
-            }
+            val col = rel.getInheritedColumn(columnName) ?: rel.getColumnSafe(columnName)
+            col.defaultValue = defaultValue
         } else if (parser.expectOptional("STORAGE")) {
-            val column = rel.getColumn(columnName)
-                ?: throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindTableColumn"),
-                        columnName, rel.name, parser.string
-                    )
-                )
+            val column = rel.getColumnSafe(columnName)
             if (parser.expectOptional("PLAIN")) {
                 column.storage = "PLAIN"
             } else if (parser.expectOptional("EXTERNAL")) {

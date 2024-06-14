@@ -70,6 +70,12 @@ sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>
         return columns.firstOrNull { it.name == name }
     }
 
+
+    fun getColumnSafe(name: String): COL {
+        return getColumn(name) ?: error("Cannot find column ''$name'' in table ''${this.name}''")
+    }
+
+
     /**
      * Generates SQL code for declaring relation and column comments
      *

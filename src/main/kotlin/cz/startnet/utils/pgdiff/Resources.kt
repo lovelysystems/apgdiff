@@ -19,7 +19,6 @@ private val RESOURCE_BUNDLE = mapOf(
     "CannotParseStringExpectedDataType" to "Cannot parse string: {0}\nExpected data type definition at position {1} ''{2}''",
     "CannotFindView" to "Cannot find view ''{0}'' for statement ''{1}''. Missing CREATE VIEW statement?",
     "CannotFindObject" to "Cannot find object ''{0}'' for statement ''{1}''.",
-    "CannotFindTableColumn" to "Cannot find column ''{0}'' in table ''{1}'' for statement ''{2}''.",
     "CannotFindTable" to "Cannot find table ''{0}'' for statement ''{1}''. Missing CREATE TABLE?",
     "CannotFindSequence" to "Cannot find sequence ''{0}'' for statement ''{1}''. Missing CREATE SEQUENCE?",
     "CreateTablePrimaryKeyNotSupported" to """CREATE TABLE ... PRIMARY KEY ..." is not supported. Use "CREATE TABLE ... CONSTRAINT name PRIMARY KEY ..." instead.""",
