@@ -48,11 +48,7 @@ class PgDiffDatabases(
             if (oldDatabase.ignoredStatements.isNotEmpty()) {
                 writer.println()
                 writer.append("/* ")
-                writer.appendLine(
-                    Resources.getString(
-                        "OriginalDatabaseIgnoredStatements"
-                    )
-                )
+                writer.appendLine("Original database ignored statements")
                 for (statement in oldDatabase.ignoredStatements) {
                     writer.println()
                     writer.appendLine(statement)
@@ -62,9 +58,7 @@ class PgDiffDatabases(
             if (newDatabase.ignoredStatements.isNotEmpty()) {
                 writer.println()
                 writer.append("/* ")
-                writer.appendLine(
-                    Resources.getString("NewDatabaseIgnoredStatements")
-                )
+                writer.appendLine("New database ignored statements")
                 for (statement in newDatabase.ignoredStatements) {
                     writer.println()
                     writer.appendLine(statement)

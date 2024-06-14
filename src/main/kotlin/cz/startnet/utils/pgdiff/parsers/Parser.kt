@@ -5,15 +5,12 @@
  */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
-import java.text.MessageFormat
-
 fun interface SubParser {
 
     operator fun invoke(parser: Parser, ctx: ParserContext): Boolean
 }
 
-class ParserContextException(val parser: Parser, cause: Exception): RuntimeException(parser.string, cause)
+class ParserContextException(val parser: Parser, cause: Exception) : RuntimeException(parser.string, cause)
 
 /**
  * Class for parsing strings.
@@ -27,7 +24,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
      */
     var position = 0
 
-    fun <R>withErrorContext(block: ()->R): R{
+    fun <R> withErrorContext(block: () -> R): R {
         try {
             return block()
         } catch (e: Exception) {
@@ -76,13 +73,14 @@ class Parser(val string: String, val statementNum: Int = 0) {
         if (string.length - (position + 1) < 20) {
             dumpEndPosition = string.length - 1
         }
-        throw ParserException(
-            MessageFormat.format(
-                Resources.getString("CannotParseStringExpectedWord"), string,
-                word, position + 1, string.substring(position, dumpEndPosition)
-            )
-        )
+        throw parseError(word, position + 1, this.string.substring(position, dumpEndPosition))
     }
+
+    fun parseError(expected: String, startPos: Int, contextString: String = "") =
+        ParserException(
+            "Cannot parse string: $string\nExpected $expected at position $startPos ''$contextString''"
+        )
+
 
     /**
      * Checks whether string contains at current position sequence of the words.
@@ -213,12 +211,8 @@ class Parser(val string: String, val statementNum: Int = 0) {
             skipWhitespace()
             result
         } catch (ex: NumberFormatException) {
-            throw ParserException(
-                MessageFormat.format(
-                    Resources.getString("CannotParseStringExpectedInteger"),
-                    string, position + 1,
-                    string.substring(position, position + 20)
-                ), ex
+            throw parseError(
+                "integer", position + 1, string.substring(position, position + 20)
             )
         }
     }
@@ -278,12 +272,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
                 endPos++
             }
             if (position == endPos) {
-                throw ParserException(
-                    MessageFormat.format(
-                        Resources.getString("CannotParseStringExpectedString"),
-                        string, position + 1
-                    )
-                )
+                throw parseError("string", position + 1)
             }
             val result = string.substring(position, endPos)
             position = endPos
@@ -302,12 +291,8 @@ class Parser(val string: String, val statementNum: Int = 0) {
         get() {
             val endPos = expressionEnd
             if (position == endPos) {
-                throw ParserException(
-                    MessageFormat.format(
-                        Resources.getString("CannotParseStringExpectedExpression"),
-                        string, position + 1,
-                        string.substring(position, position + 20)
-                    )
+                parseError(
+                    "expression", position + 1, string.substring(position, position + 20)
                 )
             }
             val result = string.substring(position, endPos).trim { it <= ' ' }
@@ -361,12 +346,9 @@ class Parser(val string: String, val statementNum: Int = 0) {
      * Throws exception about unsupported command in statement.
      */
     fun throwUnsupportedCommand() {
+        val ctxSTring = string.substring(position, if (string.length > position + 20) position + 20 else string.length)
         throw ParserException(
-            MessageFormat.format(
-                Resources.getString("CannotParseStringUnsupportedCommand"),
-                string, position + 1,
-                string.substring(position, if (string.length > position + 20) position + 20 else string.length)
-            )
+            """Cannot parse string: $string\nUnsupported command at position ${position + 1} ''$ctxSTring''"""
         )
     }
 
@@ -415,12 +397,8 @@ class Parser(val string: String, val statementNum: Int = 0) {
             endPos++
         }
         if (endPos == position) {
-            throw ParserException(
-                MessageFormat.format(
-                    Resources.getString("CannotParseStringExpectedDataType"),
-                    string, position + 1,
-                    string.substring(position, position + 20)
-                )
+            parseError(
+                "data type definition", position + 1, string.substring(position, position + 20)
             )
         }
         var dataType = string.substring(position, endPos)

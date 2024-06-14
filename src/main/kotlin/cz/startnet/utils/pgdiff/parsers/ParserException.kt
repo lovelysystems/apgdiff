@@ -11,10 +11,6 @@ package cz.startnet.utils.pgdiff.parsers
  * @author fordfrog
  */
 class ParserException : RuntimeException {
-    /**
-     * Creates a new instance of `ParserException` without detail message.
-     */
-    constructor()
 
     /**
      * Constructs an instance of `ParserException` with the specified

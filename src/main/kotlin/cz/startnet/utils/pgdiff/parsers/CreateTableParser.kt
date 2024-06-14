@@ -1,6 +1,5 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.*
 
 object
@@ -34,13 +33,11 @@ CreateTableParser : PatternBasedSubParser(
                 parseConstraint(parser, table)
             } else if (parser.expectOptional("PRIMARY", "KEY")) {
                 throw ParserException(
-                    Resources.getString(
-                        "CreateTablePrimaryKeyNotSupported"
-                    )
+                    """"CREATE TABLE ... PRIMARY KEY ..." is not supported. Use "CREATE TABLE ... CONSTRAINT name PRIMARY KEY ..." instead."""
                 )
             } else if (parser.expectOptional("UNIQUE")) {
                 throw ParserException(
-                    Resources.getString("CreateTableUniqueNotSupported")
+                    """"CREATE TABLE ... UNIQUE ..." is not supported. Use "CREATE TABLE ... CONSTRAINT name UNIQUE..." instead."""
                 )
             } else {
                 parseColumn(parser, table)
