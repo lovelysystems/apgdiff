@@ -37,6 +37,9 @@ tasks.withType<Test> {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+    compilerOptions {
+        "-Xcontext-receivers" // Enable context receivers
+    }
 }
 
 val fatJar by tasks.creating(Jar::class) {
