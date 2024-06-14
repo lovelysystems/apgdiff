@@ -1,8 +1,11 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+
 plugins {
+    kotlin("multiplatform") version "2.0.0"
     id("com.lovelysystems.gradle") version ("1.11.5")
     application
     id("org.jetbrains.kotlinx.kover") version "0.7.3"
-    kotlin("jvm") version "2.0.0"
+    //kotlin("jvm") version "2.0.0"
 }
 
 repositories {
@@ -10,20 +13,39 @@ repositories {
 }
 group = "com.lovelysystems"
 
-dependencies {
-    //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
-    runtimeOnly("io.github.petertrr:kotlin-multiplatform-diff-jvm:0.5.0")
-    implementation("io.github.petertrr:kotlin-multiplatform-diff:0.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
-    implementation("com.github.ajalt.clikt:clikt:3.3.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation(kotlin("test-junit5"))
-    // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
-    testImplementation("org.testcontainers:testcontainers:1.18.3")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
+kotlin {
 
-    implementation("org.slf4j:slf4j-api:2.0.7")
-    testImplementation("ch.qos.logback:logback-classic:1.4.11")
+    jvm()
+    linuxX64()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
+                implementation("io.github.petertrr:kotlin-multiplatform-diff:0.5.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
+                implementation("com.github.ajalt.clikt:clikt:3.3.0")
+
+                implementation("org.slf4j:slf4j-api:2.0.7")
+            }
+
+        }
+        jvmTest {
+            dependencies {
+                implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+                implementation(kotlin("test-junit5"))
+                // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
+                implementation("org.testcontainers:testcontainers:1.18.3")
+                implementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
+
+                implementation("org.slf4j:slf4j-api:2.0.7")
+                implementation("ch.qos.logback:logback-classic:1.4.11")
+            }
+
+        }
+
+    }
+
 }
 
 application {

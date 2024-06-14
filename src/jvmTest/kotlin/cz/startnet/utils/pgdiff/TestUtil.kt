@@ -11,7 +11,7 @@ import java.io.File
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
-val testFileDir = File("src/test/resources/pgdiff_test_files")
+val testFileDir = File("src/jvmTest/resources/pgdiff_test_files")
 
 data class SQLDiffTestFiles(val name: String) {
 
