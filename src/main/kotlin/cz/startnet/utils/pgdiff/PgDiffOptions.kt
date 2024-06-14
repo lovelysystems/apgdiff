@@ -2,10 +2,6 @@ package cz.startnet.utils.pgdiff
 
 data class PgDiffOptions(
     /**
-     * Output file charset name.
-     */
-    val outCharsetName: String = "UTF-8",
-    /**
      * Whether DEFAULT ... should be added in case new column has NOT NULL
      * constraint. The default value is dropped later.
      */

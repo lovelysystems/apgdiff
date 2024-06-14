@@ -1,21 +1,76 @@
 package cz.startnet.utils.pgdiff
 
+import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.parameters.arguments.ProcessedArgument
+import com.github.ajalt.clikt.parameters.arguments.RawArgument
 import com.github.ajalt.clikt.parameters.arguments.argument
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.multiple
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.file
+import com.github.ajalt.clikt.parameters.arguments.convert
+import com.github.ajalt.clikt.parameters.options.*
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
-import java.nio.charset.Charset
+import kotlinx.io.writeString
+
+private fun pathType(context: Context, fileOkay: Boolean, folderOkay: Boolean): String = when {
+    fileOkay && !folderOkay -> context.localization.pathTypeFile()
+    !fileOkay && folderOkay -> context.localization.pathTypeDirectory()
+    else -> context.localization.pathTypeOther()
+}
+
+private fun convertToPath(
+    path: String,
+    mustExist: Boolean,
+    canBeFile: Boolean,
+    canBeFolder: Boolean,
+    context: Context,
+    fail: (String) -> Unit,
+): Path {
+    val name = pathType(context, canBeFile, canBeFolder)
+    return with(context.localization) {
+        SystemFileSystem.resolve(Path(path)).also {
+            if (mustExist && !SystemFileSystem.exists(it)) fail(pathDoesNotExist(name, it.toString()))
+        }
+    }
+}
+
+fun RawArgument.path(
+    mustExist: Boolean = false,
+    canBeFile: Boolean = true,
+    canBeDir: Boolean = true,
+): ProcessedArgument<Path, Path> {
+    return convert(CompletionCandidates.Path) { str ->
+        convertToPath(
+            path = str,
+            mustExist = mustExist,
+            canBeFile = canBeFile,
+            canBeFolder = canBeDir,
+            context = context
+        ) { fail(it) }
+    }
+}
+
+
+fun RawOption.path(
+    mustExist: Boolean = false,
+    canBeFile: Boolean = true,
+    canBeDir: Boolean = true,
+): NullableOption<Path, Path> {
+    return convert({ localization.pathMetavar() }, CompletionCandidates.Path) { str ->
+        convertToPath(
+            path = str,
+            mustExist = mustExist,
+            canBeFile = canBeFile,
+            canBeFolder = canBeDir,
+            context = context
+        ) { fail(it) }
+    }
+}
+
 
 class CLI : CliktCommand(name = "apgdiff") {
-    val inCharsetName by option(help = "Input file charset name").default("UTF-8")
-    val outCharsetName by option(help = "Input file charset name").default("UTF-8")
-    val outFile by option(help = "File to write the diff sql script").file()
+    val outFile by option(help = "File to write the diff sql script").path()
     val dropCascade by option(help = "Make objects drops cascading").flag(default = false)
     val addDefaults by option(
         help = "Whether DEFAULT ... should be added in case new" +
@@ -25,8 +80,8 @@ class CLI : CliktCommand(name = "apgdiff") {
         help = "Whether to output information about ignored statements."
     ).flag(default = false)
 
-    val oldDumpFile by argument(help = "Path to the original dump file").file(mustBeReadable = true)
-    val newDumpFile by argument(help = "Path to the new dump file").file(mustBeReadable = true)
+    val oldDumpFile by argument(help = "Path to the original dump file").path()
+    val newDumpFile by argument(help = "Path to the new dump file").path()
 
     val schemas: List<String> by option(
         "-n",
@@ -51,24 +106,24 @@ class CLI : CliktCommand(name = "apgdiff") {
             excludeSchemas = excludeSchemas,
         )
 
-        val oldSource = SystemFileSystem.source(Path(oldDumpFile.absolutePath)).buffered()
-        val newSource = SystemFileSystem.source(Path(newDumpFile.absolutePath)).buffered()
-
-//        val dumpOld = oldDumpFile.bufferedReader(Charset.forName(inCharsetName))
-//        val dumpNew = newDumpFile.bufferedReader(Charset.forName(inCharsetName))
-        val charset = Charset.forName(outCharsetName) ?: error("charset $outCharsetName not found")
-
+        val oldSource = SystemFileSystem.source(oldDumpFile).buffered()
+        val newSource = SystemFileSystem.source(newDumpFile).buffered()
 
         val res = PgDiff(arguments).createDiff(oldSource, newSource)
-        val writer = outFile?.writer(charset) ?: System.out.writer(charset)
-        writer.use {
-            it.write(res.script)
+
+
+        if (outFile != null) {
+            SystemFileSystem.sink(outFile!!).buffered().writeString(res.script)
+        } else {
+            echo(res.script)
         }
 
         val diff = res.diffIgnored()
         if (diff.isNotEmpty()) {
-            System.err.println("CAUTION ignored statements differ:")
-            diff.forEach(System.err::println)
+            echo("CAUTION ignored statements differ:", err = true)
+            diff.forEach {
+                echo(it, err = true)
+            }
         }
     }
 
