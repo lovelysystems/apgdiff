@@ -2,7 +2,7 @@ plugins {
     id("com.lovelysystems.gradle") version ("1.11.5")
     application
     id("org.jetbrains.kotlinx.kover") version "0.7.3"
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "2.0.0"
 }
 
 repositories {
@@ -33,13 +33,6 @@ application {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-    compilerOptions {
-        "-Xcontext-receivers" // Enable context receivers
-    }
 }
 
 val fatJar by tasks.creating(Jar::class) {

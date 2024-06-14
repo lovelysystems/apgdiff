@@ -119,7 +119,7 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
             sbSQL.append(' ')
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (declareColumnNames) {
-                assert(columns != null && !columns.isEmpty())
+                assert(columns.isNotEmpty())
                 sbSQL.append(" (")
                 for (i in columns.indices) {
                     if (i > 0) {
