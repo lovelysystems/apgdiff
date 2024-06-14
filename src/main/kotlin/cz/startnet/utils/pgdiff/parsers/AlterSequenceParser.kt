@@ -5,9 +5,7 @@
  */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgSequence
-import java.text.MessageFormat
 
 /**
  * Parses ALTER SEQUENCE statements.
@@ -36,13 +34,7 @@ object AlterSequenceParser : PatternBasedSubParser(
             ctx.database.getSchemaSafe(schemaName)
         }
         val objectName = ParserUtils.getObjectName(sequenceName)
-        val sequence = schema.getSequence(objectName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSequence"), sequenceName,
-                    parser.string
-                )
-            )
+        val sequence = schema.getSequenceSafe(objectName)
         parseAlter(sequence, parser)
     }
 

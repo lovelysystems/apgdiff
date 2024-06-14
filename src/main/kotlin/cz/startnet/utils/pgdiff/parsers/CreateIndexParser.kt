@@ -5,9 +5,7 @@
  */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgIndex
-import java.text.MessageFormat
 
 /**
  * Parses CREATE INDEX statements.
@@ -41,20 +39,8 @@ object CreateIndexParser : PatternBasedSubParser(
             ctx.database.getSchemaSafe(schemaName)
         }
         val objectName = ParserUtils.getObjectName(tableName)
-        val table = schema.getTable(objectName)
-        val view = schema.getView(objectName)
-        if (table != null) {
-            table.addIndex(index)
-        } else if (view != null) {
-            view.addIndex(index)
-        } else {
-            throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindObject"), tableName,
-                    parser.string
-                )
-            )
-        }
+        val rel = schema.getView(objectName) ?: schema.getTableSafe(objectName)
+        rel.addIndex(index)
         schema.addIndex(index)
         index.definition = definition!!.trim { it <= ' ' }
         index.tableName = objectName

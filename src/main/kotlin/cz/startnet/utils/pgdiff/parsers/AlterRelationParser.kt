@@ -5,9 +5,7 @@
  */
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.*
-import java.text.MessageFormat
 
 
 /**
@@ -44,18 +42,10 @@ object AlterRelationParser : PatternBasedSubParser(
         val objectName = ParserUtils.getObjectName(relName)
         val rel = schema.getRelation(objectName)
         if (rel == null) {
-            val sequence = schema.getSequence(objectName)
-            if (sequence != null) {
-                // use the sequence parser since for historical reasons it is also ok to use ALTER TABLE with sequences
-                AlterSequenceParser.parseAlter(sequence, parser)
-                return
-            }
-            throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindObject"), relName,
-                    parser.string
-                )
-            )
+            val sequence = schema.getSequenceSafe(objectName)
+            // use the sequence parser since for historical reasons it is also ok to use ALTER TABLE with sequences
+            AlterSequenceParser.parseAlter(sequence, parser)
+            return
         }
         var table: PgTable? = null
         if (rel is PgTable) {

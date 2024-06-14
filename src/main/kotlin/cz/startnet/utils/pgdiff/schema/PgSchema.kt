@@ -164,6 +164,10 @@ class PgSchema(val name: String) {
         return null
     }
 
+    fun getSequenceSafe(name: String?): PgSequence {
+        return getSequence(name) ?: error("Sequence $name not found")
+    }
+
     /**
      * Finds table/view according to specified `name`.
      *
@@ -189,6 +193,10 @@ class PgSchema(val name: String) {
      */
     fun getTable(name: String): PgTableBase? {
         return tables.firstOrNull { it.name == name }
+    }
+
+    fun getTableSafe(name: String): PgTableBase {
+        return getTable(name) ?: error("Table ${this.name}.$name not found")
     }
 
     /**

@@ -1,8 +1,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgPolicy
-import java.text.MessageFormat
 
 object CreatePolicyParser : PatternBasedSubParser(
     "^CREATE[\\s]+POLICY[\\s]+.*$"
@@ -17,13 +15,7 @@ object CreatePolicyParser : PatternBasedSubParser(
         val schema = parser.withErrorContext {
             ctx.database.getSchemaSafe(schemaName)
         }
-        val table = schema.getTable(ParserUtils.getObjectName(qualifiedTableName))
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindTable"), qualifiedTableName,
-                    parser.string
-                )
-            )
+        val table = schema.getTableSafe(ParserUtils.getObjectName(qualifiedTableName))
         if (parser.expectOptional("FOR")) {
             val command = parser.expectOptionalOneOf(
                 "ALL", "SELECT",

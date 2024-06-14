@@ -1,10 +1,8 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgColumnPrivilege
 import cz.startnet.utils.pgdiff.schema.PgRelationPrivilege
 import cz.startnet.utils.pgdiff.schema.PgSequencePrivilege
-import java.text.MessageFormat
 
 /**
  * Parses GRANT statements.
@@ -161,15 +159,7 @@ object GrantRevokeParser : PatternBasedSubParser(
                     ctx.database.getSchemaSafe(schemaName)
                 }
                 val objectName = ParserUtils.getObjectName(name)
-                val table = schema.getTable(objectName)
-                val view = schema.getView(objectName)
-                if (table == null && view == null) throw RuntimeException(
-                    MessageFormat.format(
-                        Resources.getString("CannotFindObject"), name,
-                        parser.string
-                    )
-                )
-                val rel = table ?: view!!
+                val rel = schema.getView(objectName) ?: schema.getTableSafe(objectName)
                 for (i in privileges.indices) {
                     val privKey = privileges[i]
                     val privValue = privilegesColumns[i]
@@ -215,13 +205,7 @@ object GrantRevokeParser : PatternBasedSubParser(
                     ctx.database.getSchemaSafe(schemaName)
                 }
                 val objectName = ParserUtils.getObjectName(name)
-                val sequence = schema.getSequence(objectName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindSequence"), name,
-                            parser.string
-                        )
-                    )
+                val sequence = schema.getSequenceSafe(objectName)
                 for (roleName in roles) {
                     var sequencePrivilege = sequence
                         .getPrivilege(roleName)
