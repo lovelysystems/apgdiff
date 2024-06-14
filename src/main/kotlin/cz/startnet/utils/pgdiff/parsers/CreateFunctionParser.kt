@@ -1,9 +1,7 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgFunction
 import cz.startnet.utils.pgdiff.schema.PgFunctionArgument
-import java.text.MessageFormat
 
 
 /**
@@ -88,13 +86,9 @@ object CreateFunctionParser : PatternBasedSubParser(
         parser.expect("FUNCTION")
 
         val function = parser.parseFunctionSignature(ctx)
-        val schema = ctx.database.getSchema(function.schema)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), function.schema,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(function.schema)
+        }
         schema.addFunction(function)
         function.body = parser.rest
     }

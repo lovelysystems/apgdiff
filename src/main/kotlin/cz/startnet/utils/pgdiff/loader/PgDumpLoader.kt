@@ -1,11 +1,9 @@
 package cz.startnet.utils.pgdiff.loader
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.parsers.*
 import cz.startnet.utils.pgdiff.schema.PgDatabase
 import kotlinx.io.Source
 import kotlinx.io.readLine
-import java.text.MessageFormat
 
 object PgDumpLoader {
 
@@ -102,12 +100,7 @@ object PgDumpLoader {
                     return if (sbStatement.toString().trim { it <= ' ' }.length == 0) {
                         null
                     } else {
-                        throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("EndOfStatementNotFound"),
-                                sbStatement.toString()
-                            )
-                        )
+                        throw RuntimeException("Cannot find ending semicolon of statement: $sbStatement")
                     }
                 }
                 if (sbStatement.length > 0) {

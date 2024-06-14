@@ -14,13 +14,9 @@ object CreatePolicyParser : PatternBasedSubParser(
         parser.expect("ON")
         val qualifiedTableName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(qualifiedTableName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         val table = schema.getTable(ParserUtils.getObjectName(qualifiedTableName))
             ?: throw RuntimeException(
                 MessageFormat.format(

@@ -1,8 +1,6 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgSequence
-import java.text.MessageFormat
 
 /**
  * Parses CREATE SEQUENCE statements.
@@ -15,13 +13,9 @@ object CreateSequenceParser : PatternBasedSubParser(
         val sequenceName = parser.parseIdentifier()
         val sequence = PgSequence(ParserUtils.getObjectName(sequenceName), parser.statementNum)
         val schemaName = ParserUtils.getSchemaName(sequenceName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         schema.addSequence(sequence)
         while (!parser.expectOptional(";")) {
             if (parser.expectOptional("AS")) {
@@ -64,3 +58,4 @@ object CreateSequenceParser : PatternBasedSubParser(
         }
     }
 }
+

@@ -30,7 +30,7 @@ class PgDatabase {
     /**
      * Current default schema.
      */
-    lateinit var defaultSchema: PgSchema
+    var defaultSchema: PgSchema
         private set
     /**
      * Getter for [.comment].
@@ -98,6 +98,10 @@ class PgDatabase {
             }
         }
         return null
+    }
+
+    fun getSchemaSafe(name: String?): PgSchema {
+        return getSchema(name) ?: error("Schema $name not found")
     }
 
 //    /**

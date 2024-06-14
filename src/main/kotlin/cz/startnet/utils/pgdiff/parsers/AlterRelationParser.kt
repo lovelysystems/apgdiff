@@ -38,13 +38,9 @@ object AlterRelationParser : PatternBasedSubParser(
         }
         val relName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(relName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         val objectName = ParserUtils.getObjectName(relName)
         val rel = schema.getRelation(objectName)
         if (rel == null) {

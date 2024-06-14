@@ -1,9 +1,7 @@
 package cz.startnet.utils.pgdiff.parsers
 
-import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.PgMaterializedView
 import cz.startnet.utils.pgdiff.schema.PgView
-import java.text.MessageFormat
 
 /**
  * Parses CREATE VIEW statements.
@@ -53,13 +51,9 @@ object CreateViewParser : PatternBasedSubParser(
         view.declaredColumnNames = columnNames
         view.query = query
         val schemaName = ParserUtils.getSchemaName(viewName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         schema.addRelation(view)
     }
 }

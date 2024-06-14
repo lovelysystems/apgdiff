@@ -13,6 +13,8 @@ fun interface SubParser {
     operator fun invoke(parser: Parser, ctx: ParserContext): Boolean
 }
 
+class ParserContextException(val parser: Parser, cause: Exception): RuntimeException(parser.string, cause)
+
 /**
  * Class for parsing strings.
  *
@@ -24,6 +26,14 @@ class Parser(val string: String, val statementNum: Int = 0) {
      * Current position.
      */
     var position = 0
+
+    fun <R>withErrorContext(block: ()->R): R{
+        try {
+            return block()
+        } catch (e: Exception) {
+            throw ParserContextException(this, e)
+        }
+    }
 
     /**
      * Checks whether the string contains given word on current position. If not

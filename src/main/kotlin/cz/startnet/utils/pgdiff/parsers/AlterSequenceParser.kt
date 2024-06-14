@@ -32,13 +32,9 @@ object AlterSequenceParser : PatternBasedSubParser(
 
         val sequenceName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(sequenceName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         val objectName = ParserUtils.getObjectName(sequenceName)
         val sequence = schema.getSequence(objectName)
             ?: throw RuntimeException(

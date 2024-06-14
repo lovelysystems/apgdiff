@@ -37,13 +37,9 @@ object CreateIndexParser : PatternBasedSubParser(
         val tableName = parser.parseIdentifier()
         val definition = parser.rest
         val schemaName = ParserUtils.getSchemaName(tableName, ctx.database)
-        val schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         val objectName = ParserUtils.getObjectName(tableName)
         val table = schema.getTable(objectName)
         val view = schema.getView(objectName)

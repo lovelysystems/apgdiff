@@ -2,7 +2,6 @@ package cz.startnet.utils.pgdiff.parsers
 
 import cz.startnet.utils.pgdiff.Resources
 import cz.startnet.utils.pgdiff.schema.*
-import java.text.MessageFormat
 
 object
 CreateTableParser : PatternBasedSubParser(
@@ -18,13 +17,9 @@ CreateTableParser : PatternBasedSubParser(
         parser.expectOptional("IF", "NOT", "EXISTS")
         val tableName = parser.parseIdentifier()
         val schemaName = ParserUtils.getSchemaName(tableName, ctx.database)
-        var schema = ctx.database.getSchema(schemaName)
-            ?: throw RuntimeException(
-                MessageFormat.format(
-                    Resources.getString("CannotFindSchema"), schemaName,
-                    parser.string
-                )
-            )
+        val schema = parser.withErrorContext {
+            ctx.database.getSchemaSafe(schemaName)
+        }
         val table = if (foreign) {
             PgForeignTable(ParserUtils.getObjectName(tableName), ctx.database, schema, parser.statementNum)
         } else {

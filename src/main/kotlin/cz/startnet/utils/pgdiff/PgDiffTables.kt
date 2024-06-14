@@ -6,7 +6,6 @@
 package cz.startnet.utils.pgdiff
 
 import cz.startnet.utils.pgdiff.schema.*
-import java.text.MessageFormat
 
 /**
  * Diffs tables.
@@ -191,13 +190,9 @@ object PgDiffTables {
             if (newStorage == null && oldStorage != null) {
                 writer.println()
                 writer.appendLine(
-                    MessageFormat.format(
-                        Resources.getString(
-                            "WarningUnableToDetermineStorageType"
-                        ),
-                        newTable.name + '.' + newColumn.name
+                    "WARNING: Column ${newTable.name}.${newColumn.name} in new table has no STORAGE set but in old table storage was set. Unable to determine STORAGE type.",
+
                     )
-                )
                 continue
             }
             if (newStorage == null || newStorage.equals(oldStorage, ignoreCase = true)) {

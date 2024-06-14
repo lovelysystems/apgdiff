@@ -4,7 +4,6 @@ import cz.startnet.utils.pgdiff.schema.PgColumnUtils
 import cz.startnet.utils.pgdiff.schema.PgSchema
 import cz.startnet.utils.pgdiff.schema.PgType
 import cz.startnet.utils.pgdiff.schema.PgTypeColumn
-import java.text.MessageFormat
 
 /**
  * Diffs types.
@@ -111,13 +110,8 @@ object PgDiffTypes {
             val newColumnName = PgDiffUtils.getQuotedName(newColumn.name)
             if (oldColumn.type != newColumn.type) {
                 statements.add(
-                    "\tALTER ATTRIBUTE " + newColumnName + " TYPE "
-                            + newColumn.type + " /* "
-                            + MessageFormat.format(
-                        Resources.getString("TypeParameterChange"),
-                        newType.name, oldColumn.type,
-                        newColumn.type
-                    ) + " */"
+                    "\tALTER ATTRIBUTE $newColumnName TYPE ${newColumn.type}"
+                            + " /* TYPE change - table: ${newType.name} original: ${oldColumn.type} new: ${newColumn.type}  */"
                 )
             }
             val oldDefault = oldColumn.defaultValue.orEmpty()

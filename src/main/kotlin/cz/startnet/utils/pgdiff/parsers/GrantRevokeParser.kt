@@ -157,13 +157,9 @@ object GrantRevokeParser : PatternBasedSubParser(
         if ("TABLE".equals(objectType, ignoreCase = true)) {
             for (name in identifiers) {
                 val schemaName = ctx.database.getSchemaName(name)
-                val schema = ctx.database.getSchema(schemaName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindSchema"),
-                            schemaName, parser.string
-                        )
-                    )
+                val schema = parser.withErrorContext {
+                    ctx.database.getSchemaSafe(schemaName)
+                }
                 val objectName = ParserUtils.getObjectName(name)
                 val table = schema.getTable(objectName)
                 val view = schema.getView(objectName)
@@ -233,13 +229,9 @@ object GrantRevokeParser : PatternBasedSubParser(
             for (name in identifiers) {
                 // final String sequenceName = parser.parseIdentifier();
                 val schemaName = ctx.database.getSchemaName(name)
-                val schema = ctx.database.getSchema(schemaName)
-                    ?: throw RuntimeException(
-                        MessageFormat.format(
-                            Resources.getString("CannotFindSchema"),
-                            schemaName, parser.string
-                        )
-                    )
+                val schema = parser.withErrorContext {
+                    ctx.database.getSchemaSafe(schemaName)
+                }
                 val objectName = ParserUtils.getObjectName(name)
                 val sequence = schema.getSequence(objectName)
                     ?: throw RuntimeException(
@@ -268,13 +260,9 @@ object GrantRevokeParser : PatternBasedSubParser(
                 for (name in identifiers) {
                     // final String sequenceName = parser.parseIdentifier();
                     val schemaName = ctx.database.getSchemaName(name)
-                    val schema = ctx.database.getSchema(schemaName)
-                        ?: throw RuntimeException(
-                            MessageFormat.format(
-                                Resources.getString("CannotFindSchema"),
-                                schemaName, parser.string
-                            )
-                        )
+                    val schema = parser.withErrorContext {
+                        ctx.database.getSchemaSafe(schemaName)
+                    }
                     for (i in privileges.indices) {
                         val privKey = privileges[i]
                         for (roleName in roles) {
