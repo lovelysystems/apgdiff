@@ -128,8 +128,8 @@ class PgIndex
             sbSQL.append(definition)
             sbSQL.append(';')
             if (comment != null && !comment!!.isEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append("COMMENT ON INDEX ")
                 sbSQL.append(PgDiffUtils.getQuotedName(name))
                 sbSQL.append(" IS ")

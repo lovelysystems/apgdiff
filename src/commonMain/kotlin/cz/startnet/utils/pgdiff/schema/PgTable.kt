@@ -91,7 +91,7 @@ sealed class PgTableBase(
         sbSQL.append(PgDiffUtils.createIfNotExists)
         sbSQL.append(PgDiffUtils.getQuotedName(name))
         sbSQL.append(" (")
-        sbSQL.append(System.getProperty("line.separator"))
+        sbSQL.appendLine()
         var first = true
         if (columns.isEmpty()) {
             sbSQL.append(')')
@@ -101,16 +101,16 @@ sealed class PgTableBase(
                     first = false
                 } else {
                     sbSQL.append(",")
-                    sbSQL.append(System.getProperty("line.separator"))
+                    sbSQL.appendLine()
                 }
                 sbSQL.append("\t")
                 sbSQL.append(column.getFullDefinition(false))
             }
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append(")")
         }
         if (inherits.isNotEmpty()) {
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("INHERITS (")
             first = true
             for (inheritPair in inherits) {
@@ -137,12 +137,12 @@ sealed class PgTableBase(
             sbSQL.append(foreignServer)
         }
         if (tablespace != null && !tablespace!!.isEmpty()) {
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("TABLESPACE ")
             sbSQL.append(tablespace)
         }
         if (rangePartition != null && !rangePartition!!.isEmpty()) {
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("PARTITION BY RANGE ")
             sbSQL.append(rangePartition)
         }
@@ -151,11 +151,11 @@ sealed class PgTableBase(
         //Inherited column default override
         for (column in inheritedColumns) {
             if (column.defaultValue != null) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append("ALTER TABLE ONLY ")
                 sbSQL.append(PgDiffUtils.getQuotedName(name))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tALTER COLUMN ")
                 sbSQL.append(
                     PgDiffUtils.getQuotedName(column.inheritedColumn.name)
@@ -166,7 +166,7 @@ sealed class PgTableBase(
             }
         }
         for (column in columnsWithStatistics) {
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("ALTER TABLE ONLY ")
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             sbSQL.append(" ALTER COLUMN ")

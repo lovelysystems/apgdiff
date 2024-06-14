@@ -88,8 +88,8 @@ class PgSchema(val name: String) {
             }
             sbSQL.append(';')
             if (!comment.isNullOrEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append("COMMENT ON SCHEMA ")
                 sbSQL.append(PgDiffUtils.getQuotedName(name))
                 sbSQL.append(" IS ")
@@ -97,8 +97,8 @@ class PgSchema(val name: String) {
                 sbSQL.append(';')
             }
             if (owner != null) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append(ownerSQL)
             }
             return sbSQL.toString()

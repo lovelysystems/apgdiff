@@ -85,8 +85,8 @@ sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>
         protected get() {
             val sbSQL = StringBuilder(100)
             if (comment != null && !comment!!.isEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append("COMMENT ON ")
                 sbSQL.append(relationKind)
                 sbSQL.append(' ')
@@ -97,8 +97,8 @@ sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>
             }
             for (column in columns) {
                 if (!column.comment.isNullOrEmpty()) {
-                    sbSQL.append(System.getProperty("line.separator"))
-                    sbSQL.append(System.getProperty("line.separator"))
+                    sbSQL.appendLine()
+                    sbSQL.appendLine()
                     sbSQL.append("COMMENT ON COLUMN ")
                     sbSQL.append(PgDiffUtils.getQuotedName(name))
                     sbSQL.append('.')

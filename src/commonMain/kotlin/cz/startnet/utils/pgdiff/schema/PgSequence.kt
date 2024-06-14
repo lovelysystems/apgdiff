@@ -65,21 +65,21 @@ class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, posit
             sbSQL.append(PgDiffUtils.createIfNotExists)
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (dataType != null) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tAS ")
                 sbSQL.append(dataType)
             }
             if (startWith != null) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tSTART WITH ")
                 sbSQL.append(startWith)
             }
             if (increment != null) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tINCREMENT BY ")
                 sbSQL.append(increment)
             }
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("\t")
             if (maxValue == null) {
                 sbSQL.append("NO MAXVALUE")
@@ -87,7 +87,7 @@ class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, posit
                 sbSQL.append("MAXVALUE ")
                 sbSQL.append(maxValue)
             }
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("\t")
             if (minValue == null) {
                 sbSQL.append("NO MINVALUE")
@@ -96,18 +96,18 @@ class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, posit
                 sbSQL.append(minValue)
             }
             if (cache != null) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tCACHE ")
                 sbSQL.append(cache)
             }
             if (isCycle) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tCYCLE")
             }
             sbSQL.append(';')
             if (comment != null && !comment!!.isEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append("COMMENT ON SEQUENCE ")
                 sbSQL.append(PgDiffUtils.getQuotedName(name))
                 sbSQL.append(" IS ")
@@ -128,7 +128,7 @@ class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, posit
             sbSQL.append("ALTER SEQUENCE ")
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (ownedBy != null && !ownedBy!!.isEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tOWNED BY ")
                 sbSQL.append(ownedBy)
             }

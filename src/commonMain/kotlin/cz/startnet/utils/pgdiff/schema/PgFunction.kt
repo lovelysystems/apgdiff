@@ -43,8 +43,8 @@ class PgFunction(val name: String, val schema: String) {
         sbSQL.append(body)
         sbSQL.append(';')
         if (!comment.isNullOrEmpty()) {
-            sbSQL.append(System.getProperty("line.separator"))
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
+            sbSQL.appendLine()
             sbSQL.append("COMMENT ON FUNCTION ")
             sbSQL.append(signatureSQL)
             sbSQL.append(" IS ")
@@ -52,8 +52,8 @@ class PgFunction(val name: String, val schema: String) {
             sbSQL.append(';')
         }
         if (owner != null) {
-            sbSQL.append(System.getProperty("line.separator"))
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
+            sbSQL.appendLine()
             sbSQL.append("ALTER FUNCTION $signatureSQL OWNER TO $owner;")
         }
         return sbSQL.toString()

@@ -113,7 +113,7 @@ class PgTrigger(val name: String) {
             val sbSQL = StringBuilder(100)
             sbSQL.append("CREATE TRIGGER ")
             sbSQL.append(PgDiffUtils.getQuotedName(name))
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("\t")
             sbSQL.append(EventTimeQualification.toString(eventTimeQualification))
             var firstEvent = true
@@ -156,26 +156,26 @@ class PgTrigger(val name: String) {
             }
             sbSQL.append(" ON ")
             sbSQL.append(PgDiffUtils.getQuotedName(relationName))
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             if (referencing != null && !referencing!!.isEmpty()) {
                 sbSQL.append(referencing)
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
             }
             sbSQL.append("\tFOR EACH ")
             sbSQL.append(if (isForEachRow) "ROW" else "STATEMENT")
             if (`when` != null && !`when`!!.isEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tWHEN (")
                 sbSQL.append(`when`)
                 sbSQL.append(')')
             }
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("\tEXECUTE PROCEDURE ")
             sbSQL.append(function)
             sbSQL.append(';')
             if (comment != null && !comment!!.isEmpty()) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append("COMMENT ON TRIGGER ")
                 sbSQL.append(PgDiffUtils.getQuotedName(name))
                 sbSQL.append(" ON ")
@@ -252,7 +252,7 @@ class PgTrigger(val name: String) {
             sbSQL.append(" TRIGGER ")
             sbSQL.append(name)
             sbSQL.append(';')
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             return sbSQL.toString()
         }
 }

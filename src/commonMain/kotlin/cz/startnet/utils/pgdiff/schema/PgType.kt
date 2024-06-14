@@ -41,7 +41,7 @@ class PgType(name: String, position: Int) : PgRelation<PgType, PgTypeColumn>(nam
             } else {
                 sbSQL.append(" AS (")
             }
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             var first = true
             if (isEnum) {
                 for (enumValue in enumValues) {
@@ -49,12 +49,12 @@ class PgType(name: String, position: Int) : PgRelation<PgType, PgTypeColumn>(nam
                         first = false
                     } else {
                         sbSQL.append(",")
-                        sbSQL.append(System.getProperty("line.separator"))
+                        sbSQL.appendLine()
                     }
                     sbSQL.append("\t")
                     sbSQL.append(enumValue)
                 }
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append(")")
             } else {
                 if (columns.isEmpty()) {
@@ -65,18 +65,18 @@ class PgType(name: String, position: Int) : PgRelation<PgType, PgTypeColumn>(nam
                             first = false
                         } else {
                             sbSQL.append(",")
-                            sbSQL.append(System.getProperty("line.separator"))
+                            sbSQL.appendLine()
                         }
                         sbSQL.append("\t")
                         sbSQL.append(column.getFullDefinition(false))
                     }
-                    sbSQL.append(System.getProperty("line.separator"))
+                    sbSQL.appendLine()
                     sbSQL.append(")")
                 }
             }
             sbSQL.append(';')
             for (column in columnsWithStatistics) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("ALTER TABLE ONLY ")
                 sbSQL.append(PgDiffUtils.getQuotedName(name))
                 sbSQL.append(" ALTER COLUMN ")
@@ -86,13 +86,13 @@ class PgType(name: String, position: Int) : PgRelation<PgType, PgTypeColumn>(nam
                 sbSQL.append(';')
             }
             if (owner != null) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append(ownerSQL)
             }
             if (comment != null) {
-                sbSQL.append(System.getProperty("line.separator"))
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
+                sbSQL.appendLine()
                 sbSQL.append(commentSQL)
             }
             return sbSQL.toString()

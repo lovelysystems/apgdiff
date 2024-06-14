@@ -114,7 +114,7 @@ object PgDiffSequences {
             if (newDataType != null
                 && newDataType != oldDataType
             ) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tAS ")
                 sbSQL.append(newDataType)
             }
@@ -123,61 +123,61 @@ object PgDiffSequences {
             if (newIncrement != null
                 && newIncrement != oldIncrement
             ) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tINCREMENT BY ")
                 sbSQL.append(newIncrement)
             }
             val oldMinValue = oldSequence.minValue
             val newMinValue = newSequence.minValue
             if (newMinValue == null && oldMinValue != null) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tNO MINVALUE")
             } else if (newMinValue != null
                 && newMinValue != oldMinValue
             ) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tMINVALUE ")
                 sbSQL.append(newMinValue)
             }
             val oldMaxValue = oldSequence.maxValue
             val newMaxValue = newSequence.maxValue
             if (newMaxValue == null && oldMaxValue != null) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tNO MAXVALUE")
             } else if (newMaxValue != null
                 && newMaxValue != oldMaxValue
             ) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tMAXVALUE ")
                 sbSQL.append(newMaxValue)
             }
             val oldStart = oldSequence.startWith
             val newStart = newSequence.startWith
             if (newStart != null && newStart != oldStart) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tSTART WITH ")
                 sbSQL.append(newStart)
             }
             val oldCache = oldSequence.cache
             val newCache = newSequence.cache
             if (newCache != null && newCache != oldCache) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tCACHE ")
                 sbSQL.append(newCache)
             }
             val oldCycle = oldSequence.isCycle
             val newCycle = newSequence.isCycle
             if (oldCycle && !newCycle) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tNO CYCLE")
             } else if (!oldCycle && newCycle) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tCYCLE")
             }
             val oldOwnedBy = oldSequence.ownedBy
             val newOwnedBy = newSequence.ownedBy
             if (newOwnedBy != null && newOwnedBy != oldOwnedBy) {
-                sbSQL.append(System.getProperty("line.separator"))
+                sbSQL.appendLine()
                 sbSQL.append("\tOWNED BY ")
                 sbSQL.append(newOwnedBy)
             }

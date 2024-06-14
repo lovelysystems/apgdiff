@@ -135,7 +135,7 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
                 sbSQL.append(")")
             }
             sbSQL.append(" AS")
-            sbSQL.append(System.getProperty("line.separator"))
+            sbSQL.appendLine()
             sbSQL.append("\t")
             sbSQL.append(query)
             sbSQL.append(';')
@@ -143,8 +143,8 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
             /* Column default values */for (col in columns) {
                 val defaultValue = col.defaultValue
                 if (defaultValue != null && !defaultValue.isEmpty()) {
-                    sbSQL.append(System.getProperty("line.separator"))
-                    sbSQL.append(System.getProperty("line.separator"))
+                    sbSQL.appendLine()
+                    sbSQL.appendLine()
                     sbSQL.append("ALTER ")
                     sbSQL.append(relationKind)
                     sbSQL.append(' ')

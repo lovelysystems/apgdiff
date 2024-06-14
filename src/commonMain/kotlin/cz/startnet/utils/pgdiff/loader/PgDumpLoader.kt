@@ -104,7 +104,7 @@ object PgDumpLoader {
                     }
                 }
                 if (sbStatement.length > 0) {
-                    sbStatement.append(System.getProperty("line.separator"))
+                    sbStatement.appendLine()
                 }
                 pos = sbStatement.length
                 sbStatement.append(newLine)
