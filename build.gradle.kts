@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform") version "2.0.0"
-    id("com.lovelysystems.gradle") version ("1.11.5")
+    id("com.lovelysystems.gradle") version ("1.12.0")
     application
     id("org.jetbrains.kotlinx.kover") version "0.7.3"
     //kotlin("jvm") version "2.0.0"
@@ -13,7 +13,9 @@ group = "com.lovelysystems"
 
 kotlin {
 
-    jvm()
+    jvm {
+        withJava()
+    }
     linuxX64 {
         binaries.executable()
     }
@@ -63,28 +65,14 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-val fatJar by tasks.creating(Jar::class) {
-    archiveClassifier.set("fat")
-    manifest {
-        attributes["Main-Class"] = application.mainClass
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.runtimeClasspath.get().map {
-        {
-            if (it.isDirectory) {
-                it
-            } else {
-                zipTree(it)
-            }
-        }
-    })
-    with(tasks["jar"] as CopySpec)
-}
-
 lovely {
     gitProject()
-    dockerProject("lovelysystems/apgdiff") {
-        from(tasks["fatJar"].outputs)
+    dockerProject(
+        "lovelysystems/apgdiff",
+        platforms = listOf("linux/amd64"),
+        buildPlatforms = listOf("linux/amd64")
+    ) {
+        from(tasks["linkReleaseExecutableLinuxX64"].outputs)
     }
 }
 

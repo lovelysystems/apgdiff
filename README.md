@@ -14,19 +14,13 @@ comparison/diffing of database schemas dumped via `pg_dump`.
 
 ## Build and run Docker Image
 
-The executable in the docker image is built using [GraalVM](https://www.graalvm.org/) so there is no need for a JRE at
-runtime only libc.
+The executable in the docker image is a native binary created with kotlin multiplatform, so there is no need for a JVM.
+Currently only an `linux/amd64` image is built.
 
 ```shell script
 ./gradlew buildDockerImage
 docker run --rm lovelysystems/apgdiff:dev --help
 ```
-
-Note that this native image is only compiled towards the platform the docker build is running on. So for example if you
-build on an M1 Mac it will generate an arm64 executable.
-
-There is currently no cross compilation possible directly by `native-image`
-see <https://github.com/oracle/graal/issues/407>
 
 # Credits
 
