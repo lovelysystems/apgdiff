@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-
 plugins {
     kotlin("multiplatform") version "2.0.0"
     id("com.lovelysystems.gradle") version ("1.11.5")
@@ -16,7 +14,12 @@ group = "com.lovelysystems"
 kotlin {
 
     jvm()
-    linuxX64()
+    linuxX64 {
+        binaries.executable()
+    }
+//    macosX64{
+//        binaries.executable()
+//    }
 
     sourceSets {
         commonMain {
@@ -34,6 +37,9 @@ kotlin {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter:5.8.1")
                 implementation(kotlin("test-junit5"))
+                implementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+
                 // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
                 implementation("org.testcontainers:testcontainers:1.18.3")
                 implementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
