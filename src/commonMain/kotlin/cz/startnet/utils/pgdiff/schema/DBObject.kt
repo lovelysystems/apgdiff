@@ -35,10 +35,12 @@ open class DBObject(val objectType: String, val name: String, val position: Int)
 }
 
 
-class DBObjectContainer<T : DBObject> : ArrayList<T>() {
+class DBObjectContainer<T : DBObject> (private val objects: MutableList<T> = mutableListOf()):Iterable<T> {
+
+
 
     fun get(name: String): T? {
-        return firstOrNull { it.name == name }
+        return objects.firstOrNull { it.name == name }
     }
 
     fun getSame(other: T): T? {
@@ -51,5 +53,13 @@ class DBObjectContainer<T : DBObject> : ArrayList<T>() {
 
     fun containsSame(other: T): Boolean {
         return contains(other.name)
+    }
+
+    override fun iterator(): Iterator<T> {
+        return objects.iterator()
+    }
+
+    fun add(obj: T) {
+        objects.add(obj)
     }
 }

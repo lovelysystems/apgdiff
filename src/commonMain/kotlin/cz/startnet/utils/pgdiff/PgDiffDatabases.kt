@@ -263,7 +263,7 @@ class PgDiffDatabases(
                 val searchPathHelper: SearchPathHelper = if (setSearchPath) {
                     SearchPathHelper(
                         "SET search_path = "
-                                + PgDiffUtils.getQuotedName(newSchema.name, true)
+                                + PgDiffUtils.getQuotedName(newSchema.name, excludeKeywords = true)
                                 + ", pg_catalog;"
                     )
                 } else {

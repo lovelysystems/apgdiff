@@ -12,7 +12,7 @@ object PgDumpLoader {
      */
     private val PATTERN_DOLLAR_TAG = Regex(
         "[\"\\s]",
-        setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+        setOf(RegexOption.IGNORE_CASE)
     )
 
     /**
@@ -149,7 +149,7 @@ object PgDumpLoader {
             if (!isQuoted(sbStatement, endPos)) {
                 val startPos = sbStatement.lastIndexOf("/*", endPos)
                 if (startPos < endPos && !isQuoted(sbStatement, startPos)) {
-                    sbStatement.replace(startPos, endPos + 2, "")
+                    sbStatement.deleteRange(startPos, endPos + 2)
                 }
             }
             endPos = sbStatement.indexOf("*/", endPos + 2)

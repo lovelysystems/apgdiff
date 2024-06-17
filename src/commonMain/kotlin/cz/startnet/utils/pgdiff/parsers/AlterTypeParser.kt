@@ -15,6 +15,6 @@ object AlterTypeParser : PatternBasedSubParser(
             ?: error("type $objectName not found")
         parser.expect("OWNER", "TO")
         type.owner = parser.parseIdentifier()
-        assert(parser.rest.isNullOrEmpty())
+        require(parser.rest.isNullOrEmpty())
     }
 }

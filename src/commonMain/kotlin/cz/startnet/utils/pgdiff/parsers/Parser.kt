@@ -59,7 +59,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
     fun expect(word: String, optional: Boolean): Boolean {
         val wordEnd = position + word.length
         if (wordEnd <= string.length && string.substring(position, wordEnd).equals(word, ignoreCase = true)
-            && (wordEnd == string.length || Character.isWhitespace(string[wordEnd])
+            && (wordEnd == string.length || string[wordEnd].isWhitespace()
                     || string[wordEnd] == '(' || string[wordEnd] == ')' || string[wordEnd] == ';' || string[wordEnd] == ',' || string[wordEnd] == '[' || "(" == word || "," == word || "[" == word || "]" == word)
         ) {
             position = wordEnd
@@ -111,7 +111,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
      */
     fun skipWhitespace() {
         while (position < string.length) {
-            if (!Character.isWhitespace(string[position])) {
+            if (!string[position].isWhitespace()) {
                 break
             }
             position++
@@ -156,7 +156,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
             var endPos = position
             while (endPos < string.length) {
                 val chr = string[endPos]
-                if (Character.isWhitespace(chr) || chr == ',' || chr == ')' || chr == '(' || chr == ';' || chr == '.') {
+                if (chr.isWhitespace() || chr == ',' || chr == ')' || chr == '(' || chr == ';' || chr == '.') {
                     break
                 }
                 endPos++
@@ -200,7 +200,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
     fun parseInteger(): Int {
         var endPos = position
         while (endPos < string.length) {
-            if (!Character.isLetterOrDigit(string[endPos])) {
+            if (!string[endPos].isLetterOrDigit()) {
                 break
             }
             endPos++
@@ -266,7 +266,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
             var endPos = position
             while (endPos < string.length) {
                 val chr = string[endPos]
-                if (Character.isWhitespace(chr) || chr == ',' || chr == ')' || chr == ';') {
+                if (chr.isWhitespace() || chr == ',' || chr == ')' || chr == ';') {
                     break
                 }
                 endPos++
@@ -391,7 +391,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
      */
     fun parseDataType(): String {
         var endPos = position
-        while (endPos < string.length && !Character.isWhitespace(string[endPos])
+        while (endPos < string.length && !string[endPos].isWhitespace()
             && string[endPos] != '(' && string[endPos] != ')' && string[endPos] != ','
         ) {
             endPos++

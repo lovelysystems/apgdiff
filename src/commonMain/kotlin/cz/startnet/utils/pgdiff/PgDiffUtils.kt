@@ -490,16 +490,17 @@ object PgDiffUtils {
      *
      * @return quoted string if needed, otherwise not quoted string
      */
-    fun getQuotedName(
-        name: String,
-        excludeKeywords: Boolean
+    private fun quoteName(
+        name: String?,
+        excludeKeywords: Boolean = false
     ): String {
+        requireNotNull(name){ "name cannot be null" }
         if (name.indexOf('$') != -1 || name.indexOf('-') != -1 || name.indexOf('.') != -1) {
             return '"'.toString() + name + '"'
         }
         for (i in 0 until name.length) {
             val chr = name[i]
-            if (Character.isUpperCase(chr)) {
+            if (chr.isUpperCase()) {
                 return '"'.toString() + name + '"'
             }
         }
@@ -515,19 +516,10 @@ object PgDiffUtils {
         return name
     }
 
-    /**
-     * If name contains only lower case characters and digits and is not
-     * keyword, it is returned not quoted, otherwise the string is returned
-     * quoted.
-     *
-     * @param name name
-     *
-     * @return quoted string if needed, otherwise not quoted string
-     */
-    fun getQuotedName(name: String?): String {
-        checkNotNull(name)
-        return getQuotedName(name, false)
+    fun getQuotedName(vararg parts: String?, excludeKeywords: Boolean = false): String {
+        return parts.joinToString(".", transform = { quoteName(it, excludeKeywords) })
     }
+
 
     /**
      * IF useIfExists is true return DROP IF NOT EXISTS

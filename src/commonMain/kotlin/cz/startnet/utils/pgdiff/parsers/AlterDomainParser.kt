@@ -15,6 +15,6 @@ object AlterDomainParser : PatternBasedSubParser(
             ?: error("domain $objectName not found")
         parser.expect("OWNER", "TO")
         domain.owner = parser.parseIdentifier()
-        assert(parser.rest.isNullOrEmpty())
+        require(parser.rest.isNullOrEmpty())
     }
 }

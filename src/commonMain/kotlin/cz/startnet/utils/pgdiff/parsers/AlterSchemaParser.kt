@@ -12,7 +12,7 @@ object AlterSchemaParser : PatternBasedSubParser(
             ?: error("schema $schemaName not found")
         parser.expect("OWNER", "TO")
         schema.owner = parser.parseIdentifier()
-        assert(parser.rest.isNullOrEmpty())
+        require(parser.rest.isNullOrEmpty())
     }
 
 }

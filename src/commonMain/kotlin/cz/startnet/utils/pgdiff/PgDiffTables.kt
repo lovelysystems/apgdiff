@@ -123,7 +123,7 @@ object PgDiffTables {
                 ) {
                     newStatValue = newStat
                 } else if (oldStat != null && newStat == null) {
-                    newStatValue = Integer.valueOf(-1)
+                    newStatValue = -1
                 }
                 if (newStatValue != null) {
                     stats[newColumn.name] = newStatValue
@@ -365,7 +365,7 @@ object PgDiffTables {
                 val inheritTableName: String = if (newSchema?.name == schemaName) {
                     PgDiffUtils.getQuotedName(tableName)
                 } else {
-                    String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
+                    PgDiffUtils.getQuotedName(schemaName, tableName)
                 }
                 writer.println()
                 writer.appendLine(
@@ -392,7 +392,7 @@ object PgDiffTables {
                 val inheritTableName: String = if (newSchema?.name == schemaName) {
                     PgDiffUtils.getQuotedName(tableName)
                 } else {
-                    String.format("%s.%s", PgDiffUtils.getQuotedName(schemaName), PgDiffUtils.getQuotedName(tableName))
+                    PgDiffUtils.getQuotedName(schemaName, tableName)
                 }
                 writer.println()
                 writer.appendLine(
@@ -407,6 +407,7 @@ object PgDiffTables {
         }
 
     }
+
 
     /**
      * Outputs statements for defaults of tables who's column belongs to

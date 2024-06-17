@@ -145,7 +145,7 @@ class PgConstraint(var name: String) {
      * @return {@inheritDoc}
      */
     override fun hashCode(): Int {
-        return (javaClass.name + "|" + definition + "|" + name + "|"
+        return (this::class.qualifiedName + "|" + definition + "|" + name + "|"
                 + tableName).hashCode()
     }
 

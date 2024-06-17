@@ -57,7 +57,7 @@ class PgExtension(val name: String) {
     }
 
     override fun hashCode(): Int {
-        return (javaClass.name + "|" + name + "|" + version + "|"
+        return (this::class.qualifiedName + "|" + name + "|" + version + "|"
                 + from).hashCode()
     }
 }

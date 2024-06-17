@@ -228,7 +228,7 @@ class PgTrigger(val name: String) {
     }
 
     override fun hashCode(): Int {
-        return (javaClass.name + "|" + eventTimeQualification + "|" + isForEachRow + "|"
+        return (this::class.qualifiedName + "|" + eventTimeQualification + "|" + isForEachRow + "|"
                 + function + "|" + name + "|" + isOnDelete + "|" + isOnInsert + "|"
                 + isOnUpdate + "|" + isOnTruncate + "|" + relationName
                 + "|" + isDisable).hashCode()

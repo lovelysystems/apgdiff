@@ -80,6 +80,7 @@ object ParserUtils {
      *
      * @return generated name
      */
+    @OptIn(ExperimentalStdlibApi::class)
     fun generateName(
         prefix: String?,
         names: List<String?>, postfix: String?
@@ -95,7 +96,7 @@ object ParserUtils {
                 }
                 sbString.append(name)
             }
-            Integer.toHexString(sbString.toString().hashCode())
+            sbString.toString().hashCode().toHexString()
         }
         val sbResult = StringBuilder(30)
         if (prefix != null && !prefix.isEmpty()) {

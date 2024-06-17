@@ -123,7 +123,7 @@ sealed class PgTableBase(
                 inheritTableName = if (schema.name == inheritPair.first) {
                     inheritPair.second
                 } else {
-                    String.format("%s.%s", inheritPair.first, inheritPair.second)
+                    listOf(inheritPair.first, inheritPair.second).joinToString(".")
                 }
                 sbSQL.append(inheritTableName)
             }

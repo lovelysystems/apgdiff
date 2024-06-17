@@ -97,8 +97,8 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
         }
         set(columnNames) {
             // Can only be set once for a view, before defaults/comments are set
-            assert(!declareColumnNames)
-            assert(columns.isEmpty())
+            require(!declareColumnNames)
+            require(columns.isEmpty())
             if (columnNames == null || columnNames.isEmpty()) return
             declareColumnNames = true
             for (colName in columnNames) {
@@ -119,7 +119,7 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
             sbSQL.append(' ')
             sbSQL.append(PgDiffUtils.getQuotedName(name))
             if (declareColumnNames) {
-                assert(columns.isNotEmpty())
+                require(columns.isNotEmpty())
                 sbSQL.append(" (")
                 for (i in columns.indices) {
                     if (i > 0) {
