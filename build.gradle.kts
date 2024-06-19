@@ -19,6 +19,11 @@ kotlin {
     linuxX64 {
         binaries.executable()
     }
+
+    macosArm64 {
+        binaries.executable()
+    }
+
 //    macosX64{
 //        binaries.executable()
 //    }
@@ -29,7 +34,7 @@ kotlin {
                 //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
                 implementation("io.github.petertrr:kotlin-multiplatform-diff:0.5.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
-                implementation("com.github.ajalt.clikt:clikt:3.3.0")
+                implementation("com.github.ajalt.clikt:clikt:4.4.0")
 
                 implementation("org.slf4j:slf4j-api:2.0.7")
             }

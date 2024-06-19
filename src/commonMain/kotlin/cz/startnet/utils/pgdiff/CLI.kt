@@ -104,6 +104,7 @@ class CLI : CliktCommand(name = "apgdiff") {
             dropCascade = dropCascade,
             outputIgnoredStatements = outputIgnoredStatements,
             excludeSchemas = excludeSchemas,
+            schemas = schemas
         )
 
         val oldSource = SystemFileSystem.source(oldDumpFile).buffered()
