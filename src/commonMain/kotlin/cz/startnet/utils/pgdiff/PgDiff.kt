@@ -13,7 +13,6 @@ data class PgDiffResult(
     val ignoredNew: List<String>
 ) {
     fun diffIgnored(): List<String> {
-        DiffRowGenerator
         if (ignoredOld != ignoredNew) {
             val unifiedDiff = generateUnifiedDiff(ignoredOld, ignoredNew)
             return unifiedDiff

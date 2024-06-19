@@ -3,7 +3,6 @@ plugins {
     id("com.lovelysystems.gradle") version ("1.12.0")
     application
     id("org.jetbrains.kotlinx.kover") version "0.7.3"
-    //kotlin("jvm") version "2.0.0"
 }
 
 repositories {
@@ -20,19 +19,23 @@ kotlin {
         binaries.executable()
     }
 
-    macosArm64 {
+    linuxArm64() {
         binaries.executable()
     }
 
-//    macosX64{
-//        binaries.executable()
-//    }
+    macosArm64 {
+        binaries.executable()
+    }
 
     sourceSets {
         commonMain {
             dependencies {
                 //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
-                implementation("io.github.petertrr:kotlin-multiplatform-diff:0.5.0")
+                implementation("io.github.petertrr:kotlin-multiplatform-diff") {
+                    version {
+                        branch = "dobe/add-arm-targets"
+                    }
+                }
                 implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
                 implementation("com.github.ajalt.clikt:clikt:4.4.0")
 
@@ -74,10 +77,14 @@ lovely {
     gitProject()
     dockerProject(
         "lovelysystems/apgdiff",
-        platforms = listOf("linux/amd64"),
-        buildPlatforms = listOf("linux/amd64")
+        platforms = listOf("linux/amd64", "linux/arm64"),
     ) {
-        from(tasks["linkReleaseExecutableLinuxX64"].outputs)
+        into("amd64") {
+            from(tasks["linkReleaseExecutableLinuxX64"].outputs)
+        }
+        into("arm64") {
+            from(tasks["linkReleaseExecutableLinuxArm64"].outputs)
+        }
     }
 }
 

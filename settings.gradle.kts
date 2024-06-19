@@ -17,7 +17,16 @@ kotlinMultiplatformDiff?.let {
 
     includeBuild(it) {
         dependencySubstitution {
-            substitute(module("io.github.petertrr:kotlin-multiplatform-diff")).using(project(":"))
+            substitute(module("io.github.petertrr:kotlin-multiplatform-diff"))
+                .using(project(":"))
         }
     }
 }
+
+
+sourceControl {
+    gitRepository(uri("https://github.com/lovelysystems/kotlin-multiplatform-diff.git")) {
+        producesModule("io.github.petertrr:kotlin-multiplatform-diff")
+    }
+}
+
