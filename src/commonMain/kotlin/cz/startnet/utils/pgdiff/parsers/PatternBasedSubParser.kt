@@ -1,14 +1,14 @@
 package cz.startnet.utils.pgdiff.parsers
 
+expect fun createRegex(pattern: String): Regex
+
 open class PatternBasedSubParser(val pattern: Regex) : SubParser {
 
     constructor(vararg regexes: String) : this(
         regexes.joinToString(")|(", "(", ")")
     )
 
-    constructor(regex: String) : this(
-        Regex(regex, setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL))
-    )
+    constructor(regex: String) : this(createRegex(regex))
 
     open fun parse(parser: Parser, ctx: ParserContext) {}
 
