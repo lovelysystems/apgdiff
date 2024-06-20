@@ -1,6 +1,6 @@
 # Experimental Kotlin Rewrite of apgdiff
 
-[![Build Status](https://travis-ci.com/lovelysystems/apgdiff.svg?branch=master)](https://travis-ci.com/lovelysystems/apgdiff)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/lovelysystems/apgdiff/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/lovelysystems/apgdiff/tree/master)
 
 Another PostgreSQL Diff Tool is free PostgreSQL diff tool that is useful for
 comparison/diffing of database schemas dumped via `pg_dump`.
