@@ -1,0 +1,59 @@
+version: 2.1
+
+jobs:
+  test:
+    # machine is required, docker does not work because of testcontainers
+    # see https://www.testcontainers.org/supported_docker_environment/
+    machine:
+      image: ubuntu-2004:2023.07.1
+    steps:
+      - run:
+          name: Install Java 17
+          command: |
+            sudo apt-get install openjdk-17-jre
+            sudo update-alternatives --auto java
+      - run:
+          name: Docker Setup
+          command: 'docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD'
+      - checkout
+      - run:
+          name: Delete gitconfig
+          description: 'Remove git config which maps urls to ssh see https://github.com/cognitect-labs/test-runner/issues/23'
+          command: |
+            rm -rf ~/.gitconfig        
+      - run:
+          name: Generate cache key
+          command: ./.circleci/cache_checksum.sh /tmp/checksum.txt
+      - restore_cache:
+          key: gradle-{{ checksum "/tmp/checksum.txt" }}
+      - run:
+          name: Bootstrap Gradle
+          command: ./gradlew --version
+      - run:
+          name: Prepare docker container builder
+          # ignore failures since builder could exist already (cache)
+          command: ./gradlew prepareDockerContainerBuilder || true
+      - run:
+          name: Check
+          command: ./gradlew check
+      - run:
+          name: Verify generated sources committed
+          command: git diff --exit-code HEAD --
+      - store_test_results:
+          path: build/test-results
+          when: always
+      - run:
+          name: Build Docker Image
+          command: ./gradlew buildDockerImage
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+          key: gradle-{{ checksum "/tmp/checksum.txt" }}
+
+workflows:
+  test:
+    jobs:
+      - test:
+          context:
+            - docker-credentials

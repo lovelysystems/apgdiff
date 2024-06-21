@@ -1,24 +1,67 @@
 plugins {
-    id("com.lovelysystems.gradle") version ("1.8.1")
+    kotlin("multiplatform") version "2.0.0"
+    id("com.lovelysystems.gradle") version ("1.12.0")
     application
-    id("org.jetbrains.kotlinx.kover") version "0.4.2"
-    kotlin("jvm") version "1.7.10"
+    id("org.jetbrains.kotlinx.kover") version "0.7.3"
 }
 
 repositories {
     mavenCentral()
 }
-
 group = "com.lovelysystems"
 
-dependencies {
-    implementation("io.github.java-diff-utils:java-diff-utils:4.5")
-    implementation("com.github.ajalt.clikt:clikt:3.3.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation(kotlin("test-junit5"))
-    // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
-    testImplementation("org.testcontainers:testcontainers:1.17.3")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
+kotlin {
+
+    jvm {
+        withJava()
+    }
+    linuxX64 {
+        binaries.executable()
+    }
+
+    linuxArm64() {
+        binaries.executable()
+    }
+
+    macosArm64 {
+        binaries.executable()
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
+                implementation("io.github.petertrr:kotlin-multiplatform-diff") {
+                    version {
+                        branch = "dobe/add-arm-targets"
+                    }
+                }
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
+                implementation("com.github.ajalt.clikt:clikt:4.4.0")
+
+                implementation("org.slf4j:slf4j-api:2.0.7")
+            }
+
+        }
+        jvmTest {
+            dependencies {
+                implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+                implementation(kotlin("test-junit5"))
+                implementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+
+                // Note: testcontainers 1.16.0 and 1.16.2 produce flaky tests
+                implementation("org.testcontainers:testcontainers:1.18.3")
+                implementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
+
+                implementation("org.slf4j:slf4j-api:2.0.7")
+                implementation("ch.qos.logback:logback-classic:1.4.11")
+            }
+
+        }
+
+    }
+
 }
 
 application {
@@ -30,31 +73,18 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
-val fatJar by tasks.creating(Jar::class) {
-    archiveClassifier.set("fat")
-    manifest {
-        attributes["Main-Class"] = application.mainClass
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.runtimeClasspath.get().map {
-        {
-            if (it.isDirectory) {
-                it
-            } else {
-                zipTree(it)
-            }
-        }
-    })
-    with(tasks["jar"] as CopySpec)
-}
-
 lovely {
     gitProject()
-    dockerProject("lovelysystems/apgdiff")
-    dockerFiles.from(tasks["fatJar"].outputs)
+    dockerProject(
+        "lovelysystems/apgdiff",
+        platforms = listOf("linux/amd64", "linux/arm64"),
+    ) {
+        into("amd64") {
+            from(tasks["linkReleaseExecutableLinuxX64"].outputs)
+        }
+        into("arm64") {
+            from(tasks["linkReleaseExecutableLinuxArm64"].outputs)
+        }
+    }
 }
 

@@ -2,6 +2,8 @@
 
 ## unreleased
 
+- migrated to kotlin multiplatform
+- docker image is now built for arm and x86 architectures
 - upgraded gradle, kotlin and build compat to java 17
 
 ## 2021-12-17 / 0.0.2
