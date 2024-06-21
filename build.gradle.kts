@@ -30,7 +30,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                //implementation("io.github.java-diff-utils:java-diff-utils:4.5")
                 implementation("io.github.petertrr:kotlin-multiplatform-diff") {
                     version {
                         branch = "dobe/add-arm-targets"

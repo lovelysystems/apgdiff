@@ -1,6 +1,6 @@
 # Changes for apgdiff
 
-## unreleased
+## 2024-06-21 / 1.0.0
 
 - migrated to kotlin multiplatform
 - docker image is now built for arm and x86 architectures
