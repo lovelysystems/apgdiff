@@ -1,5 +1,9 @@
 # Changes for apgdiff
 
+## unreleased
+
+- fix output file not being created automatically if it does not exist
+
 ## 2024-06-21 / 1.0.0
 
 - migrated to kotlin multiplatform

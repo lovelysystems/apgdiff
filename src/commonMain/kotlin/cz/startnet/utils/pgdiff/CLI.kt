@@ -29,9 +29,17 @@ private fun convertToPath(
 ): Path {
     val name = pathType(context, canBeFile, canBeFolder)
     return with(context.localization) {
-        SystemFileSystem.resolve(Path(path)).also {
-            if (mustExist && !SystemFileSystem.exists(it)) fail(pathDoesNotExist(name, it.toString()))
+        val p = Path(path)
+        val exists = SystemFileSystem.exists(p)
+        if (exists) {
+            SystemFileSystem.resolve(Path(path))
+        } else {
+            if (mustExist) {
+                fail(pathDoesNotExist(name, p.toString()))
+            }
+            p
         }
+
     }
 }
 
@@ -70,27 +78,27 @@ fun RawOption.path(
 
 
 class CLI : CliktCommand(name = "apgdiff") {
-    val outFile by option(help = "File to write the diff sql script").path()
-    val dropCascade by option(help = "Make objects drops cascading").flag(default = false)
-    val addDefaults by option(
+    private val outFile by option(help = "File to write the diff sql script").path(mustExist = false)
+    private val dropCascade by option(help = "Make objects drops cascading").flag(default = false)
+    private val addDefaults by option(
         help = "Whether DEFAULT ... should be added in case new" +
                 " column has NOT NULL constraint. The default value is dropped later."
     ).flag(default = false)
-    val outputIgnoredStatements by option(
+    private val outputIgnoredStatements by option(
         help = "Whether to output information about ignored statements."
     ).flag(default = false)
 
-    val oldDumpFile by argument(help = "Path to the original dump file").path()
-    val newDumpFile by argument(help = "Path to the new dump file").path()
+    private val oldDumpFile by argument(help = "Path to the original dump file").path(mustExist = true)
+    private val newDumpFile by argument(help = "Path to the new dump file").path(mustExist = true)
 
-    val schemas: List<String> by option(
+    private val schemas: List<String> by option(
         "-n",
         "--schema",
         help = "diff the specified schema(s) only. diffs all if not given",
         metavar = "REGEX_PATTERN"
     ).multiple()
 
-    val excludeSchemas: List<String> by option(
+    private val excludeSchemas: List<String> by option(
         "-N",
         "--exclude-schema",
         help = "do NOT diff the specified schema(s)",
@@ -112,11 +120,12 @@ class CLI : CliktCommand(name = "apgdiff") {
 
         val res = PgDiff(arguments).createDiff(oldSource, newSource)
 
-
         if (outFile != null) {
-            SystemFileSystem.sink(outFile!!).buffered().writeString(res.script)
+            val f = SystemFileSystem.sink(outFile!!).buffered()
+            f.writeString(res.script)
+            f.close()
         } else {
-            echo(res.script)
+            echo(res.script, trailingNewline = false)
         }
 
         val diff = res.diffIgnored()
