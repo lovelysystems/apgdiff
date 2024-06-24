@@ -1,6 +1,6 @@
 # Changes for apgdiff
 
-## unreleased
+## 2024-06-24 / 1.0.1
 
 - fix output file not being created automatically if it does not exist
 
