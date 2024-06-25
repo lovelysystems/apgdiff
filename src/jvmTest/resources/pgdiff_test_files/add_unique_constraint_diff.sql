@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 ALTER TABLE inventoryitemsupplier
 	ADD CONSTRAINT inventoryitemsupplier_pkey PRIMARY KEY (id);
 

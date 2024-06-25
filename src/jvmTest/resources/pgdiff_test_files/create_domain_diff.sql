@@ -1,3 +1,5 @@
+
+SET search_path = public, pg_catalog;
 COMMENT ON DOMAIN benefits IS 'benefits comment';
 ALTER DOMAIN benefits DROP NOT NULL;
 

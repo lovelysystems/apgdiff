@@ -76,7 +76,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
         throw parseError(word, position + 1, this.string.substring(position, dumpEndPosition))
     }
 
-    fun parseError(expected: String, startPos: Int, contextString: String = "") =
+    private fun parseError(expected: String, startPos: Int, contextString: String = "") =
         ParserException(
             "Cannot parse string: $string\nExpected $expected at position $startPos ''$contextString''"
         )
@@ -177,8 +177,7 @@ class Parser(val string: String, val statementNum: Int = 0) {
      */
     val rest: String?
         get() {
-            val result: String
-            result = if (string[string.length - 1] == ';') {
+            val result: String = if (string[string.length - 1] == ';') {
                 if (position == string.length - 1) {
                     return null
                 } else {

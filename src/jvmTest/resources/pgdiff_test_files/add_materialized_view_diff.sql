@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE MATERIALIZED VIEW testview AS
 	SELECT testtable.id,
     testtable.name

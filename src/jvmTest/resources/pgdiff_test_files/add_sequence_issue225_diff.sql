@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE SEQUENCE alert_alert_id_seq
 	AS integer
 	START WITH 1

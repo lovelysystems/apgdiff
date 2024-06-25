@@ -181,7 +181,7 @@ object PgDiffSequences {
                 sbSQL.append("\tOWNED BY ")
                 sbSQL.append(newOwnedBy)
             }
-            if (sbSQL.length > 0) {
+            if (sbSQL.isNotEmpty()) {
                 writer.println()
                 writer.append(
                     "ALTER SEQUENCE "

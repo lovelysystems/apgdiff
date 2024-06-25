@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE OR REPLACE FUNCTION afunction(text, text, numeric) RETURNS numeric
     LANGUAGE plpgsql IMMUTABLE
     AS $_$

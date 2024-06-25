@@ -84,7 +84,7 @@ sealed class PgRelation<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, COL>
     protected val commentDefinitionSQL: String
         protected get() {
             val sbSQL = StringBuilder(100)
-            if (comment != null && !comment!!.isEmpty()) {
+            if (comment != null && comment!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.appendLine()
                 sbSQL.append("COMMENT ON ")

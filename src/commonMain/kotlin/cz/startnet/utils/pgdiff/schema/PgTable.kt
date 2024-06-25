@@ -119,8 +119,7 @@ sealed class PgTableBase(
                 } else {
                     sbSQL.append(", ")
                 }
-                var inheritTableName: String?
-                inheritTableName = if (schema.name == inheritPair.first) {
+                var inheritTableName: String? = if (schema.name == inheritPair.first) {
                     inheritPair.second
                 } else {
                     listOf(inheritPair.first, inheritPair.second).joinToString(".")
@@ -129,19 +128,19 @@ sealed class PgTableBase(
             }
             sbSQL.append(")")
         }
-        if (with != null && !with!!.isEmpty()) {
+        if (with != null && with!!.isNotEmpty()) {
             TODO("with clause in table creation not supported")
         }
         if (this is PgForeignTable) {
             sbSQL.append("SERVER ")
             sbSQL.append(foreignServer)
         }
-        if (tablespace != null && !tablespace!!.isEmpty()) {
+        if (tablespace != null && tablespace!!.isNotEmpty()) {
             sbSQL.appendLine()
             sbSQL.append("TABLESPACE ")
             sbSQL.append(tablespace)
         }
-        if (rangePartition != null && !rangePartition!!.isEmpty()) {
+        if (rangePartition != null && rangePartition!!.isNotEmpty()) {
             sbSQL.appendLine()
             sbSQL.append("PARTITION BY RANGE ")
             sbSQL.append(rangePartition)

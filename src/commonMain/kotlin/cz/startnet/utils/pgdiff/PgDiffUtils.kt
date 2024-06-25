@@ -498,9 +498,8 @@ object PgDiffUtils {
         if (name.indexOf('$') != -1 || name.indexOf('-') != -1 || name.indexOf('.') != -1) {
             return '"'.toString() + name + '"'
         }
-        for (i in 0 until name.length) {
-            val chr = name[i]
-            if (chr.isUpperCase()) {
+        for (element in name) {
+            if (element.isUpperCase()) {
                 return '"'.toString() + name + '"'
             }
         }

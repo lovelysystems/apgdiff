@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 DROP FUNCTION power_number(integer);
 CREATE FUNCTION power_number(arg_new integer) RETURNS integer
     LANGUAGE plpgsql

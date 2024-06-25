@@ -22,13 +22,13 @@ ALTER [ COLUMN ] column_name SET ( attribute_option = value [, ... ] )
 ALTER [ COLUMN ] column_name RESET ( attribute_option [, ... ] )
 ALTER [ COLUMN ] column_name SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
 */
-class AlterColumnParser(val columnName: String, val parser: Parser, val rel: PgRelation<*, *>, val ctx: ParserContext) {
+class AlterColumnParser(private val columnName: String, val parser: Parser, private val rel: PgRelation<*, *>, val ctx: ParserContext) {
 
-    fun getColumnSafe(): PgColumnBase<*, *> {
+    private fun getColumnSafe(): PgColumnBase<*, *> {
         return parser.withErrorContext { rel.getColumnSafe(columnName) }
     }
 
-    fun parseSet() = parser.withErrorContext {
+    private fun parseSet() = parser.withErrorContext {
         if (parser.expectOptional("STATISTICS")) {
             getColumnSafe().statistics = parser.parseInteger()
         } else if (parser.expectOptional("NOT NULL")) {

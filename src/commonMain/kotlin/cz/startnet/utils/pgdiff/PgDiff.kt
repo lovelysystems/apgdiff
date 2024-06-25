@@ -4,7 +4,6 @@ import cz.startnet.utils.pgdiff.loader.PgDumpLoader
 import io.github.petertrr.diffutils.diff
 import io.github.petertrr.diffutils.patch.Delta
 import io.github.petertrr.diffutils.patch.DeltaType
-import io.github.petertrr.diffutils.text.DiffRowGenerator
 import kotlinx.io.Source
 
 data class PgDiffResult(
@@ -84,4 +83,3 @@ class PgDiff(
 
     }
 }
-

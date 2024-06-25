@@ -46,7 +46,7 @@ interface PGVisitor<R> {
 abstract class WalkingVisitor : PGVisitor<Unit> {
 
     lateinit var table: PgTableBase
-    lateinit var db: PgDatabase
+    private lateinit var db: PgDatabase
     lateinit var schema: PgSchema
 
     override fun visit(o: PgDatabase) {
@@ -71,4 +71,3 @@ abstract class WalkingVisitor : PGVisitor<Unit> {
 
 
 }
-

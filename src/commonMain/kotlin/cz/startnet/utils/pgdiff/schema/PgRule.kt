@@ -50,14 +50,13 @@ class PgRule(
         if (this === other) {
             equals = true
         } else if (other is PgRule) {
-            val rule = other
             equals =
-                event === rule.event && relationName == rule.relationName && name == rule.name && query == rule.query
+                event === other.event && relationName == other.relationName && name == other.name && query == other.query
         }
         return equals
     }
 
     override val commentSQL: String
-        get() = "COMMENT ON RULE ${quotedIdentifier()} ON ${relationName} IS $comment;"
+        get() = "COMMENT ON RULE ${quotedIdentifier()} ON $relationName IS $comment;"
 
 }

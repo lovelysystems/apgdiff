@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 DROP TRIGGER trg_testview_instead_of_delete ON testview;
 
 DROP TRIGGER trg_testview_instead_of_insert ON testview;

@@ -105,7 +105,7 @@ class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, posit
                 sbSQL.append("\tCYCLE")
             }
             sbSQL.append(';')
-            if (comment != null && !comment!!.isEmpty()) {
+            if (comment != null && comment!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.appendLine()
                 sbSQL.append("COMMENT ON SEQUENCE ")
@@ -127,7 +127,7 @@ class PgSequence(name: String, position: Int) : DBObject("SEQUENCE", name, posit
             val sbSQL = StringBuilder(100)
             sbSQL.append("ALTER SEQUENCE ")
             sbSQL.append(PgDiffUtils.getQuotedName(name))
-            if (ownedBy != null && !ownedBy!!.isEmpty()) {
+            if (ownedBy != null && ownedBy!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.append("\tOWNED BY ")
                 sbSQL.append(ownedBy)
