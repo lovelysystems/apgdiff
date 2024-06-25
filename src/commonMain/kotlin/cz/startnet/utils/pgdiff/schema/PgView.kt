@@ -99,7 +99,7 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
             // Can only be set once for a view, before defaults/comments are set
             require(!declareColumnNames)
             require(columns.isEmpty())
-            if (columnNames == null || columnNames.isEmpty()) return
+            if (columnNames.isNullOrEmpty()) return
             declareColumnNames = true
             for (colName in columnNames) {
                 addColumn(PGViewColumn(this, colName))
@@ -142,7 +142,7 @@ sealed class PgViewBase(name: String, objectType: String, position: Int) : PgRel
 
             /* Column default values */for (col in columns) {
                 val defaultValue = col.defaultValue
-                if (defaultValue != null && !defaultValue.isEmpty()) {
+                if (!defaultValue.isNullOrEmpty()) {
                     sbSQL.appendLine()
                     sbSQL.appendLine()
                     sbSQL.append("ALTER ")

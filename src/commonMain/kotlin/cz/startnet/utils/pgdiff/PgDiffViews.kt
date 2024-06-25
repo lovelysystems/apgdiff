@@ -217,7 +217,7 @@ object PgDiffViews {
         for (oldCol in oldView!!.columns) {
             if (oldCol.defaultValue == null) continue
             val newCol = newView.getColumn(oldCol.name)
-            if (newCol != null && newCol.defaultValue != null) {
+            if (newCol?.defaultValue != null) {
                 if (oldCol.defaultValue != newCol.defaultValue) {
 
                     writer.println()
@@ -245,7 +245,7 @@ object PgDiffViews {
         // add new defaults
         for (newCol in newView.columns) {
             val oldCol = oldView.getColumn(newCol.name)
-            if (oldCol != null && oldCol.defaultValue != null
+            if (oldCol?.defaultValue != null
                 || newCol.defaultValue == null
             ) {
                 continue

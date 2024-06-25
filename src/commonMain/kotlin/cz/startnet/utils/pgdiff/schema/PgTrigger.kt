@@ -128,7 +128,7 @@ class PgTrigger(val name: String) {
                     sbSQL.append(" OR")
                 }
                 sbSQL.append(" UPDATE")
-                if (!updateColumns.isEmpty()) {
+                if (updateColumns.isNotEmpty()) {
                     sbSQL.append(" OF")
                     var first = true
                     for (columnName in updateColumns) {
@@ -157,13 +157,13 @@ class PgTrigger(val name: String) {
             sbSQL.append(" ON ")
             sbSQL.append(PgDiffUtils.getQuotedName(relationName))
             sbSQL.appendLine()
-            if (referencing != null && !referencing!!.isEmpty()) {
+            if (referencing != null && referencing!!.isNotEmpty()) {
                 sbSQL.append(referencing)
                 sbSQL.appendLine()
             }
             sbSQL.append("\tFOR EACH ")
             sbSQL.append(if (isForEachRow) "ROW" else "STATEMENT")
-            if (`when` != null && !`when`!!.isEmpty()) {
+            if (`when` != null && `when`!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.append("\tWHEN (")
                 sbSQL.append(`when`)
@@ -173,7 +173,7 @@ class PgTrigger(val name: String) {
             sbSQL.append("\tEXECUTE PROCEDURE ")
             sbSQL.append(function)
             sbSQL.append(';')
-            if (comment != null && !comment!!.isEmpty()) {
+            if (comment != null && comment!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.appendLine()
                 sbSQL.append("COMMENT ON TRIGGER ")
@@ -210,17 +210,16 @@ class PgTrigger(val name: String) {
         if (this === `object`) {
             equals = true
         } else if (`object` is PgTrigger) {
-            val trigger = `object`
-            equals = (eventTimeQualification == trigger.eventTimeQualification
-                    && isForEachRow == trigger.isForEachRow
-                    && function == trigger.function && name == trigger.name && isOnDelete == trigger.isOnDelete
-                    && isOnInsert == trigger.isOnInsert
-                    && isOnUpdate == trigger.isOnUpdate
-                    && isOnTruncate == trigger.isOnTruncate
-                    && relationName == trigger.relationName)
+            equals = (eventTimeQualification == `object`.eventTimeQualification
+                    && isForEachRow == `object`.isForEachRow
+                    && function == `object`.function && name == `object`.name && isOnDelete == `object`.isOnDelete
+                    && isOnInsert == `object`.isOnInsert
+                    && isOnUpdate == `object`.isOnUpdate
+                    && isOnTruncate == `object`.isOnTruncate
+                    && relationName == `object`.relationName)
             if (equals) {
                 val sorted1: List<String> = updateColumns.sorted()
-                val sorted2: List<String?> = trigger.updateColumns.sorted()
+                val sorted2: List<String?> = `object`.updateColumns.sorted()
                 equals = sorted1 == sorted2
             }
         }

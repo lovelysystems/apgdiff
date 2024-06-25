@@ -19,7 +19,7 @@ kotlin {
         binaries.executable()
     }
 
-    linuxArm64() {
+    linuxArm64 {
         binaries.executable()
     }
 
@@ -86,4 +86,3 @@ lovely {
         }
     }
 }
-

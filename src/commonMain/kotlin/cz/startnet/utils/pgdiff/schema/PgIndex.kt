@@ -127,7 +127,7 @@ class PgIndex
             sbSQL.append(' ')
             sbSQL.append(definition)
             sbSQL.append(';')
-            if (comment != null && !comment!!.isEmpty()) {
+            if (comment != null && comment!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.appendLine()
                 sbSQL.append("COMMENT ON INDEX ")
@@ -159,9 +159,8 @@ class PgIndex
         if (this === `object`) {
             equals = true
         } else if (`object` is PgIndex) {
-            val index = `object`
             equals =
-                definition == index.definition && name == index.name && tableName == index.tableName && isUnique == index.isUnique
+                definition == `object`.definition && name == `object`.name && tableName == `object`.tableName && isUnique == `object`.isUnique
         }
         return equals
     }

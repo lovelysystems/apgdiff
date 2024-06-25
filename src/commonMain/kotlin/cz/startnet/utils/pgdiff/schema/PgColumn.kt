@@ -64,7 +64,7 @@ sealed class PgColumnBase<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
         sbDefinition.append(quotedIdentifier())
         sbDefinition.append(' ')
         sbDefinition.append(type)
-        if (defaultValue != null && !defaultValue!!.isEmpty()) {
+        if (defaultValue != null && defaultValue!!.isNotEmpty()) {
             sbDefinition.append(" DEFAULT ")
             sbDefinition.append(defaultValue)
         } else if (!nullValue && addDefaults) {
@@ -93,7 +93,7 @@ sealed class PgColumnBase<REL : PgRelation<REL, COL>, COL : PgColumnBase<REL, CO
         return null
     }
 
-    fun quotedIdentifier() = PgDiffUtils.getQuotedName(name)
+    private fun quotedIdentifier() = PgDiffUtils.getQuotedName(name)
 
     fun commentSQL(writer: StringBuilder) {
         val commentStr = comment ?: "NULL"

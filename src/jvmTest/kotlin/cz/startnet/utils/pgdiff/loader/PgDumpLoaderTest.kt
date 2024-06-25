@@ -8,8 +8,8 @@ import java.io.File
 
 class PgDumpLoaderTest {
 
-    fun sqlFiles() = javaClass.getResourceAsStream("/loader_test_files")?.let {
-        it.reader().readLines().filter { it.endsWith(".sql") }
+    private fun sqlFiles() = javaClass.getResourceAsStream("/loader_test_files")?.let { testFiles ->
+        testFiles.reader().readLines().filter { filename -> filename.endsWith(".sql") }
     } ?: error("directory for test files not found")
 
     @ParameterizedTest

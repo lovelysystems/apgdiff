@@ -4,7 +4,7 @@ object CommentParser : PatternBasedSubParser(
     "^COMMENT[\\s]+ON[\\s]+.*$"
 ) {
 
-    val subParsers = listOf(
+    private val subParsers = listOf(
         "EXTENSION" to ::parseExtension,
         "TABLE" to ::parseTable,
         "TYPE" to ::parseType,

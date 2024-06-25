@@ -32,7 +32,7 @@ class SearchPathHelper
      * @param writer writer
      */
     fun outputSearchPath(writer: StringBuilder) {
-        if (!wasOutput && searchPath != null && !searchPath.isEmpty()) {
+        if (!wasOutput && !searchPath.isNullOrEmpty()) {
             writer.println()
             writer.appendLine(searchPath)
             wasOutput = true

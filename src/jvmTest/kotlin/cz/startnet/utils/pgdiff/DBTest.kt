@@ -60,9 +60,7 @@ class VanillaDBContainer(imageName: String) :
     }
 
     fun dumpDB(dbName: String): String {
-        return exec("pg_dump", "-s", "-d", dbName).let {
-            it.stdout
-        }
+        return exec("pg_dump", "-s", "-d", dbName).stdout
     }
 }
 

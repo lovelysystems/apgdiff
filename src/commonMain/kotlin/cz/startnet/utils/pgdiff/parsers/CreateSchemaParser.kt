@@ -17,7 +17,7 @@ object CreateSchemaParser : PatternBasedSubParser(
             ctx.database.addSchema(schema)
             schema.authorization = schema.name
             val definition = parser.rest
-            if (definition != null && !definition.isEmpty()) {
+            if (!definition.isNullOrEmpty()) {
                 schema.definition = definition
             }
         } else {
@@ -29,7 +29,7 @@ object CreateSchemaParser : PatternBasedSubParser(
                 schema.authorization = ParserUtils.getObjectName(parser.parseIdentifier())
             }
             val definition = parser.rest
-            if (definition != null && !definition.isEmpty()) {
+            if (!definition.isNullOrEmpty()) {
                 schema.definition = definition
             }
         }

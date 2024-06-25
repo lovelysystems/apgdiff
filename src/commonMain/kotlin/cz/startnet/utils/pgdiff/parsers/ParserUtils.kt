@@ -85,13 +85,12 @@ object ParserUtils {
         prefix: String?,
         names: List<String?>, postfix: String?
     ): String {
-        val adjName: String?
-        adjName = if (names.size == 1) {
+        val adjName: String? = if (names.size == 1) {
             names[0]
         } else {
             val sbString = StringBuilder(names.size * 15)
             for (name in names) {
-                if (sbString.length > 0) {
+                if (sbString.isNotEmpty()) {
                     sbString.append(',')
                 }
                 sbString.append(name)
@@ -99,11 +98,11 @@ object ParserUtils {
             sbString.toString().hashCode().toHexString()
         }
         val sbResult = StringBuilder(30)
-        if (prefix != null && !prefix.isEmpty()) {
+        if (!prefix.isNullOrEmpty()) {
             sbResult.append(prefix)
         }
         sbResult.append(adjName)
-        if (postfix != null && !postfix.isEmpty()) {
+        if (!postfix.isNullOrEmpty()) {
             sbResult.append(postfix)
         }
         return sbResult.toString()

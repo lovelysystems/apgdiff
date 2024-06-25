@@ -82,7 +82,7 @@ class PgConstraint(var name: String) {
             sbSQL.append(' ')
             sbSQL.append(definition)
             sbSQL.append(';')
-            if (comment != null && !comment!!.isEmpty()) {
+            if (comment != null && comment!!.isNotEmpty()) {
                 sbSQL.appendLine()
                 sbSQL.appendLine()
                 sbSQL.append("COMMENT ON CONSTRAINT ")
@@ -133,8 +133,7 @@ class PgConstraint(var name: String) {
         if (this === `object`) {
             equals = true
         } else if (`object` is PgConstraint) {
-            val constraint = `object`
-            equals = definition == constraint.definition && name == constraint.name && tableName == constraint.tableName
+            equals = definition == `object`.definition && name == `object`.name && tableName == `object`.tableName
         }
         return equals
     }

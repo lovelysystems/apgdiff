@@ -33,11 +33,11 @@ class SQLDiffFilesArgumentsProvider : ArgumentsProvider {
 
     private val originalPattern = Regex("^(.*)_original.sql")
 
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments>? {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
 
-        val names = testFileDir.list()!!.map {
+        val names = testFileDir.list()!!.mapNotNull {
             originalPattern.matchEntire(it)?.groups?.get(1)?.value
-        }.filterNotNull().sorted()
+        }.sorted()
 
         return names.asSequence().map {
             Arguments.of(SQLDiffTestFiles(it))
@@ -57,4 +57,3 @@ fun PgDiffResult.shouldHaveNoDiff() {
     script.shouldBeBlank()
     diffIgnored().joinToString("\n").shouldBeEmpty()
 }
-

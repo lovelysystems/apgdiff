@@ -6,7 +6,7 @@ import cz.startnet.utils.pgdiff.schema.*
  * A visitor that prints drop statements for any objects that are absent in the new database
  */
 class DropObjectsVisitor(
-    val newDB: PgDatabase,
+    private val newDB: PgDatabase,
     val writer: StringBuilder,
     val options: PgDiffOptions,
 ) : WalkingVisitor() {

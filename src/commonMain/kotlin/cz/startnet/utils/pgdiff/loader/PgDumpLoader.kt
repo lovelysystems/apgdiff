@@ -94,16 +94,13 @@ object PgDumpLoader {
         var pos = sbStatement.indexOf(";")
         while (true) {
             if (pos == -1) {
-                val newLine: String?
-                newLine = reader.readLine()
-                if (newLine == null) {
-                    return if (sbStatement.toString().trim { it <= ' ' }.length == 0) {
+                val newLine: String = reader.readLine()
+                    ?: return if (sbStatement.toString().trim { it <= ' ' }.isEmpty()) {
                         null
                     } else {
                         throw RuntimeException("Cannot find ending semicolon of statement: $sbStatement")
                     }
-                }
-                if (sbStatement.length > 0) {
+                if (sbStatement.isNotEmpty()) {
                     sbStatement.appendLine()
                 }
                 pos = sbStatement.length

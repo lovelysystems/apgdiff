@@ -84,9 +84,9 @@ object CreateTriggerParser : PatternBasedSubParser(
 
     private fun parseReferencing(parser: Parser, trigger: PgTrigger): Boolean {
         if (parser.expectOptional("NEW", "TABLE", "AS")) {
-            trigger.referencing = trigger.referencing + " NEW "
+            trigger.referencing += " NEW "
         } else if (parser.expectOptional("OLD", "TABLE", "AS")) {
-            trigger.referencing = trigger.referencing + " OLD "
+            trigger.referencing += " OLD "
         } else {
             return false
         }

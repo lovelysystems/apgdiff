@@ -10,7 +10,7 @@ data class DomainConstraint(val name: String, val check: String) {
     override fun toString() = sql()
 
     fun sql(): String {
-        return "CONSTRAINT ${quotedIdentifier()} CHECK ${check}"
+        return "CONSTRAINT ${quotedIdentifier()} CHECK $check"
     }
 }
 
@@ -49,4 +49,3 @@ class PgDomain(name: String, position: Int) : DBObject("DOMAIN", name, position)
         }
     }
 }
-
