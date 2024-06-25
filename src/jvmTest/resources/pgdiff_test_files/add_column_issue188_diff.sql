@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 ALTER TABLE test1
 	ADD COLUMN test2 text DEFAULT '*/'::text,
 	ADD COLUMN test text DEFAULT 'this /*is*/ test'::text,

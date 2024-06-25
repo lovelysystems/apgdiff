@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 DROP MATERIALIZED VIEW IF EXISTS testview CASCADE;
 
 CREATE MATERIALIZED VIEW testview AS

@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE SEQUENCE testtable2_id_seq
 	START WITH 1
 	INCREMENT BY 1

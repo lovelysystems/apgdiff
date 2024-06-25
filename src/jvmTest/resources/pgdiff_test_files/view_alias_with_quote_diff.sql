@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 DROP VIEW IF EXISTS foo CASCADE;
 
 CREATE VIEW foo AS

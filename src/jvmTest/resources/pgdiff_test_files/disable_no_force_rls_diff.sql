@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 ALTER TABLE items DISABLE ROW LEVEL SECURITY;
 
 ALTER TABLE projects NO FORCE ROW LEVEL SECURITY;

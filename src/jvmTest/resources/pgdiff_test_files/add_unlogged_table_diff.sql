@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE UNLOGGED TABLE asset_country_weight (
 	asset integer NOT NULL,
 	country character varying(3) NOT NULL,

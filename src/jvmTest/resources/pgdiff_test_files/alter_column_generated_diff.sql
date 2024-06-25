@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE TABLE companies (
 	id bigint NOT NULL
 );

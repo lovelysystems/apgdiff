@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE TYPE bug_status AS ENUM (
 	'new',
 	'open',

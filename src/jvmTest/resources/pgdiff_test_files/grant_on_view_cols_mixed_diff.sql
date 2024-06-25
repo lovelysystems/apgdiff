@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 REVOKE ALL ON TABLE items_view FROM admin;
 GRANT SELECT, UPDATE ON TABLE items_view TO admin;
 

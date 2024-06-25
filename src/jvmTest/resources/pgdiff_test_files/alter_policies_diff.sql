@@ -1,3 +1,5 @@
+
+SET search_path = public, pg_catalog;
 ALTER POLICY check_evens_and_1 ON todos TO PUBLIC
 WITH CHECK (
   (((id % 2) = 0) OR (id = 1))

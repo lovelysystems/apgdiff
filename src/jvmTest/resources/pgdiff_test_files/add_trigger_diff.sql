@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE OR REPLACE FUNCTION test_table_trigger() RETURNS trigger
     LANGUAGE plpgsql
     AS $$

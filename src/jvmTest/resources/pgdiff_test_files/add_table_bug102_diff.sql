@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 CREATE TABLE "procedureresult$Operation" (
 	id bigint NOT NULL,
 	name character varying(255),

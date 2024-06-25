@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 COMMENT ON SEQUENCE test_id_seq IS 'test table sequence 2';
 
 COMMENT ON TABLE test IS 'test table 2';

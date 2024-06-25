@@ -1,4 +1,6 @@
 
+SET search_path = public, pg_catalog;
+
 DROP FUNCTION multiply_numbers(smallint, smallint);
 CREATE FUNCTION multiply_numbers(number1 smallint, number2 smallint) RETURNS smallint
     LANGUAGE plpgsql

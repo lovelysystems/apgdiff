@@ -127,9 +127,9 @@ class PgDiffDatabases(
     private fun updateSchemas() {
         // order schemas by positions of the first relation, to order by schema dependencies
         // TODO: a more safe way would be create all objects based on their position
-        val schemas = newDatabase.schemas.sortedBy {
-            if (it.rels.isNotEmpty()) {
-                it.rels.minOf { it.position }
+        val schemas = newDatabase.schemas.sortedBy { schema ->
+            if (schema.rels.isNotEmpty()) {
+                schema.rels.minOf { it.position }
             } else {
                 0
             }
@@ -258,17 +258,11 @@ class PgDiffDatabases(
             //diffWriter.flush()
             val diffString = schemaWriter.toString() // diff.toString(arguments.outCharsetName) TODO: utf8
             if (diffString.isNotEmpty()) {
-                val setSearchPath = (newDatabase.schemas.size > 1
-                        || newDatabase.schemas[0].name != "public")
-                val searchPathHelper: SearchPathHelper = if (setSearchPath) {
-                    SearchPathHelper(
-                        "SET search_path = "
-                                + PgDiffUtils.getQuotedName(newSchema.name, excludeKeywords = true)
-                                + ", pg_catalog;"
-                    )
-                } else {
-                    SearchPathHelper(null)
-                }
+                val searchPathHelper = SearchPathHelper(
+                    "SET search_path = "
+                            + PgDiffUtils.getQuotedName(newSchema.name, excludeKeywords = true)
+                            + ", pg_catalog;"
+                )
                 searchPathHelper.outputSearchPath(writer)
                 writer.write(diffString)
             }
