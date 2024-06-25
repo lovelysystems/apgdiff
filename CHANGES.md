@@ -1,5 +1,9 @@
 # Changes for apgdiff
 
+## 2024-06-25 / 1.0.2
+
+- fix pg 15+ diffs by always setting the search_path to the schema of the object explicitly
+
 ## 2024-06-24 / 1.0.1
 
 - fix output file not being created automatically if it does not exist
