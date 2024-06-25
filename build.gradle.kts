@@ -1,8 +1,8 @@
 plugins {
     kotlin("multiplatform") version "2.0.0"
-    id("com.lovelysystems.gradle") version ("1.12.0")
+    id("com.lovelysystems.gradle") version ("1.13.0")
     application
-    id("org.jetbrains.kotlinx.kover") version "0.7.3"
+    id("org.jetbrains.kotlinx.kover") version "0.8.1"
 }
 
 repositories {
