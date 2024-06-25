@@ -1,5 +1,11 @@
 # Changes for apgdiff
 
+## unreleased
+
+### Chore
+
+- upgrade gradle and plugins
+
 ## 2024-06-25 / 1.0.2
 
 - fix pg 15+ diffs by always setting the search_path to the schema of the object explicitly
