@@ -24,9 +24,31 @@ kotlinMultiplatformDiff?.let {
 }
 
 
-sourceControl {
-    gitRepository(uri("https://github.com/lovelysystems/kotlin-multiplatform-diff.git")) {
-        producesModule("io.github.petertrr:kotlin-multiplatform-diff")
+dependencyResolutionManagement {
+
+    repositories {
+        mavenCentral()
+    }
+
+    // Catalogs
+    versionCatalogs {
+
+        create("libs") {
+            library("kotlin-multiplatform-diff", "io.github.petertrr", "kotlin-multiplatform-diff")
+                .version("0.7.0")
+            library("kotlinx-io-core", "org.jetbrains.kotlinx", "kotlinx-io-core")
+                .version("0.4.0")
+            library("clikt", "com.github.ajalt.clikt", "clikt").version("4.4.0")
+            library("logback-classic", "ch.qos.logback", "logback-classic").version("1.4.11")
+        }
+
+        // Testing
+        create("testLibs") {
+            library("kotest-assertions-core", "io.kotest", "kotest-assertions-core").version("5.9.1")
+            library("testcontainers", "org.testcontainers", "testcontainers").version("1.18.3")
+            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
+            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").withoutVersion()
+        }
+
     }
 }
-
