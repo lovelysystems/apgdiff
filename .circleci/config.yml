@@ -41,7 +41,7 @@ jobs:
           command: git diff --exit-code HEAD --
       - store_test_results:
           path: build/test-results
-          when: always
+          when: true
       - run:
           name: Build Docker Image
           command: ./gradlew buildDockerImage
