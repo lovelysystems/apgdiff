@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.lovelysystemsGradle)
@@ -11,7 +13,17 @@ group = "com.lovelysystems"
 
 kotlin {
 
-    jvm {}
+    jvm {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        binaries {
+            executable {
+                mainClass.set("cz.startnet.utils.pgdiff.CLIKt")
+                applicationName.set("apgdiff")
+            }
+
+
+        }
+    }
     linuxX64 {
         binaries.executable()
     }
