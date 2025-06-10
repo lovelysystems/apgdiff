@@ -1,5 +1,5 @@
 [versions]
-kotlin-multiplatform-diff = "0.7.0"
+kotlin-multiplatform-diff = "1.1.0"
 kotlinx-io-core = "0.4.0"
 clikt = "5.0.3"
 logback-classic = "1.4.11"
