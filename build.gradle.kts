@@ -38,16 +38,16 @@ kotlin {
         }
         commonTest {
             dependencies {
-                implementation(testLibs.kotest.assertions.core)
+                implementation(libs.kotest.assertions.core)
                 implementation(kotlin("test"))
             }
         }
         jvmTest {
             dependencies {
-                implementation(testLibs.junit.jupiter.api)
-                implementation(testLibs.junit.jupiter.params)
+                implementation(libs.junit.jupiter.api)
+                implementation(libs.junit.jupiter.params)
                 implementation(kotlin("test-junit5"))
-                implementation(testLibs.testcontainers)
+                implementation(libs.testcontainers)
                 implementation(libs.logback.classic)
             }
 
