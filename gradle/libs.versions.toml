@@ -1,13 +1,13 @@
 [versions]
 kotlin-multiplatform-diff = "0.7.0"
 kotlinx-io-core = "0.4.0"
-clikt = "4.4.0"
+clikt = "5.0.3"
 logback-classic = "1.4.11"
 kotest-assertions-core = "5.9.1"
 testcontainers = "1.18.3"
-kotlin = "2.0.0"
-lovelysystems-gradle = "1.13.0"
-kotlinx-kover = "0.8.1"
+kotlin = "2.1.21"
+lovelysystems-gradle = "1.15.1"
+kotlinx-kover = "0.9.1"
 
 [libraries]
 # Main dependencies

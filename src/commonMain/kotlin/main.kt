@@ -1,3 +1,4 @@
+import com.github.ajalt.clikt.core.main
 import cz.startnet.utils.pgdiff.CLI
 
 /**

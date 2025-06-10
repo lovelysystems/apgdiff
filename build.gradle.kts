@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.lovelysystemsGradle)
-    application
     alias(libs.plugins.kotlinxKover)
 }
 
@@ -12,9 +11,7 @@ group = "com.lovelysystems"
 
 kotlin {
 
-    jvm {
-        withJava()
-    }
+    jvm {}
     linuxX64 {
         binaries.executable()
     }
@@ -55,11 +52,6 @@ kotlin {
 
     }
 
-}
-
-application {
-    mainClass.set("cz.startnet.utils.pgdiff.CLIKt")
-    applicationName = "apgdiff"
 }
 
 tasks.withType<Test> {
