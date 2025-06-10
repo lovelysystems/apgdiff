@@ -4,8 +4,8 @@
 
 ### Chore
 
+- upgrade kotlin-multiplatform-diff
 - moved a first test to common
-- upgrade kotlin-multiplatform-diff to 0.7.0 which includes the arm builds now directly
 - upgrade gradle and plugins
 
 ## 2024-06-25 / 1.0.2

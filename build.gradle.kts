@@ -20,8 +20,6 @@ kotlin {
                 mainClass.set("cz.startnet.utils.pgdiff.CLIKt")
                 applicationName.set("apgdiff")
             }
-
-
         }
     }
     linuxX64 {
@@ -59,9 +57,7 @@ kotlin {
                 implementation(libs.testcontainers)
                 implementation(libs.logback.classic)
             }
-
         }
-
     }
 
 }
