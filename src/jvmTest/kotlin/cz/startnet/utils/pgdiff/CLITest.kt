@@ -1,5 +1,6 @@
 package cz.startnet.utils.pgdiff
 
+import com.github.ajalt.clikt.core.main
 import io.kotest.matchers.shouldBe
 import kotlinx.io.Buffer
 import kotlinx.io.buffered

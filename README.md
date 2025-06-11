@@ -9,11 +9,19 @@ Another PostgreSQL Diff Tool is useful for comparison/diffing of database schema
 The schemas are compared based on database dumps created by using `pg_dump`. So 
 for the actual comparison, there is no direct database access required.
 
-## Install and run locally (JVM)
+## Install and run locally 
+
+Since the JVM build is faster than the other targets it should be used for local testing to have faster roundtrips.
 
 ```shell script
-./gradlew installDist
-./build/install/apgdiff/bin/apgdiff --help 
+./gradlew installJvmDist
+./build/install/apgdiff-jvm/bin/apgdiff --help
+```
+
+To see available run tasks for other build targets run:
+
+```shell script
+./gradlew run
 ```
 
 ## Build and run Docker Image
