@@ -1,6 +1,6 @@
 # Changes for apgdiff
 
-## unreleased
+## 2025-10-02 / 1.0.3
 
 ### Fix
 
