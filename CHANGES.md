@@ -2,6 +2,10 @@
 
 ## unreleased
 
+### Fix
+
+- allow \unrestricted command at end of dumps
+
 ### Chore
 
 - upgrade kotlin-multiplatform-diff
