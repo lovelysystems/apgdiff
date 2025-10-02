@@ -98,7 +98,13 @@ object PgDumpLoader {
                     ?: return if (sbStatement.toString().trim { it <= ' ' }.isEmpty()) {
                         null
                     } else {
-                        throw RuntimeException("Cannot find ending semicolon of statement: $sbStatement")
+                        val trimmed = sbStatement.toString().trim { it <= ' ' }
+                        if (trimmed.startsWith("\\")) {
+                            // Accept meta-commands (e.g. \unrestrict) at EOF
+                            null
+                        } else {
+                            throw RuntimeException("Cannot find ending semicolon of statement: $sbStatement")
+                        }
                     }
                 if (sbStatement.isNotEmpty()) {
                     sbStatement.appendLine()
